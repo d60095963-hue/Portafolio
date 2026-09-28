@@ -803,3 +803,23 @@
     </script>
 </body>
 </html>
+async function eliminarTarea(idTarea) {
+  const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");
+  if (!confirmacion) return;
+
+  try {
+    const respuesta = await fetch(`/api/tareas/eliminar/${idTarea}`, {
+      method: 'DELETE',
+    });
+
+    if (respuesta.ok) {
+      alert("Tarea eliminada con éxito.");
+      // Actualizar la lista en pantalla o remover el elemento del DOM
+      document.getElementById(`tarea-${idTarea}`).remove();
+    } else {
+      alert("Ocurrió un error al intentar eliminar la tarea.");
+    }
+  } catch (error) {
+    console.error("Error en la petición:", error);
+  }
+}

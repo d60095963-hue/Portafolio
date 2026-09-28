@@ -1,40 +1,34 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio Digital Académico e Investigación - UPLA</title>
+    <title>Portafolio Digital Universitario - UPLA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js para Métricas y Gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        darkbg: '#07080a',
-                        darkcard: '#0f1117',
-                        darkborder: '#1e2230',
+                        darkbg: '#0a0a0c',
+                        darkcard: '#121318',
+                        darkborder: '#1f222e',
                         celeste: {
                             DEFAULT: '#00b4d8',
                             light: '#48cae4',
-                            dark: '#0077b6',
-                            glow: 'rgba(0, 180, 216, 0.4)'
+                            glow: '#00b4d880'
                         },
                         verde: {
                             DEFAULT: '#2ec4b6',
                             bright: '#00f5d4',
-                            glow: 'rgba(0, 245, 212, 0.4)'
-                        },
-                        dorado: '#ffb703',
-                        puroRed: '#ff0055'
+                            glow: '#00f5d460'
+                        }
                     },
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
@@ -46,522 +40,339 @@
     </script>
 
     <style>
+        /* Custom Glowing & Cyberpunk Effects */
         body {
-            background-color: #07080a;
+            background-color: #0a0a0c;
             color: #f1f5f9;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 180, 216, 0.07) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 245, 212, 0.07) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(15, 17, 23, 0.5) 0%, transparent 100%);
+                radial-gradient(circle at 15% 15%, rgba(0, 180, 216, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(0, 245, 212, 0.08) 0%, transparent 40%);
             background-attachment: fixed;
         }
 
-        .glass-panel {
-            background: rgba(15, 17, 23, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 180, 216, 0.18);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        .glass-card {
+            background: rgba(18, 19, 24, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        .glass-card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card-hover:hover {
+        .glass-card:hover {
             border-color: rgba(0, 245, 212, 0.4);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px -5px rgba(0, 245, 212, 0.15);
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.15);
         }
 
-        .btn-glow {
-            background: linear-gradient(135deg, #00b4d8 0%, #00f5d4 100%);
-            color: #07080a;
-            font-weight: 800;
+        .glow-border-celeste {
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+        }
+
+        .glow-text-celeste {
+            text-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
+        }
+
+        .glow-text-verde {
+            text-shadow: 0 0 8px rgba(0, 245, 212, 0.6);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #00b4d8 0%, #2ec4b6 100%);
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 245, 212, 0.25);
         }
 
-        .btn-glow:hover {
-            box-shadow: 0 0 25px rgba(0, 245, 212, 0.5);
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #48cae4 0%, #00f5d4 100%);
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
             transform: translateY(-1px);
         }
 
-        .text-glow-celeste {
-            text-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
-        }
-
-        .text-glow-verde {
-            text-shadow: 0 0 10px rgba(0, 245, 212, 0.5);
-        }
-
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #07080a; }
-        ::-webkit-scrollbar-thumb { background: #1e2230; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00b4d8; }
-
-        /* Badge Glows */
-        .badge-status-aprobado {
-            background: rgba(0, 245, 212, 0.15);
-            color: #00f5d4;
-            border: 1px solid rgba(0, 245, 212, 0.3);
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .badge-status-pendiente {
-            background: rgba(255, 183, 3, 0.15);
-            color: #ffb703;
-            border: 1px solid rgba(255, 183, 3, 0.3);
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
         }
-        .badge-status-observado {
-            background: rgba(255, 0, 85, 0.15);
-            color: #ff0055;
-            border: 1px solid rgba(255, 0, 85, 0.3);
+        ::-webkit-scrollbar-thumb {
+            background: #1f222e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00b4d8;
         }
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-verde selection:text-black">
 
-    <!-- NOTIFICATION TOAST CONTAINER -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none"></div>
-
-    <!-- AUTHENTICATION / PORTAL MODAL -->
-    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkbg/90 backdrop-blur-xl">
-        <div class="w-full max-w-lg glass-panel rounded-3xl p-6 md:p-8 border border-celeste/30 relative overflow-hidden shadow-2xl max-h-[95vh] overflow-y-auto">
-            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-celeste via-verde-bright to-celeste"></div>
+    <!-- AUTHENTICATION CONTAINER -->
+    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkbg/90 backdrop-blur-md">
+        <div class="w-full max-w-md glass-card rounded-2xl p-6 md:p-8 border border-celeste/30 relative overflow-hidden shadow-2xl max-h-[95vh] overflow-y-auto">
+            <!-- Decorative Accent line -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-celeste via-verde-bright to-celeste"></div>
 
             <!-- Logo Header -->
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-darkbg border-2 border-celeste mb-3 shadow-[0_0_20px_rgba(0,180,216,0.3)]">
-                    <i class="fa-solid fa-graduation-cap text-4xl text-verde-bright"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-darkbg border-2 border-celeste mb-3 shadow-[0_0_15px_rgba(0,180,216,0.3)]">
+                    <i class="fa-solid fa-graduation-cap text-3xl text-verde-bright"></i>
                 </div>
-                <h2 class="text-2xl font-black tracking-tight text-white uppercase">Universidad Peruana</h2>
-                <h3 class="text-xl font-extrabold text-celeste tracking-widest uppercase text-glow-celeste">Los Andes</h3>
-                <p class="text-xs text-gray-400 mt-1 font-mono">Facultad de Ingeniería • Sistema Académico V3.0</p>
-            </div>
-
-            <!-- Role Selector -->
-            <div class="grid grid-cols-2 gap-2 p-1 bg-darkbg/80 rounded-xl border border-darkborder mb-5">
-                <button type="button" id="roleStudentBtn" onclick="setRole('estudiante')" class="py-2 text-xs font-bold rounded-lg transition-all bg-celeste/20 text-celeste border border-celeste/40">
-                    <i class="fa-solid fa-user-graduate mr-1.5"></i>Estudiante
-                </button>
-                <button type="button" id="roleDocentBtn" onclick="setRole('docente')" class="py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-chalkboard-user mr-1.5"></i>Docente / Evaluador
-                </button>
+                <h2 class="text-xl font-extrabold tracking-tight text-white uppercase">Universidad Peruana</h2>
+                <h3 class="text-lg font-bold text-celeste tracking-widest uppercase glow-text-celeste">Los Andes</h3>
+                <p class="text-xs text-gray-400 mt-1">Portafolio Digital Académico</p>
             </div>
 
             <!-- Auth Tabs -->
             <div class="flex border-b border-darkborder mb-6">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-xs font-bold text-celeste border-b-2 border-celeste transition-all">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold text-celeste border-b-2 border-celeste transition-all duration-300">
                     <i class="fa-solid fa-right-to-bracket mr-2"></i>Iniciar Sesión
                 </button>
-                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2.5 text-xs font-bold text-gray-400 hover:text-white transition-all">
-                    <i class="fa-solid fa-user-plus mr-2"></i>Nuevo Registro
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-user-plus mr-2"></i>Registrarse
                 </button>
             </div>
+
+            <!-- Alert Box -->
+            <div id="authAlert" class="hidden mb-4 p-3 rounded-lg text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30"></div>
 
             <!-- LOGIN FORM -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Código Universitario / DNI</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombre o Código Universitario</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                             <i class="fa-solid fa-id-card text-sm"></i>
                         </span>
-                        <input type="text" id="loginIdentifier" required placeholder="Ej: U202310492" class="w-full pl-10 pr-4 py-3 bg-darkbg/90 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-celeste text-white placeholder-gray-500">
+                        <input type="text" id="loginIdentifier" required placeholder="Ej: U12345678 o Tu Nombre" class="w-full pl-10 pr-4 py-2.5 bg-darkbg/80 border border-darkborder rounded-xl text-sm focus:outline-none focus:border-celeste text-white placeholder-gray-500 transition-colors">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Contraseña de Acceso</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                             <i class="fa-solid fa-lock text-sm"></i>
                         </span>
-                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-3 bg-darkbg/90 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-celeste text-white placeholder-gray-500">
+                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-darkbg/80 border border-darkborder rounded-xl text-sm focus:outline-none focus:border-celeste text-white placeholder-gray-500 transition-colors">
                     </div>
                 </div>
-                <button type="submit" class="w-full py-3.5 btn-glow rounded-xl text-xs font-extrabold flex items-center justify-center space-x-2">
-                    <span>Acceder al Portafolio</span>
-                    <i class="fa-solid fa-arrow-right"></i>
+                <button type="submit" class="w-full py-3 mt-2 btn-gradient text-darkbg font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg">
+                    <span>Ingresar al Portafolio</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </form>
 
             <!-- REGISTER FORM -->
             <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-                <!-- Avatar Upload & Preview -->
-                <div class="flex flex-col items-center mb-3">
+                <!-- Selector de Foto de Perfil -->
+                <div class="flex flex-col items-center mb-2">
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Foto de Perfil</label>
                     <div class="relative group cursor-pointer" onclick="document.getElementById('regAvatarInput').click()">
-                        <img id="avatarPreview" src="https://ui-avatars.com/api/?name=UPLA+Estudiante&background=00b4d8&color=fff" alt="Avatar" class="w-20 h-20 rounded-2xl object-cover border-2 border-celeste shadow-[0_0_15px_rgba(0,180,216,0.3)]">
-                        <div class="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-camera text-white text-xl"></i>
+                        <img id="avatarPreview" src="https://ui-avatars.com/api/?name=Usuario&background=00b4d8&color=fff" alt="Avatar Preview" class="w-20 h-20 rounded-full object-cover border-2 border-celeste shadow-lg">
+                        <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-camera text-white text-lg"></i>
                         </div>
                     </div>
                     <input type="file" id="regAvatarInput" accept="image/*" onchange="previewProfileImage(event)" class="hidden">
-                    <span class="text-[10px] text-gray-400 mt-1">Haz clic para subir fotografía</span>
+                    <span class="text-[10px] text-gray-400 mt-1">Haz clic para subir foto</span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Nombres y Apellidos</label>
-                        <input type="text" id="regName" required placeholder="Ej: Carlos Mendoza" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Código / DNI</label>
-                        <input type="text" id="regCode" required placeholder="Ej: 74839201" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white">
-                    </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombre Completo</label>
+                    <input type="text" id="regName" required placeholder="Ej: Juan Pérez" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Ciclo Académico</label>
-                        <select id="regCycle" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white">
-                            <option value="V Ciclo">V Ciclo</option>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiante</label>
+                        <input type="text" id="regCode" required placeholder="Ej: 74839201" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Ciclo Académico</label>
+                        <select id="regCycle" required class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white">
+                            <option value="I Ciclo">I Ciclo</option>
+                            <option value="II Ciclo">II Ciclo</option>
+                            <option value="III Ciclo">III Ciclo</option>
+                            <option value="IV Ciclo">IV Ciclo</option>
+                            <option value="V Ciclo" selected>V Ciclo</option>
                             <option value="VI Ciclo">VI Ciclo</option>
                             <option value="VII Ciclo">VII Ciclo</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Modalidad</label>
-                        <select id="regModality" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white">
-                            <option value="Presencial">Presencial</option>
-                            <option value="Semipresencial">Semipresencial</option>
+                            <option value="VIII Ciclo">VIII Ciclo</option>
+                            <option value="IX Ciclo">IX Ciclo</option>
+                            <option value="X Ciclo">X Ciclo</option>
                         </select>
                     </div>
                 </div>
-
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Escuela Profesional</label>
-                    <input type="text" id="regCareer" required value="Ingeniería de Sistemas e Informática" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Carrera Universitaria</label>
+                    <input type="text" id="regCareer" required placeholder="Ej: Ingeniería de Sistemas e Informática" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Contraseña</label>
-                    <input type="password" id="regPassword" required placeholder="••••••••" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
+                    <input type="password" id="regPassword" required placeholder="Crea una contraseña segura" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
                 </div>
-
-                <button type="submit" class="w-full py-3 btn-glow rounded-xl text-xs font-extrabold flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-user-check"></i>
-                    <span>Crear Perfil Institucional</span>
+                <button type="submit" class="w-full py-3 mt-2 btn-gradient text-darkbg font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg">
+                    <i class="fa-solid fa-user-check text-xs"></i>
+                    <span>Crear Cuenta Mi UPLA</span>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- MAIN APP INTERFACE -->
+    <!-- MAIN DASHBOARD -->
     <div id="appContainer" class="hidden min-h-screen flex flex-col">
-
-        <!-- HEADER SYSTEM NAVBAR -->
-        <header class="glass-panel sticky top-0 z-40 border-b border-celeste/20 bg-darkbg/90">
+        <!-- HEADER / NAVIGATION -->
+        <header class="glass-card sticky top-0 z-40 border-b border-celeste/20 bg-darkbg/90">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                
-                <!-- Brand Badge -->
+                <!-- Brand & Logo -->
                 <div class="flex items-center space-x-3">
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-celeste via-verde-bright to-celeste p-0.5 shadow-[0_0_15px_rgba(0,180,216,0.4)]">
-                        <div class="w-full h-full bg-darkbg rounded-[14px] flex items-center justify-center">
-                            <i class="fa-solid fa-laptop-code text-verde-bright text-xl"></i>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-celeste to-verde-bright p-0.5 shadow-[0_0_10px_rgba(0,180,216,0.5)]">
+                        <div class="w-full h-full bg-darkbg rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-university text-verde-bright text-lg"></i>
                         </div>
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span class="font-black text-white text-lg tracking-wider">UPLA</span>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-celeste/20 text-celeste font-mono font-bold border border-celeste/30">V3.0 PRO</span>
+                            <span class="font-black text-white text-base tracking-wide">UPLA</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-celeste/20 text-celeste font-semibold border border-celeste/30">Portafolio</span>
                         </div>
-                        <p class="text-[11px] text-gray-400 font-medium">Portafolio Digital de Evidencias</p>
+                        <p class="text-[11px] text-gray-400 font-medium hidden sm:block">Universidad Peruana Los Andes</p>
                     </div>
                 </div>
 
-                <!-- Navigation Links -->
-                <nav class="hidden md:flex items-center space-x-1 bg-darkbg/60 p-1.5 rounded-2xl border border-darkborder">
-                    <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-celeste/20 text-celeste border border-celeste/30">
-                        <i class="fa-solid fa-chart-pie mr-1.5"></i>Dashboard
-                    </button>
-                    <button onclick="switchView('works')" id="nav-works" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
-                        <i class="fa-solid fa-folder-open mr-1.5"></i>Evidencias
-                    </button>
-                    <button onclick="switchView('syllabus')" id="nav-syllabus" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
-                        <i class="fa-solid fa-book-bookmark mr-1.5"></i>Sílabo
-                    </button>
-                    <button onclick="switchView('rubrics')" id="nav-rubrics" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
-                        <i class="fa-solid fa-list-check mr-1.5"></i>Rúbricas
-                    </button>
-                </nav>
-
-                <!-- Profile Info & Actions -->
-                <div class="flex items-center space-x-4">
-                    <button onclick="exportFullReport()" class="hidden sm:flex px-3 py-2 bg-darkborder hover:bg-gray-800 rounded-xl text-xs text-gray-300 transition-all items-center space-x-1.5 border border-darkborder" title="Exportar Reporte Completo">
-                        <i class="fa-solid fa-file-pdf text-red-400"></i>
-                        <span>Exportar PDF</span>
-                    </button>
-
-                    <div class="flex items-center space-x-3">
-                        <img id="userHeaderAvatar" src="" alt="User" class="w-10 h-10 rounded-xl object-cover border-2 border-celeste shadow-[0_0_10px_rgba(0,180,216,0.3)]">
-                        <div class="text-right hidden sm:block">
-                            <div id="userDisplayName" class="text-xs font-bold text-white flex items-center justify-end space-x-1"></div>
-                            <div id="userDisplayDetails" class="text-[10px] text-verde-bright font-mono"></div>
+                <!-- User Info Badge & Profile Image -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <img id="userHeaderAvatar" src="https://ui-avatars.com/api/?name=Usuario&background=00b4d8&color=fff" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-celeste shadow-[0_0_10px_rgba(0,180,216,0.3)]">
+                    
+                    <div class="text-right hidden md:block">
+                        <div id="userDisplayName" class="text-sm font-bold text-white flex items-center justify-end space-x-1">
+                            <span>Cargando...</span>
+                        </div>
+                        <div id="userDisplayDetails" class="text-xs text-verde-bright font-mono">
+                            ---
                         </div>
                     </div>
 
-                    <button onclick="logout()" class="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 transition-all text-xs" title="Cerrar Sesión">
-                        <i class="fa-solid fa-power-off"></i>
+                    <button onclick="logout()" class="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 transition-all text-xs font-semibold flex items-center space-x-2" title="Cerrar Sesión">
+                        <i class="fa-solid fa-power-off text-sm"></i>
+                        <span class="hidden sm:inline">Salir</span>
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- MAIN CONTENT AREA -->
+        <!-- MAIN BODY CONTENT -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+            
+            <!-- Welcome Banner -->
+            <div class="relative overflow-hidden rounded-2xl glass-card p-6 md:p-8 mb-8 border border-celeste/30">
+                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-verde/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-verde-bright uppercase tracking-widest px-2.5 py-1 rounded-full bg-verde/10 border border-verde/20">
+                            Semestre Académico Activo
+                        </span>
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-2">
+                            Portafolio de Trabajos y Evidencias
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1 max-w-2xl">
+                            Gestiona, organiza y sube tus actividades universitarias organizadas por unidades (4 semanas por unidad) en las asignaturas de tu especialidad.
+                        </p>
+                    </div>
+                    <button onclick="openUploadModal()" class="btn-gradient text-darkbg font-extrabold px-5 py-3 rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:scale-105 transition-transform self-start md:self-auto">
+                        <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+                        <span>Subir Trabajo</span>
+                    </button>
+                </div>
+            </div>
 
-            <!-- VIEW 1: DASHBOARD METRICS -->
-            <section id="viewDashboard" class="space-y-6">
-                <!-- Welcome Banner -->
-                <div class="relative overflow-hidden rounded-3xl glass-panel p-6 md:p-8 border border-celeste/30">
-                    <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-verde/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <!-- Course Selection Tabs -->
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-6">
+                <button id="courseTab1" onclick="selectCourse('dev-apps')" class="flex-1 p-4 rounded-xl glass-card border-l-4 border-l-celeste text-left transition-all flex items-center justify-between group">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-3 rounded-lg bg-celeste/10 text-celeste group-hover:bg-celeste group-hover:text-darkbg transition-colors">
+                            <i class="fa-solid fa-laptop-code text-xl"></i>
+                        </div>
                         <div>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-bold text-verde-bright uppercase tracking-widest px-3 py-1 rounded-full bg-verde/10 border border-verde/30">
-                                    Semestre Académico 2026-I
-                                </span>
-                                <span id="userRoleBadge" class="text-[10px] font-bold text-celeste uppercase tracking-widest px-3 py-1 rounded-full bg-celeste/10 border border-celeste/30">
-                                    Estudiante
-                                </span>
-                            </div>
-                            <h1 class="text-2xl md:text-3xl font-black text-white mt-3">
-                                Resumen de Progreso y Evidencias
-                            </h1>
-                            <p class="text-xs text-gray-400 mt-1 max-w-2xl">
-                                Monitor general de cumplimiento de competencias, avance modular por semanas y notas de evaluación continua.
-                            </p>
+                            <h3 class="font-bold text-white text-sm sm:text-base">Desarrollo de Aplicaciones</h3>
+                            <p class="text-xs text-gray-400">Asignatura Principal</p>
                         </div>
-                        <button onclick="openUploadModal()" class="btn-glow px-6 py-3.5 rounded-2xl text-xs font-black flex items-center justify-center space-x-2 self-start md:self-auto">
-                            <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                            <span>Registrar Nueva Evidencia</span>
-                        </button>
                     </div>
-                </div>
+                    <span id="badgeDevApps" class="px-2.5 py-1 text-xs rounded-full bg-darkbg border border-celeste/30 text-celeste font-mono font-bold">0</span>
+                </button>
 
-                <!-- KPI Cards Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="glass-panel p-5 rounded-2xl border border-darkborder flex items-center justify-between">
+                <button id="courseTab2" onclick="selectCourse('algo-struct')" class="flex-1 p-4 rounded-xl glass-card border-l-4 border-l-gray-600 text-left transition-all flex items-center justify-between group opacity-70 hover:opacity-100">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-3 rounded-lg bg-verde/10 text-verde-bright group-hover:bg-verde-bright group-hover:text-darkbg transition-colors">
+                            <i class="fa-solid fa-diagram-project text-xl"></i>
+                        </div>
                         <div>
-                            <p class="text-[11px] font-semibold text-gray-400 uppercase">Trabajos Subidos</p>
-                            <h3 id="statTotalWorks" class="text-2xl font-black text-white mt-1">0</h3>
-                            <p class="text-[10px] text-celeste mt-1"><i class="fa-solid fa-check-circle mr-1"></i>En plataforma</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-celeste/10 text-celeste flex items-center justify-center text-xl border border-celeste/20">
-                            <i class="fa-solid fa-folder-closed"></i>
+                            <h3 class="font-bold text-white text-sm sm:text-base">Algoritmos y Estructuras</h3>
+                            <p class="text-xs text-gray-400">Asignatura Especializada</p>
                         </div>
                     </div>
+                    <span id="badgeAlgoStruct" class="px-2.5 py-1 text-xs rounded-full bg-darkbg border border-verde/30 text-verde-bright font-mono font-bold">0</span>
+                </button>
+            </div>
 
-                    <div class="glass-panel p-5 rounded-2xl border border-darkborder flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-semibold text-gray-400 uppercase">Promedio General</p>
-                            <h3 id="statAverageGrade" class="text-2xl font-black text-verde-bright mt-1">--.--</h3>
-                            <p class="text-[10px] text-verde-bright mt-1"><i class="fa-solid fa-award mr-1"></i>Escala Vigesimal</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-verde/10 text-verde-bright flex items-center justify-center text-xl border border-verde/20">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-                    </div>
+            <!-- Units Navigation Filter -->
+            <div class="glass-card rounded-xl p-2 mb-4 flex flex-wrap gap-1 md:gap-2">
+                <button onclick="selectUnit('all')" id="unitTab-all" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-celeste/20 border border-celeste/40 transition-all text-center">
+                    Todas las Unidades
+                </button>
+                <button onclick="selectUnit('U1')" id="unitTab-U1" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
+                    Unidad 1 (Sem 1-4)
+                </button>
+                <button onclick="selectUnit('U2')" id="unitTab-U2" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
+                    Unidad 2 (Sem 5-8)
+                </button>
+                <button onclick="selectUnit('U3')" id="unitTab-U3" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
+                    Unidad 3 (Sem 9-12)
+                </button>
+                <button onclick="selectUnit('U4')" id="unitTab-U4" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
+                    Unidad 4 (Sem 13-16)
+                </button>
+            </div>
 
-                    <div class="glass-panel p-5 rounded-2xl border border-darkborder flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-semibold text-gray-400 uppercase">Avance Sílabo</p>
-                            <h3 id="statSyllabusProgress" class="text-2xl font-black text-white mt-1">0%</h3>
-                            <p class="text-[10px] text-dorado mt-1"><i class="fa-solid fa-calendar-days mr-1"></i>16 Semanas</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-dorado/10 text-dorado flex items-center justify-center text-xl border border-dorado/20">
-                            <i class="fa-solid fa-list-check"></i>
-                        </div>
-                    </div>
-
-                    <div class="glass-panel p-5 rounded-2xl border border-darkborder flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-semibold text-gray-400 uppercase">Observaciones</p>
-                            <h3 id="statPendingReviews" class="text-2xl font-black text-puroRed mt-1">0</h3>
-                            <p class="text-[10px] text-puroRed mt-1"><i class="fa-solid fa-bell mr-1"></i>Requieren atención</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-puroRed/10 text-puroRed flex items-center justify-center text-xl border border-puroRed/20">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                    </div>
+            <!-- Sub-filtro de Semanas por Unidad -->
+            <div id="weeksFilterContainer" class="glass-card rounded-xl p-2 mb-8 flex flex-wrap gap-2 items-center text-xs">
+                <span class="text-gray-400 font-semibold px-2"><i class="fa-regular fa-calendar-days text-verde-bright mr-1"></i> Filtrar Semana:</span>
+                <div id="weeksButtonsList" class="flex flex-wrap gap-1">
+                    <!-- Botones de semanas dinámicos -->
                 </div>
+            </div>
 
-                <!-- Analytics Charts Row -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="glass-panel p-6 rounded-3xl border border-darkborder lg:col-span-2">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-extrabold text-white"><i class="fa-solid fa-chart-column text-celeste mr-2"></i>Rendimiento y Notas por Semana</h3>
-                            <span class="text-[10px] text-gray-400">Escala (0 - 20)</span>
-                        </div>
-                        <div class="h-64 relative">
-                            <canvas id="gradesChart"></canvas>
-                        </div>
-                    </div>
+            <!-- WORKS CONTENT GRID -->
+            <div id="worksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Works Cards will be dynamically rendered here -->
+            </div>
 
-                    <div class="glass-panel p-6 rounded-3xl border border-darkborder">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-extrabold text-white"><i class="fa-solid fa-pie-chart text-verde-bright mr-2"></i>Distribución por Tipos</h3>
-                        </div>
-                        <div class="h-64 relative flex items-center justify-center">
-                            <canvas id="typesChart"></canvas>
-                        </div>
-                    </div>
+            <!-- Empty State Display -->
+            <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center glass-card rounded-2xl border border-dashed border-darkborder">
+                <div class="w-16 h-16 rounded-full bg-darkbg flex items-center justify-center mb-4 text-celeste text-2xl border border-celeste/20">
+                    <i class="fa-solid fa-folder-open"></i>
                 </div>
-            </section>
-
-            <!-- VIEW 2: WORKS / EVIDENCES MANAGER -->
-            <section id="viewWorks" class="hidden space-y-6">
-                <!-- Course Selector Header -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button id="courseTab-dev-apps" onclick="selectCourse('dev-apps')" class="p-5 rounded-2xl glass-panel border-l-4 border-l-celeste text-left transition-all flex items-center justify-between group">
-                        <div class="flex items-center space-x-4">
-                            <div class="p-3.5 rounded-xl bg-celeste/10 text-celeste group-hover:bg-celeste group-hover:text-darkbg transition-colors">
-                                <i class="fa-solid fa-code text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-extrabold text-white text-sm sm:text-base">Desarrollo de Aplicaciones</h3>
-                                <p class="text-xs text-gray-400">Asignatura Principal • Ing. de Sistemas</p>
-                            </div>
-                        </div>
-                        <span id="badgeDevApps" class="px-3 py-1 text-xs rounded-full bg-darkbg border border-celeste/30 text-celeste font-mono font-bold">0</span>
-                    </button>
-
-                    <button id="courseTab-algo-struct" onclick="selectCourse('algo-struct')" class="p-5 rounded-2xl glass-panel border-l-4 border-l-gray-700 text-left transition-all flex items-center justify-between group opacity-70 hover:opacity-100">
-                        <div class="flex items-center space-x-4">
-                            <div class="p-3.5 rounded-xl bg-verde/10 text-verde-bright group-hover:bg-verde-bright group-hover:text-darkbg transition-colors">
-                                <i class="fa-solid fa-diagram-project text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-extrabold text-white text-sm sm:text-base">Algoritmos y Estructuras de Datos</h3>
-                                <p class="text-xs text-gray-400">Asignatura Especializada • Ing. de Sistemas</p>
-                            </div>
-                        </div>
-                        <span id="badgeAlgoStruct" class="px-3 py-1 text-xs rounded-full bg-darkbg border border-verde/30 text-verde-bright font-mono font-bold">0</span>
-                    </button>
-                </div>
-
-                <!-- Units Filter Toolbar -->
-                <div class="glass-panel rounded-2xl p-2 flex flex-wrap gap-1.5 border border-darkborder">
-                    <button onclick="selectUnit('all')" id="unitTab-all" class="unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-celeste/20 border border-celeste/40 transition-all text-center">
-                        Todas
-                    </button>
-                    <button onclick="selectUnit('U1')" id="unitTab-U1" class="unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                        Unidad 1 (Sem 1-4)
-                    </button>
-                    <button onclick="selectUnit('U2')" id="unitTab-U2" class="unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                        Unidad 2 (Sem 5-8)
-                    </button>
-                    <button onclick="selectUnit('U3')" id="unitTab-U3" class="unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                        Unidad 3 (Sem 9-12)
-                    </button>
-                    <button onclick="selectUnit('U4')" id="unitTab-U4" class="unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                        Unidad 4 (Sem 13-16)
-                    </button>
-                </div>
-
-                <!-- Weeks Sub-filter & Controls -->
-                <div class="glass-panel rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs border border-darkborder">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-gray-400 font-bold"><i class="fa-regular fa-calendar-days text-verde-bright mr-1"></i>Semana:</span>
-                        <div id="weeksButtonsList" class="flex flex-wrap gap-1"></div>
-                    </div>
-
-                    <!-- Search Input -->
-                    <div class="relative w-full sm:w-64">
-                        <input type="text" id="searchInput" oninput="renderWorks()" placeholder="Buscar trabajo..." class="w-full pl-9 pr-3 py-1.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
-                    </div>
-                </div>
-
-                <!-- Works Dynamic Grid -->
-                <div id="worksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-                <!-- Empty State Display -->
-                <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center glass-panel rounded-3xl border border-dashed border-darkborder">
-                    <div class="w-16 h-16 rounded-full bg-darkbg flex items-center justify-center mb-4 text-celeste text-2xl border border-celeste/20">
-                        <i class="fa-solid fa-folder-open"></i>
-                    </div>
-                    <h3 class="text-base font-bold text-white">No se encontraron entregas</h3>
-                    <p class="text-xs text-gray-400 mt-1 max-w-sm">No hay evidencias registradas en este filtro. Haz clic abajo para agregar una.</p>
-                    <button onclick="openUploadModal()" class="mt-4 px-5 py-2.5 btn-glow rounded-xl text-xs font-bold transition-all">
-                        + Subir Evidencia
-                    </button>
-                </div>
-            </section>
-
-            <!-- VIEW 3: SYLLABUS TRACKER -->
-            <section id="viewSyllabus" class="hidden space-y-6">
-                <div class="glass-panel p-6 rounded-3xl border border-darkborder">
-                    <h2 class="text-lg font-black text-white mb-1"><i class="fa-solid fa-book-bookmark text-celeste mr-2"></i>Sílabo e Itinerario Académico</h2>
-                    <p class="text-xs text-gray-400 mb-6">Programación de contenidos temáticos organizados en 4 Unidades y 16 Semanas de clase.</p>
-
-                    <div id="syllabusContainer" class="space-y-4"></div>
-                </div>
-            </section>
-
-            <!-- VIEW 4: EVALUATION RUBRICS -->
-            <section id="viewRubrics" class="hidden space-y-6">
-                <div class="glass-panel p-6 rounded-3xl border border-darkborder">
-                    <h2 class="text-lg font-black text-white mb-1"><i class="fa-solid fa-list-check text-verde-bright mr-2"></i>Rúbrica Institucional de Evaluación</h2>
-                    <p class="text-xs text-gray-400 mb-6">Criterios estandarizados de valoración para entregables e investigaciones en la UPLA.</p>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-darkborder text-[11px] font-bold uppercase text-celeste">
-                                    <th class="py-3 px-4">Criterio</th>
-                                    <th class="py-3 px-4">Excelente (18-20)</th>
-                                    <th class="py-3 px-4">Bueno (14-17)</th>
-                                    <th class="py-3 px-4">En Proceso (11-13)</th>
-                                    <th class="py-3 px-4">Deficiente (0-10)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-xs divide-y divide-darkborder/50 text-gray-300">
-                                <tr>
-                                    <td class="py-4 px-4 font-bold text-white">Estructura y Formato</td>
-                                    <td class="py-4 px-4">Cumple al 100% las normas IEEE/APA, sin errores tipográficos.</td>
-                                    <td class="py-4 px-4">Mínimos errores de formato que no afectan la lectura.</td>
-                                    <td class="py-4 px-4">Estructura incompleta, desorganización parcial.</td>
-                                    <td class="py-4 px-4">No cumple formatos mínimos ni estructura.</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-4 px-4 font-bold text-white">Calidad del Código / Solución</td>
-                                    <td class="py-4 px-4">Código limpio, documentado, optimizado y libre de bugs.</td>
-                                    <td class="py-4 px-4">Funciona correctamente, documentación básica.</td>
-                                    <td class="py-4 px-4">Presenta fallas de ejecución menores o ineficiencia.</td>
-                                    <td class="py-4 px-4">El código no compila o la solución es errónea.</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-4 px-4 font-bold text-white">Sustentación / Repositorio</td>
-                                    <td class="py-4 px-4">Enlace activo con commits constantes e historial claro.</td>
-                                    <td class="py-4 px-4">Repositorio activo pero con pocos avances registrados.</td>
-                                    <td class="py-4 px-4">Solo subió versión final sin historial.</td>
-                                    <td class="py-4 px-4">Enlace roto, inaccesible o no enviado.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+                <h3 class="text-base font-bold text-white">No hay trabajos registrados</h3>
+                <p class="text-xs text-gray-400 mt-1 max-w-sm">No se encontraron entregas en este filtro. ¡Haz clic en subir trabajo para añadir una!</p>
+                <button onclick="openUploadModal()" class="mt-4 px-4 py-2 bg-celeste/20 text-celeste border border-celeste/40 hover:bg-celeste/30 rounded-xl text-xs font-bold transition-all">
+                    + Registrar Trabajo
+                </button>
+            </div>
 
         </main>
 
         <!-- FOOTER -->
-        <footer class="border-t border-darkborder bg-darkbg/90 py-6 mt-12 text-center text-xs text-gray-500">
-            <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-                <p>© Universidad Peruana Los Andes - Huancayo, Perú</p>
-                <p class="font-mono text-[11px] text-gray-400">Escuela Profesional de Ingeniería de Sistemas e Informática</p>
+        <footer class="border-t border-darkborder bg-darkbg py-6 mt-12 text-center text-xs text-gray-500">
+            <div class="max-w-7xl mx-auto px-4">
+                <p>© Universidad Peruana Los Andes - Portafolio Digital Universitario</p>
+                <p class="text-[11px] text-gray-600 mt-1">Sistemas & Informática • Desarrollado para gestión de evidencias académicas</p>
             </div>
         </footer>
     </div>
 
-    <!-- MODAL: UPLOAD / EDIT WORK -->
-    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/85 backdrop-blur-xl">
-        <div class="w-full max-w-xl glass-panel rounded-3xl p-6 border border-verde-bright/30 relative max-h-[90vh] overflow-y-auto">
+    <!-- UPLOAD WORK MODAL -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
+        <div class="w-full max-w-xl glass-card rounded-2xl p-6 border border-verde-bright/30 relative max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-5 pb-3 border-b border-darkborder">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-cloud-arrow-up text-verde-bright text-lg"></i>
-                    <h3 id="modalWorkTitle" class="text-base font-black text-white">Registrar Nueva Evidencia</h3>
+                    <h3 class="text-base font-bold text-white">Subir Trabajo Académico</h3>
                 </div>
                 <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white p-1 text-lg">
                     <i class="fa-solid fa-xmark"></i>
@@ -569,24 +380,22 @@
             </div>
 
             <form id="workForm" onsubmit="saveWork(event)" class="space-y-4">
-                <input type="hidden" id="workEditId" value="">
-
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Título del Trabajo / Actividad</label>
-                    <input type="text" id="workTitle" required placeholder="Ej: Guía Práctica 02 - Árboles Binarios" class="w-full px-3.5 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Título del Trabajo / Actividad</label>
+                    <input type="text" id="workTitle" required placeholder="Ej: Guía Práctica 01 - Matriz de Adyacencia" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Asignatura</label>
-                        <select id="workCourse" required class="w-full px-3 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Curso Destino</label>
+                        <select id="workCourse" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
                             <option value="dev-apps">Desarrollo de Aplicaciones</option>
                             <option value="algo-struct">Algoritmos y Estructuras</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Unidad Académica</label>
-                        <select id="workUnit" onchange="updateWeekDropdown()" required class="w-full px-3 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Unidad Académica</label>
+                        <select id="workUnit" onchange="updateWeekDropdown()" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
                             <option value="U1">Unidad 1</option>
                             <option value="U2">Unidad 2</option>
                             <option value="U3">Unidad 3</option>
@@ -594,55 +403,43 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Semana</label>
-                        <select id="workWeek" required class="w-full px-3 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright"></select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Tipo de Archivo</label>
-                        <select id="workType" required class="w-full px-3 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                            <option value="java">Código Java (.java)</option>
-                            <option value="python">Código Python (.py)</option>
-                            <option value="pdf">Informe PDF (.pdf)</option>
-                            <option value="word">Documento Word (.docx)</option>
-                            <option value="zip">Archivo Comprimido (.zip/.rar)</option>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Semana Correspondiente</label>
+                        <select id="workWeek" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                            <!-- Opciones cargadas dinámicamente -->
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Nota Calificada (0-20)</label>
-                        <input type="number" id="workGrade" min="0" max="20" step="0.5" placeholder="Opcional" class="w-full px-3 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Descripción / Resumen</label>
-                    <textarea id="workDescription" rows="2" placeholder="Describa brevemente los objetivos logrados en este trabajo..." class="w-full px-3 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright resize-none"></textarea>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Tipo de Documento</label>
+                    <select id="workType" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                        <option value="java">Código Java (.java)</option>
+                        <option value="pdf">Documento PDF (.pdf)</option>
+                        <option value="word">Documento Word (.docx)</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">Enlace del Repositorio / Nube (GitHub, Drive)</label>
-                    <input type="url" id="workLink" required placeholder="https://github.com/usuario/proyecto" class="w-full px-3.5 py-2.5 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Descripción corta</label>
+                    <textarea id="workDescription" rows="2" placeholder="Resumen o explicación de la actividad solicitada por el docente..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright resize-none"></textarea>
                 </div>
 
-                <!-- Campo exclusivo para Docente / Feedback -->
-                <div id="teacherFeedbackBox" class="p-3 bg-darkbg/90 rounded-2xl border border-celeste/30 hidden">
-                    <label class="block text-xs font-bold text-celeste mb-1"><i class="fa-solid fa-comment-dots mr-1"></i>Feedback Docente / Observaciones</label>
-                    <textarea id="workFeedback" rows="2" placeholder="Ingrese comentarios para el estudiante..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste resize-none"></textarea>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Enlace del Archivo / Repositorio (Drive, GitHub, etc.)</label>
+                    <input type="url" id="workLink" required placeholder="https://github.com/..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
                 </div>
 
                 <div class="pt-3 border-t border-darkborder flex justify-end space-x-3">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 bg-darkborder hover:bg-gray-800 rounded-xl text-xs text-gray-300 transition-colors">Cancelar</button>
-                    <button type="submit" class="px-5 py-2.5 btn-glow rounded-xl text-xs font-bold">Guardar Evidencia</button>
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 transition-colors">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 btn-gradient text-darkbg font-bold rounded-xl text-xs">Guardar Trabajo</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- SCRIPT LOGIC -->
     <script>
-        // Mapeo de semanas por unidad
+        // Mapeo de semanas por unidad (4 Semanas por Unidad = 16 Semanas en total)
         const unitWeeksMapping = {
             'U1': [{ id: 1, label: 'Semana 1' }, { id: 2, label: 'Semana 2' }, { id: 3, label: 'Semana 3' }, { id: 4, label: 'Semana 4' }],
             'U2': [{ id: 5, label: 'Semana 5' }, { id: 6, label: 'Semana 6' }, { id: 7, label: 'Semana 7' }, { id: 8, label: 'Semana 8' }],
@@ -650,79 +447,20 @@
             'U4': [{ id: 13, label: 'Semana 13' }, { id: 14, label: 'Semana 14' }, { id: 15, label: 'Semana 15' }, { id: 16, label: 'Semana 16' }]
         };
 
-        // Sílabo Oficial
-        const syllabusData = [
-            { unit: 'U1', name: 'Unidad I: Fundamentos y Arquitectura de Software', weeks: [
-                { w: 1, topic: 'Introducción al desarrollo de software y arquitecturas modernas' },
-                { w: 2, topic: 'Patrones de diseño de software (MVC, Singleton, Factory)' },
-                { w: 3, topic: 'Estructuras de datos lineales: Listas enlazadas y pilas' },
-                { w: 4, topic: 'Evaluación Parcial de la Unidad I' }
-            ]},
-            { unit: 'U2', name: 'Unidad II: Algoritmos Avanzados e Interfaz', weeks: [
-                { w: 5, topic: 'Arboles binarios de búsqueda y algoritmos de recorrido' },
-                { w: 6, topic: 'Diseño de interfaces Web accesibles y responsivas' },
-                { w: 7, topic: 'Integración de API RESTful y persistencia de datos' },
-                { w: 8, topic: 'Evaluación Parcial de la Unidad II' }
-            ]},
-            { unit: 'U3', name: 'Unidad III: Optimización y Bases de Datos', weeks: [
-                { w: 9, topic: 'Algoritmos de ordenamiento y búsqueda compleja' },
-                { w: 10, topic: 'Modelado relacional y NoSQL para aplicaciones' },
-                { w: 11, topic: 'Pruebas unitarias, integración continua y QA' },
-                { w: 12, topic: 'Evaluación Parcial de la Unidad III' }
-            ]},
-            { unit: 'U4', name: 'Unidad IV: Despliegue e Investigación', weeks: [
-                { w: 13, topic: 'Despliegue en la nube y contenedores (Docker)' },
-                { w: 14, topic: 'Seguridad en aplicaciones web y autenticación' },
-                { w: 15, topic: 'Presentación final del proyecto de investigación' },
-                { w: 16, topic: 'Evaluación Final del Portafolio Académico' }
-            ]}
-        ];
-
-        // Estado Global
+        // Estado Global de la App
         let currentUser = null;
-        let selectedRole = 'estudiante';
         let selectedCourse = 'dev-apps';
         let selectedUnit = 'all';
         let selectedWeek = 'all';
         let profileImageBase64 = '';
 
-        // Chart Instances
-        let gradesChartInstance = null;
-        let typesChartInstance = null;
-
-        // Datos iniciales de ejemplo
-        let worksData = JSON.parse(localStorage.getItem('upla_works_v3')) || [
-            { id: 1, title: 'Práctica Calificada 01 - Arrays y Listas', course: 'dev-apps', unit: 'U1', week: 2, type: 'java', grade: 18, description: 'Implementación de listas simples con Java.', link: 'https://github.com', feedback: 'Excelente estructura de clases.', status: 'aprobado', date: '2026-03-10' },
-            { id: 2, title: 'Informe de Algoritmos de Búsqueda', course: 'algo-struct', unit: 'U2', week: 6, type: 'pdf', grade: 16, description: 'Análisis comparativo de complejidad Big-O.', link: 'https://drive.google.com', feedback: 'Faltó profundizar en gráfica.', status: 'aprobado', date: '2026-04-02' }
+        // Trabajos guardados
+        let worksData = JSON.parse(localStorage.getItem('upla_works')) || [
+            { id: 1, title: 'Práctica Calificada 1 - Arrays', course: 'dev-apps', unit: 'U1', week: 2, type: 'java', description: 'Ejercicios con arreglos unidimensionales.', link: 'https://github.com', date: '2023-09-10' },
+            { id: 2, title: 'Informe de Estructura de Datos', course: 'algo-struct', unit: 'U2', week: 6, type: 'pdf', description: 'Uso e implementación de Listas Enlazadas.', link: 'https://drive.google.com', date: '2023-10-12' }
         ];
 
-        // Inicialización
-        window.onload = function() {
-            checkExistingSession();
-        };
-
-        function checkExistingSession() {
-            const savedUser = JSON.parse(localStorage.getItem('upla_user_v3'));
-            if (savedUser) {
-                currentUser = savedUser;
-                initDashboard();
-            }
-        }
-
-        function setRole(role) {
-            selectedRole = role;
-            const btnStud = document.getElementById('roleStudentBtn');
-            const btnDoc = document.getElementById('roleDocentBtn');
-
-            if (role === 'estudiante') {
-                btnStud.className = "py-2 text-xs font-bold rounded-lg transition-all bg-celeste/20 text-celeste border border-celeste/40";
-                btnDoc.className = "py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all";
-            } else {
-                btnDoc.className = "py-2 text-xs font-bold rounded-lg transition-all bg-verde/20 text-verde-bright border border-verde/40";
-                btnStud.className = "py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition-all";
-            }
-        }
-
+        // Cambiar pestañas de autenticación
         function switchAuthTab(tab) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
@@ -732,271 +470,225 @@
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
                 registerForm.classList.add('hidden');
-                tabLoginBtn.className = "flex-1 py-2.5 text-xs font-bold text-celeste border-b-2 border-celeste transition-all";
-                tabRegisterBtn.className = "flex-1 py-2.5 text-xs font-bold text-gray-400 hover:text-white transition-all";
+                tabLoginBtn.className = "flex-1 py-2 text-sm font-semibold text-celeste border-b-2 border-celeste transition-all duration-300";
+                tabRegisterBtn.className = "flex-1 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-all duration-300";
             } else {
                 loginForm.classList.add('hidden');
                 registerForm.classList.remove('hidden');
-                tabRegisterBtn.className = "flex-1 py-2.5 text-xs font-bold text-verde-bright border-b-2 border-verde-bright transition-all";
-                tabLoginBtn.className = "flex-1 py-2.5 text-xs font-bold text-gray-400 hover:text-white transition-all";
+                tabRegisterBtn.className = "flex-1 py-2 text-sm font-semibold text-verde-bright border-b-2 border-verde-bright transition-all duration-300";
+                tabLoginBtn.className = "flex-1 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-all duration-300";
             }
         }
 
-        function previewProfileImage(e) {
-            const file = e.target.files[0];
+        // Previsualizar la foto subida
+        function previewProfileImage(event) {
+            const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    profileImageBase64 = evt.target.result;
+                reader.onload = function(e) {
+                    profileImageBase64 = e.target.result;
                     document.getElementById('avatarPreview').src = profileImageBase64;
                 }
                 reader.readAsDataURL(file);
             }
         }
 
+        // Manejar Registro
         function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('regName').value;
             const code = document.getElementById('regCode').value;
             const cycle = document.getElementById('regCycle').value;
             const career = document.getElementById('regCareer').value;
-
+            const password = document.getElementById('regPassword').value;
+            
             const avatar = profileImageBase64 || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=00b4d8&color=fff`;
 
-            currentUser = { name, code, cycle, career, avatar, role: selectedRole };
-            localStorage.setItem('upla_user_v3', JSON.stringify(currentUser));
-            showToast('¡Cuenta creada exitosamente!');
+            const user = { name, code, cycle, career, password, avatar };
+            localStorage.setItem('upla_user', JSON.stringify(user));
+            currentUser = user;
             initDashboard();
         }
 
+        // Manejar Login
         function handleLogin(e) {
             e.preventDefault();
             const identifier = document.getElementById('loginIdentifier').value;
+            const savedUser = JSON.parse(localStorage.getItem('upla_user'));
 
-            currentUser = {
-                name: identifier.length > 8 ? identifier : 'Estudiante UPLA',
-                code: identifier,
-                cycle: 'V Ciclo',
-                career: 'Ingeniería de Sistemas e Informática',
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(identifier)}&background=00b4d8&color=fff`,
-                role: selectedRole
-            };
-            localStorage.setItem('upla_user_v3', JSON.stringify(currentUser));
-            showToast('¡Bienvenido a la Plataforma UPLA!');
+            if (savedUser) {
+                currentUser = savedUser;
+            } else {
+                // Usuario por defecto si entra directamente
+                currentUser = {
+                    name: identifier,
+                    code: '74839201',
+                    cycle: 'V Ciclo',
+                    career: 'Ing. de Sistemas e Informática',
+                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(identifier)}&background=00b4d8&color=fff`
+                };
+            }
             initDashboard();
         }
 
+        // Iniciar el Dashboard
         function initDashboard() {
             document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
 
-            document.getElementById('userDisplayName').innerText = currentUser.name;
+            document.getElementById('userDisplayName').innerHTML = `${currentUser.name} <i class="fa-solid fa-circle-check text-celeste text-xs ml-1"></i>`;
             document.getElementById('userDisplayDetails').innerText = `${currentUser.code} | ${currentUser.cycle}`;
             document.getElementById('userHeaderAvatar').src = currentUser.avatar;
-            document.getElementById('userRoleBadge').innerText = currentUser.role.toUpperCase();
-
-            // Ajustar vista para docente
-            if (currentUser.role === 'docente') {
-                document.getElementById('teacherFeedbackBox').classList.remove('hidden');
-            }
 
             updateWeekDropdown();
             renderWeeksFilter();
-            renderSyllabus();
             renderWorks();
-            updateDashboardMetrics();
         }
 
+        // Cerrar sesión
         function logout() {
-            localStorage.removeItem('upla_user_v3');
-            location.reload();
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authContainer').classList.remove('hidden');
         }
 
-        // Navegación de Vistas
-        function switchView(viewName) {
-            ['Dashboard', 'Works', 'Syllabus', 'Rubrics'].forEach(v => {
-                const el = document.getElementById(`view${v}`);
-                const nav = document.getElementById(`nav-${v.toLowerCase()}`);
-                if (v.toLowerCase() === viewName) {
-                    el.classList.remove('hidden');
-                    if (nav) nav.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all bg-celeste/20 text-celeste border border-celeste/30";
-                } else {
-                    el.classList.add('hidden');
-                    if (nav) nav.className = "px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all";
-                }
-            });
-        }
-
+        // Seleccionar Curso
         function selectCourse(course) {
             selectedCourse = course;
-            const tab1 = document.getElementById('courseTab-dev-apps');
-            const tab2 = document.getElementById('courseTab-algo-struct');
+            const tab1 = document.getElementById('courseTab1');
+            const tab2 = document.getElementById('courseTab2');
 
             if (course === 'dev-apps') {
-                tab1.classList.remove('opacity-70', 'border-l-gray-700');
+                tab1.classList.remove('opacity-70', 'border-l-gray-600');
                 tab1.classList.add('border-l-celeste');
-                tab2.classList.add('opacity-70', 'border-l-gray-700');
+                tab2.classList.add('opacity-70', 'border-l-gray-600');
                 tab2.classList.remove('border-l-verde-bright');
             } else {
-                tab2.classList.remove('opacity-70', 'border-l-gray-700');
+                tab2.classList.remove('opacity-70', 'border-l-gray-600');
                 tab2.classList.add('border-l-verde-bright');
-                tab1.classList.add('opacity-70', 'border-l-gray-700');
+                tab1.classList.add('opacity-70', 'border-l-gray-600');
                 tab1.classList.remove('border-l-celeste');
             }
             renderWorks();
         }
 
+        // Seleccionar Unidad
         function selectUnit(unit) {
             selectedUnit = unit;
-            selectedWeek = 'all';
-
+            selectedWeek = 'all'; // Resetear semana al cambiar de unidad
+            
             document.querySelectorAll('.unit-btn').forEach(btn => {
-                btn.className = "unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center";
+                btn.className = "unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center";
             });
-            document.getElementById(`unitTab-${unit}`).className = "unit-btn flex-1 min-w-[100px] py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-celeste/20 border border-celeste/40 transition-all text-center";
+            const activeBtn = document.getElementById(`unitTab-${unit}`);
+            activeBtn.className = "unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-celeste/20 border border-celeste/40 transition-all text-center";
 
             renderWeeksFilter();
             renderWorks();
         }
 
+        // Renderizar Filtros de Semanas dinámicos por Unidad
         function renderWeeksFilter() {
-            const container = document.getElementById('weeksButtonsList');
-            container.innerHTML = '';
+            const listContainer = document.getElementById('weeksButtonsList');
+            listContainer.innerHTML = '';
 
             let weeksToDisplay = [];
             if (selectedUnit === 'all') {
-                for (let i = 1; i <= 16; i++) weeksToDisplay.push({ id: i, label: `Sem ${i}` });
+                for (let i = 1; i <= 16; i++) {
+                    weeksToDisplay.push({ id: i, label: `Sem ${i}` });
+                }
             } else {
                 weeksToDisplay = unitWeeksMapping[selectedUnit];
             }
 
+            // Opción "Todas las Semanas"
             const allBtn = document.createElement('button');
-            allBtn.className = `px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${selectedWeek === 'all' ? 'bg-verde-bright text-darkbg font-extrabold' : 'bg-darkbg text-gray-400 border border-darkborder'}`;
+            allBtn.className = `px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${selectedWeek === 'all' ? 'bg-verde-bright text-darkbg font-bold' : 'bg-darkbg text-gray-400 hover:text-white border border-darkborder'}`;
             allBtn.innerText = 'Todas';
-            allBtn.onclick = () => { selectedWeek = 'all'; renderWeeksFilter(); renderWorks(); };
-            container.appendChild(allBtn);
+            allBtn.onclick = () => filterByWeek('all');
+            listContainer.appendChild(allBtn);
 
             weeksToDisplay.forEach(w => {
                 const btn = document.createElement('button');
-                btn.className = `px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${selectedWeek == w.id ? 'bg-verde-bright text-darkbg font-extrabold' : 'bg-darkbg text-gray-400 border border-darkborder'}`;
+                btn.className = `px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${selectedWeek == w.id ? 'bg-verde-bright text-darkbg font-bold' : 'bg-darkbg text-gray-400 hover:text-white border border-darkborder'}`;
                 btn.innerText = w.label;
-                btn.onclick = () => { selectedWeek = w.id; renderWeeksFilter(); renderWorks(); };
-                container.appendChild(btn);
+                btn.onclick = () => filterByWeek(w.id);
+                listContainer.appendChild(btn);
             });
         }
 
+        function filterByWeek(weekId) {
+            selectedWeek = weekId;
+            renderWeeksFilter();
+            renderWorks();
+        }
+
+        // Actualizar el Dropdown del Modal según Unidad Seleccionada
         function updateWeekDropdown() {
             const unit = document.getElementById('workUnit').value;
-            const select = document.getElementById('workWeek');
-            select.innerHTML = '';
+            const weekSelect = document.getElementById('workWeek');
+            weekSelect.innerHTML = '';
 
-            unitWeeksMapping[unit].forEach(w => {
+            const weeks = unitWeeksMapping[unit];
+            weeks.forEach(w => {
                 const opt = document.createElement('option');
                 opt.value = w.id;
-                opt.innerText = `${w.label}`;
-                select.appendChild(opt);
+                opt.innerText = `${w.label} (Unidad ${unit.replace('U','')})`;
+                weekSelect.appendChild(opt);
             });
         }
 
-        // Modales
-        function openUploadModal(editId = null) {
-            const modal = document.getElementById('uploadModal');
-            const form = document.getElementById('workForm');
-            form.reset();
-
-            if (editId) {
-                const work = worksData.find(w => w.id === editId);
-                if (work) {
-                    document.getElementById('workEditId').value = work.id;
-                    document.getElementById('modalWorkTitle').innerText = 'Editar Evidencia';
-                    document.getElementById('workTitle').value = work.title;
-                    document.getElementById('workCourse').value = work.course;
-                    document.getElementById('workUnit').value = work.unit;
-                    updateWeekDropdown();
-                    document.getElementById('workWeek').value = work.week;
-                    document.getElementById('workType').value = work.type;
-                    document.getElementById('workGrade').value = work.grade || '';
-                    document.getElementById('workDescription').value = work.description;
-                    document.getElementById('workLink').value = work.link;
-                    document.getElementById('workFeedback').value = work.feedback || '';
-                }
-            } else {
-                document.getElementById('workEditId').value = '';
-                document.getElementById('modalWorkTitle').innerText = 'Registrar Nueva Evidencia';
-                updateWeekDropdown();
-            }
-
-            modal.classList.remove('hidden');
+        // Modal Handlers
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
         }
 
         function closeUploadModal() {
             document.getElementById('uploadModal').classList.add('hidden');
         }
 
+        // Guardar Trabajo
         function saveWork(e) {
             e.preventDefault();
-            const editId = document.getElementById('workEditId').value;
             const title = document.getElementById('workTitle').value;
             const course = document.getElementById('workCourse').value;
             const unit = document.getElementById('workUnit').value;
             const week = parseInt(document.getElementById('workWeek').value);
             const type = document.getElementById('workType').value;
-            const grade = parseFloat(document.getElementById('workGrade').value) || null;
             const description = document.getElementById('workDescription').value;
             const link = document.getElementById('workLink').value;
-            const feedback = document.getElementById('workFeedback').value;
 
-            let status = 'pendiente';
-            if (grade !== null) {
-                status = grade >= 11 ? 'aprobado' : 'observado';
-            }
+            const newWork = {
+                id: Date.now(),
+                title, course, unit, week, type, description, link,
+                date: new Date().toISOString().split('T')[0]
+            };
 
-            if (editId) {
-                const index = worksData.findIndex(w => w.id == editId);
-                if (index !== -1) {
-                    worksData[index] = { ...worksData[index], title, course, unit, week, type, grade, description, link, feedback, status };
-                }
-            } else {
-                worksData.unshift({
-                    id: Date.now(),
-                    title, course, unit, week, type, grade, description, link, feedback, status,
-                    date: new Date().toISOString().split('T')[0]
-                });
-            }
+            worksData.unshift(newWork);
+            localStorage.setItem('upla_works', JSON.stringify(worksData));
 
-            localStorage.setItem('upla_works_v3', JSON.stringify(worksData));
-            showToast('Evidencia guardada exitosamente.');
             closeUploadModal();
+            document.getElementById('workForm').reset();
             renderWorks();
-            updateDashboardMetrics();
         }
 
-        function deleteWork(id) {
-            if (confirm('¿Está seguro de eliminar esta evidencia?')) {
-                worksData = worksData.filter(w => w.id !== id);
-                localStorage.setItem('upla_works_v3', JSON.stringify(worksData));
-                showToast('Evidencia eliminada.');
-                renderWorks();
-                updateDashboardMetrics();
-            }
-        }
-
-        // Renderizado de Trabajos
+        // Renderizar Lista de Trabajos
         function renderWorks() {
             const grid = document.getElementById('worksGrid');
             const emptyState = document.getElementById('emptyState');
-            const search = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = '';
 
-            document.getElementById('badgeDevApps').innerText = worksData.filter(w => w.course === 'dev-apps').length;
-            document.getElementById('badgeAlgoStruct').innerText = worksData.filter(w => w.course === 'algo-struct').length;
+            // Conteo de badges
+            const devAppsCount = worksData.filter(w => w.course === 'dev-apps').length;
+            const algoStructCount = worksData.filter(w => w.course === 'algo-struct').length;
+            document.getElementById('badgeDevApps').innerText = devAppsCount;
+            document.getElementById('badgeAlgoStruct').innerText = algoStructCount;
 
+            // Filtrado
             const filtered = worksData.filter(w => {
-                const mCourse = w.course === selectedCourse;
-                const mUnit = selectedUnit === 'all' || w.unit === selectedUnit;
-                const mWeek = selectedWeek === 'all' || w.week == selectedWeek;
-                const mSearch = w.title.toLowerCase().includes(search) || w.description.toLowerCase().includes(search);
-                return mCourse && mUnit && mWeek && mSearch;
+                const matchCourse = w.course === selectedCourse;
+                const matchUnit = selectedUnit === 'all' || w.unit === selectedUnit;
+                const matchWeek = selectedWeek === 'all' || w.week == selectedWeek;
+                return matchCourse && matchUnit && matchWeek;
             });
 
             if (filtered.length === 0) {
@@ -1007,181 +699,36 @@
                 emptyState.classList.remove('flex');
 
                 filtered.forEach(work => {
-                    let typeBadge = `<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono text-[10px]">.${work.type.toUpperCase()}</span>`;
-                    
-                    let statusBadge = `<span class="badge-status-pendiente px-2.5 py-0.5 rounded-full text-[10px] font-bold">Sin Calificar</span>`;
-                    if (work.status === 'aprobado') statusBadge = `<span class="badge-status-aprobado px-2.5 py-0.5 rounded-full text-[10px] font-bold">Aprobado (${work.grade})</span>`;
-                    if (work.status === 'observado') statusBadge = `<span class="badge-status-observado px-2.5 py-0.5 rounded-full text-[10px] font-bold">Observado (${work.grade})</span>`;
+                    let typeBadge = '';
+                    if (work.type === 'java') typeBadge = '<span class="px-2 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30 font-mono text-[10px]">.JAVA</span>';
+                    else if (work.type === 'pdf') typeBadge = '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30 font-mono text-[10px]">.PDF</span>';
+                    else typeBadge = '<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono text-[10px]">.DOCX</span>';
 
                     const card = document.createElement('div');
-                    card.className = "glass-panel glass-card-hover rounded-2xl p-5 border border-darkborder flex flex-col justify-between relative";
+                    card.className = "glass-card rounded-2xl p-5 border border-darkborder flex flex-col justify-between hover:translate-y-[-2px] transition-transform";
                     card.innerHTML = `
                         <div>
                             <div class="flex justify-between items-start mb-3">
-                                <div class="flex items-center space-x-1.5">
+                                <div class="flex items-center space-x-2">
                                     <span class="px-2 py-0.5 rounded bg-celeste/20 text-celeste text-[10px] font-bold border border-celeste/30">${work.unit}</span>
                                     <span class="px-2 py-0.5 rounded bg-verde/20 text-verde-bright text-[10px] font-bold border border-verde/30">Semana ${work.week}</span>
                                 </div>
                                 ${typeBadge}
                             </div>
-                            <h4 class="text-sm font-bold text-white mb-1.5 leading-snug">${work.title}</h4>
-                            <p class="text-xs text-gray-400 mb-3 line-clamp-2">${work.description || 'Sin descripción provista.'}</p>
-                            
-                            ${work.feedback ? `<div class="p-2.5 mb-3 bg-celeste/10 rounded-xl border border-celeste/20 text-[11px] text-celeste"><i class="fa-solid fa-comment-dots mr-1"></i><strong>Feedback:</strong> ${work.feedback}</div>` : ''}
+                            <h4 class="text-sm font-bold text-white mb-2 leading-snug">${work.title}</h4>
+                            <p class="text-xs text-gray-400 mb-4 line-clamp-2">${work.description || 'Sin descripción opcional provista.'}</p>
                         </div>
-
-                        <div>
-                            <div class="flex items-center justify-between mb-3 pt-2 border-t border-darkborder/60">
-                                ${statusBadge}
-                                <span class="text-[10px] text-gray-500 font-mono"><i class="fa-regular fa-clock mr-1"></i>${work.date}</span>
-                            </div>
-
-                            <div class="flex items-center justify-between pt-2">
-                                <a href="${work.link}" target="_blank" class="text-verde-bright hover:underline font-bold text-xs flex items-center space-x-1">
-                                    <span>Ver Enlace</span>
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                                </a>
-                                <div class="flex items-center space-x-1">
-                                    <button onclick="openUploadModal(${work.id})" class="p-1.5 text-gray-400 hover:text-white transition-colors" title="Editar">
-                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                    </button>
-                                    <button onclick="deleteWork(${work.id})" class="p-1.5 text-red-400 hover:text-red-300 transition-colors" title="Eliminar">
-                                        <i class="fa-solid fa-trash text-xs"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="pt-3 border-t border-darkborder flex justify-between items-center text-xs">
+                            <span class="text-gray-500 text-[10px]"><i class="fa-regular fa-clock mr-1"></i>${work.date}</span>
+                            <a href="${work.link}" target="_blank" class="text-verde-bright hover:underline font-bold flex items-center space-x-1">
+                                <span>Ver Archivo</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
             }
-        }
-
-        // Sílabo Renderer
-        function renderSyllabus() {
-            const container = document.getElementById('syllabusContainer');
-            container.innerHTML = '';
-
-            syllabusData.forEach(u => {
-                const card = document.createElement('div');
-                card.className = "glass-panel rounded-2xl p-4 border border-darkborder";
-                
-                let weeksHtml = u.weeks.map(w => {
-                    const hasWork = worksData.some(work => work.week === w.w);
-                    return `
-                        <div class="flex items-center justify-between py-2 border-b border-darkborder/40 last:border-0 text-xs">
-                            <div class="flex items-center space-x-3">
-                                <span class="w-6 h-6 rounded-lg bg-darkbg flex items-center justify-center font-mono font-bold text-[10px] text-celeste border border-celeste/30">${w.w}</span>
-                                <span class="text-gray-300">${w.topic}</span>
-                            </div>
-                            ${hasWork ? '<span class="text-verde-bright text-[10px] font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Entregado</span>' : '<span class="text-gray-600 text-[10px]">Pendiente</span>'}
-                        </div>
-                    `;
-                }).join('');
-
-                card.innerHTML = `
-                    <h3 class="text-xs font-black text-celeste uppercase mb-3">${u.name}</h3>
-                    <div class="space-y-1">${weeksHtml}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Métricas e Indicadores (Chart.js)
-        function updateDashboardMetrics() {
-            document.getElementById('statTotalWorks').innerText = worksData.length;
-
-            const gradedWorks = worksData.filter(w => w.grade !== null);
-            if (gradedWorks.length > 0) {
-                const sum = gradedWorks.reduce((acc, curr) => acc + curr.grade, 0);
-                const avg = (sum / gradedWorks.length).toFixed(1);
-                document.getElementById('statAverageGrade').innerText = avg;
-            } else {
-                document.getElementById('statAverageGrade').innerText = '--.--';
-            }
-
-            const uniqueWeeksWithWorks = new Set(worksData.map(w => w.week)).size;
-            const progress = Math.round((uniqueWeeksWithWorks / 16) * 100);
-            document.getElementById('statSyllabusProgress').innerText = `${progress}%`;
-
-            const pending = worksData.filter(w => w.status === 'observado' || w.status === 'pendiente').length;
-            document.getElementById('statPendingReviews').innerText = pending;
-
-            renderCharts();
-        }
-
-        function renderCharts() {
-            // Chart 1: Grades per Week
-            const ctxGrades = document.getElementById('gradesChart').getContext('2d');
-            const weekLabels = Array.from({ length: 16 }, (_, i) => `Sem ${i + 1}`);
-            const weekGrades = weekLabels.map((_, idx) => {
-                const wNum = idx + 1;
-                const match = worksData.find(w => w.week === wNum && w.grade !== null);
-                return match ? match.grade : null;
-            });
-
-            if (gradesChartInstance) gradesChartInstance.destroy();
-            gradesChartInstance = new Chart(ctxGrades, {
-                type: 'line',
-                data: {
-                    labels: weekLabels,
-                    datasets: [{
-                        label: 'Calificación',
-                        data: weekGrades,
-                        borderColor: '#00f5d4',
-                        backgroundColor: 'rgba(0, 245, 212, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#00b4d8'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { min: 0, max: 20, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // Chart 2: Types Distribution
-            const ctxTypes = document.getElementById('typesChart').getContext('2d');
-            const typesCount = { java: 0, pdf: 0, word: 0, zip: 0, python: 0 };
-            worksData.forEach(w => { if (typesCount[w.type] !== undefined) typesCount[w.type]++; });
-
-            if (typesChartInstance) typesChartInstance.destroy();
-            typesChartInstance = new Chart(ctxTypes, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Java', 'PDF', 'Word', 'Zip', 'Python'],
-                    datasets: [{
-                        data: Object.values(typesCount),
-                        backgroundColor: ['#ffb703', '#ff0055', '#00b4d8', '#2ec4b6', '#a855f7'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } }
-                }
-            });
-        }
-
-        function showToast(msg) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = "pointer-events-auto flex items-center space-x-2 bg-darkbg border border-verde-bright/40 text-verde-bright px-4 py-3 rounded-2xl shadow-xl text-xs font-bold transition-all";
-            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function exportFullReport() {
-            window.print();
         }
     </script>
 </body>

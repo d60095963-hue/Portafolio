@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio Digital Universitario - UPLA</title>
+    <title>Portafolio Digital Estudiantil - UPLA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -40,7 +40,6 @@
     </script>
 
     <style>
-        /* Custom Glowing & Cyberpunk Effects */
         body {
             background-color: #0a0a0c;
             color: #f1f5f9;
@@ -62,16 +61,8 @@
             box-shadow: 0 0 15px rgba(0, 245, 212, 0.15);
         }
 
-        .glow-border-celeste {
-            box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
-        }
-
         .glow-text-celeste {
             text-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
-        }
-
-        .glow-text-verde {
-            text-shadow: 0 0 8px rgba(0, 245, 212, 0.6);
         }
 
         .btn-gradient {
@@ -85,7 +76,6 @@
             transform: translateY(-1px);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -107,17 +97,16 @@
     <!-- AUTHENTICATION CONTAINER -->
     <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkbg/90 backdrop-blur-md">
         <div class="w-full max-w-md glass-card rounded-2xl p-6 md:p-8 border border-celeste/30 relative overflow-hidden shadow-2xl max-h-[95vh] overflow-y-auto">
-            <!-- Decorative Accent line -->
             <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-celeste via-verde-bright to-celeste"></div>
 
             <!-- Logo Header -->
             <div class="text-center mb-6">
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-darkbg border-2 border-celeste mb-3 shadow-[0_0_15px_rgba(0,180,216,0.3)]">
-                    <i class="fa-solid fa-graduation-cap text-3xl text-verde-bright"></i>
+                    <i class="fa-solid fa-user-graduate text-3xl text-verde-bright"></i>
                 </div>
                 <h2 class="text-xl font-extrabold tracking-tight text-white uppercase">Universidad Peruana</h2>
                 <h3 class="text-lg font-bold text-celeste tracking-widest uppercase glow-text-celeste">Los Andes</h3>
-                <p class="text-xs text-gray-400 mt-1">Portafolio Digital Académico</p>
+                <p class="text-xs text-gray-400 mt-1">Portafolio Estudiantil de Evidencias</p>
             </div>
 
             <!-- Auth Tabs -->
@@ -130,13 +119,10 @@
                 </button>
             </div>
 
-            <!-- Alert Box -->
-            <div id="authAlert" class="hidden mb-4 p-3 rounded-lg text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30"></div>
-
             <!-- LOGIN FORM -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombre o Código Universitario</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiantil o Nombre</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                             <i class="fa-solid fa-id-card text-sm"></i>
@@ -154,7 +140,7 @@
                     </div>
                 </div>
                 <button type="submit" class="w-full py-3 mt-2 btn-gradient text-darkbg font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg">
-                    <span>Ingresar al Portafolio</span>
+                    <span>Ingresar como Estudiante</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </form>
@@ -165,13 +151,13 @@
                 <div class="flex flex-col items-center mb-2">
                     <label class="block text-xs font-medium text-gray-300 mb-2">Foto de Perfil</label>
                     <div class="relative group cursor-pointer" onclick="document.getElementById('regAvatarInput').click()">
-                        <img id="avatarPreview" src="https://ui-avatars.com/api/?name=Usuario&background=00b4d8&color=fff" alt="Avatar Preview" class="w-20 h-20 rounded-full object-cover border-2 border-celeste shadow-lg">
-                        <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <img id="avatarPreview" src="https://ui-avatars.com/api/?name=Estudiante&background=00b4d8&color=fff" alt="Avatar Preview" class="w-20 h-20 rounded-full object-cover border-2 border-celeste shadow-lg">
+                        <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <i class="fa-solid fa-camera text-white text-lg"></i>
                         </div>
                     </div>
-                    <input type="file" id="regAvatarInput" accept="image/*" onchange="previewProfileImage(event)" class="hidden">
-                    <span class="text-[10px] text-gray-400 mt-1">Haz clic para subir foto</span>
+                    <input type="file" id="regAvatarInput" accept="image/*" onchange="previewProfileImage(event, 'avatarPreview')" class="hidden">
+                    <span class="text-[10px] text-gray-400 mt-1">Subir imagen opcional</span>
                 </div>
 
                 <div>
@@ -180,7 +166,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiante</label>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiantil</label>
                         <input type="text" id="regCode" required placeholder="Ej: 74839201" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
                     </div>
                     <div>
@@ -205,11 +191,11 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
-                    <input type="password" id="regPassword" required placeholder="Crea una contraseña segura" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
+                    <input type="password" id="regPassword" required placeholder="Crea tu contraseña" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
                 </div>
                 <button type="submit" class="w-full py-3 mt-2 btn-gradient text-darkbg font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg">
                     <i class="fa-solid fa-user-check text-xs"></i>
-                    <span>Crear Cuenta Mi UPLA</span>
+                    <span>Crear Cuenta Estudiantil</span>
                 </button>
             </form>
         </div>
@@ -224,21 +210,26 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-celeste to-verde-bright p-0.5 shadow-[0_0_10px_rgba(0,180,216,0.5)]">
                         <div class="w-full h-full bg-darkbg rounded-[10px] flex items-center justify-center">
-                            <i class="fa-solid fa-university text-verde-bright text-lg"></i>
+                            <i class="fa-solid fa-graduation-cap text-verde-bright text-lg"></i>
                         </div>
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
                             <span class="font-black text-white text-base tracking-wide">UPLA</span>
-                            <span class="text-xs px-2 py-0.5 rounded bg-celeste/20 text-celeste font-semibold border border-celeste/30">Portafolio</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-celeste/20 text-celeste font-semibold border border-celeste/30">Estudiante</span>
                         </div>
                         <p class="text-[11px] text-gray-400 font-medium hidden sm:block">Universidad Peruana Los Andes</p>
                     </div>
                 </div>
 
-                <!-- User Info Badge & Profile Image -->
+                <!-- User Info Badge, Edit Profile & Profile Image -->
                 <div class="flex items-center space-x-3 sm:space-x-4">
-                    <img id="userHeaderAvatar" src="https://ui-avatars.com/api/?name=Usuario&background=00b4d8&color=fff" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-celeste shadow-[0_0_10px_rgba(0,180,216,0.3)]">
+                    <div class="relative group cursor-pointer" onclick="openProfileModal()" title="Editar Perfil">
+                        <img id="userHeaderAvatar" src="https://ui-avatars.com/api/?name=Estudiante&background=00b4d8&color=fff" alt="Perfil" class="w-11 h-11 rounded-full object-cover border-2 border-celeste shadow-[0_0_10px_rgba(0,180,216,0.3)]">
+                        <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-pen text-white text-xs"></i>
+                        </div>
+                    </div>
                     
                     <div class="text-right hidden md:block">
                         <div id="userDisplayName" class="text-sm font-bold text-white flex items-center justify-end space-x-1">
@@ -248,6 +239,11 @@
                             ---
                         </div>
                     </div>
+
+                    <button onclick="openProfileModal()" class="p-2.5 rounded-xl bg-celeste/10 text-celeste hover:bg-celeste/20 border border-celeste/30 transition-all text-xs font-semibold flex items-center space-x-1" title="Editar Perfil">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span class="hidden sm:inline">Perfil</span>
+                    </button>
 
                     <button onclick="logout()" class="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 transition-all text-xs font-semibold flex items-center space-x-2" title="Cerrar Sesión">
                         <i class="fa-solid fa-power-off text-sm"></i>
@@ -266,13 +262,13 @@
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <span class="text-xs font-bold text-verde-bright uppercase tracking-widest px-2.5 py-1 rounded-full bg-verde/10 border border-verde/20">
-                            Semestre Académico Activo
+                            Mi Portafolio Digital Estudiantil
                         </span>
                         <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-2">
-                            Portafolio de Trabajos y Evidencias
+                            Gestión de Entregas y Actividades
                         </h1>
                         <p class="text-sm text-gray-400 mt-1 max-w-2xl">
-                            Gestiona, organiza y sube tus actividades universitarias organizadas por unidades (4 semanas por unidad) en las asignaturas de tu especialidad.
+                            Sube y organiza tus evidencias académicas distribuidas en 4 Unidades (16 semanas de ciclo).
                         </p>
                     </div>
                     <button onclick="openUploadModal()" class="btn-gradient text-darkbg font-extrabold px-5 py-3 rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:scale-105 transition-transform self-start md:self-auto">
@@ -333,15 +329,11 @@
             <!-- Sub-filtro de Semanas por Unidad -->
             <div id="weeksFilterContainer" class="glass-card rounded-xl p-2 mb-8 flex flex-wrap gap-2 items-center text-xs">
                 <span class="text-gray-400 font-semibold px-2"><i class="fa-regular fa-calendar-days text-verde-bright mr-1"></i> Filtrar Semana:</span>
-                <div id="weeksButtonsList" class="flex flex-wrap gap-1">
-                    <!-- Botones de semanas dinámicos -->
-                </div>
+                <div id="weeksButtonsList" class="flex flex-wrap gap-1"></div>
             </div>
 
             <!-- WORKS CONTENT GRID -->
-            <div id="worksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Works Cards will be dynamically rendered here -->
-            </div>
+            <div id="worksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
             <!-- Empty State Display -->
             <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center glass-card rounded-2xl border border-dashed border-darkborder">
@@ -360,8 +352,7 @@
         <!-- FOOTER -->
         <footer class="border-t border-darkborder bg-darkbg py-6 mt-12 text-center text-xs text-gray-500">
             <div class="max-w-7xl mx-auto px-4">
-                <p>© Universidad Peruana Los Andes - Portafolio Digital Universitario</p>
-                <p class="text-[11px] text-gray-600 mt-1">Sistemas & Informática • Desarrollado para gestión de evidencias académicas</p>
+                <p>© Universidad Peruana Los Andes - Portafolio Digital Estudiantil</p>
             </div>
         </footer>
     </div>
@@ -404,9 +395,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">Semana Correspondiente</label>
-                        <select id="workWeek" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                            <!-- Opciones cargadas dinámicamente -->
-                        </select>
+                        <select id="workWeek" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright"></select>
                     </div>
                 </div>
 
@@ -421,7 +410,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Descripción corta</label>
-                    <textarea id="workDescription" rows="2" placeholder="Resumen o explicación de la actividad solicitada por el docente..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright resize-none"></textarea>
+                    <textarea id="workDescription" rows="2" placeholder="Resumen o explicación de la actividad realizada..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright resize-none"></textarea>
                 </div>
 
                 <div>
@@ -437,9 +426,75 @@
         </div>
     </div>
 
+    <!-- EDIT PROFILE MODAL -->
+    <div id="profileModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
+        <div class="w-full max-w-md glass-card rounded-2xl p-6 border border-celeste/30 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-darkborder">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-user-gear text-celeste text-lg"></i>
+                    <h3 class="text-base font-bold text-white">Editar Perfil de Estudiante</h3>
+                </div>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white p-1 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="editProfileForm" onsubmit="saveProfileChanges(event)" class="space-y-4">
+                <!-- Foto de Perfil en Modal -->
+                <div class="flex flex-col items-center mb-3">
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Cambiar Foto de Perfil</label>
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('editAvatarInput').click()">
+                        <img id="editAvatarPreview" src="" alt="Avatar Preview" class="w-24 h-24 rounded-full object-cover border-2 border-celeste shadow-lg">
+                        <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-camera text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="editAvatarInput" accept="image/*" onchange="previewProfileImage(event, 'editAvatarPreview')" class="hidden">
+                    <span class="text-[10px] text-gray-400 mt-1">Haz clic para seleccionar nueva foto</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombre Completo</label>
+                    <input type="text" id="editName" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiantil</label>
+                        <input type="text" id="editCode" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Ciclo Académico</label>
+                        <select id="editCycle" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
+                            <option value="I Ciclo">I Ciclo</option>
+                            <option value="II Ciclo">II Ciclo</option>
+                            <option value="III Ciclo">III Ciclo</option>
+                            <option value="IV Ciclo">IV Ciclo</option>
+                            <option value="V Ciclo">V Ciclo</option>
+                            <option value="VI Ciclo">VI Ciclo</option>
+                            <option value="VII Ciclo">VII Ciclo</option>
+                            <option value="VIII Ciclo">VIII Ciclo</option>
+                            <option value="IX Ciclo">IX Ciclo</option>
+                            <option value="X Ciclo">X Ciclo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Carrera Universitaria</label>
+                    <input type="text" id="editCareer" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
+                </div>
+
+                <div class="pt-3 border-t border-darkborder flex justify-end space-x-3">
+                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 transition-colors">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 btn-gradient text-darkbg font-bold rounded-xl text-xs">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- SCRIPT LOGIC -->
     <script>
-        // Mapeo de semanas por unidad (4 Semanas por Unidad = 16 Semanas en total)
         const unitWeeksMapping = {
             'U1': [{ id: 1, label: 'Semana 1' }, { id: 2, label: 'Semana 2' }, { id: 3, label: 'Semana 3' }, { id: 4, label: 'Semana 4' }],
             'U2': [{ id: 5, label: 'Semana 5' }, { id: 6, label: 'Semana 6' }, { id: 7, label: 'Semana 7' }, { id: 8, label: 'Semana 8' }],
@@ -447,20 +502,17 @@
             'U4': [{ id: 13, label: 'Semana 13' }, { id: 14, label: 'Semana 14' }, { id: 15, label: 'Semana 15' }, { id: 16, label: 'Semana 16' }]
         };
 
-        // Estado Global de la App
         let currentUser = null;
         let selectedCourse = 'dev-apps';
         let selectedUnit = 'all';
         let selectedWeek = 'all';
-        let profileImageBase64 = '';
+        let tempAvatarBase64 = '';
 
-        // Trabajos guardados
         let worksData = JSON.parse(localStorage.getItem('upla_works')) || [
-            { id: 1, title: 'Práctica Calificada 1 - Arrays', course: 'dev-apps', unit: 'U1', week: 2, type: 'java', description: 'Ejercicios con arreglos unidimensionales.', link: 'https://github.com', date: '2023-09-10' },
-            { id: 2, title: 'Informe de Estructura de Datos', course: 'algo-struct', unit: 'U2', week: 6, type: 'pdf', description: 'Uso e implementación de Listas Enlazadas.', link: 'https://drive.google.com', date: '2023-10-12' }
+            { id: 1, title: 'Práctica Calificada 1 - Arrays', course: 'dev-apps', unit: 'U1', week: 2, type: 'java', description: 'Ejercicios con arreglos unidimensionales.', link: 'https://github.com', date: '2026-09-10' },
+            { id: 2, title: 'Informe de Estructura de Datos', course: 'algo-struct', unit: 'U2', week: 6, type: 'pdf', description: 'Uso e implementación de Listas Enlazadas.', link: 'https://drive.google.com', date: '2026-09-12' }
         ];
 
-        // Cambiar pestañas de autenticación
         function switchAuthTab(tab) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
@@ -480,20 +532,18 @@
             }
         }
 
-        // Previsualizar la foto subida
-        function previewProfileImage(event) {
+        function previewProfileImage(event, previewImgId) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    profileImageBase64 = e.target.result;
-                    document.getElementById('avatarPreview').src = profileImageBase64;
+                    tempAvatarBase64 = e.target.result;
+                    document.getElementById(previewImgId).src = tempAvatarBase64;
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // Manejar Registro
         function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('regName').value;
@@ -502,15 +552,15 @@
             const career = document.getElementById('regCareer').value;
             const password = document.getElementById('regPassword').value;
             
-            const avatar = profileImageBase64 || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=00b4d8&color=fff`;
+            const avatar = tempAvatarBase64 || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=00b4d8&color=fff`;
 
             const user = { name, code, cycle, career, password, avatar };
             localStorage.setItem('upla_user', JSON.stringify(user));
             currentUser = user;
+            tempAvatarBase64 = '';
             initDashboard();
         }
 
-        // Manejar Login
         function handleLogin(e) {
             e.preventDefault();
             const identifier = document.getElementById('loginIdentifier').value;
@@ -519,7 +569,6 @@
             if (savedUser) {
                 currentUser = savedUser;
             } else {
-                // Usuario por defecto si entra directamente
                 currentUser = {
                     name: identifier,
                     code: '74839201',
@@ -531,27 +580,57 @@
             initDashboard();
         }
 
-        // Iniciar el Dashboard
         function initDashboard() {
             document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
 
-            document.getElementById('userDisplayName').innerHTML = `${currentUser.name} <i class="fa-solid fa-circle-check text-celeste text-xs ml-1"></i>`;
-            document.getElementById('userDisplayDetails').innerText = `${currentUser.code} | ${currentUser.cycle}`;
-            document.getElementById('userHeaderAvatar').src = currentUser.avatar;
-
+            updateHeaderUI();
             updateWeekDropdown();
             renderWeeksFilter();
             renderWorks();
         }
 
-        // Cerrar sesión
+        function updateHeaderUI() {
+            document.getElementById('userDisplayName').innerHTML = `${currentUser.name} <i class="fa-solid fa-circle-check text-celeste text-xs ml-1"></i>`;
+            document.getElementById('userDisplayDetails').innerText = `${currentUser.code} | ${currentUser.cycle}`;
+            document.getElementById('userHeaderAvatar').src = currentUser.avatar;
+        }
+
+        function openProfileModal() {
+            document.getElementById('editName').value = currentUser.name;
+            document.getElementById('editCode').value = currentUser.code;
+            document.getElementById('editCycle').value = currentUser.cycle;
+            document.getElementById('editCareer').value = currentUser.career;
+            document.getElementById('editAvatarPreview').src = currentUser.avatar;
+            tempAvatarBase64 = '';
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function saveProfileChanges(e) {
+            e.preventDefault();
+            currentUser.name = document.getElementById('editName').value;
+            currentUser.code = document.getElementById('editCode').value;
+            currentUser.cycle = document.getElementById('editCycle').value;
+            currentUser.career = document.getElementById('editCareer').value;
+
+            if (tempAvatarBase64) {
+                currentUser.avatar = tempAvatarBase64;
+            }
+
+            localStorage.setItem('upla_user', JSON.stringify(currentUser));
+            updateHeaderUI();
+            closeProfileModal();
+        }
+
         function logout() {
             document.getElementById('appContainer').classList.add('hidden');
             document.getElementById('authContainer').classList.remove('hidden');
         }
 
-        // Seleccionar Curso
         function selectCourse(course) {
             selectedCourse = course;
             const tab1 = document.getElementById('courseTab1');
@@ -571,10 +650,9 @@
             renderWorks();
         }
 
-        // Seleccionar Unidad
         function selectUnit(unit) {
             selectedUnit = unit;
-            selectedWeek = 'all'; // Resetear semana al cambiar de unidad
+            selectedWeek = 'all';
             
             document.querySelectorAll('.unit-btn').forEach(btn => {
                 btn.className = "unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center";
@@ -586,7 +664,6 @@
             renderWorks();
         }
 
-        // Renderizar Filtros de Semanas dinámicos por Unidad
         function renderWeeksFilter() {
             const listContainer = document.getElementById('weeksButtonsList');
             listContainer.innerHTML = '';
@@ -600,7 +677,6 @@
                 weeksToDisplay = unitWeeksMapping[selectedUnit];
             }
 
-            // Opción "Todas las Semanas"
             const allBtn = document.createElement('button');
             allBtn.className = `px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${selectedWeek === 'all' ? 'bg-verde-bright text-darkbg font-bold' : 'bg-darkbg text-gray-400 hover:text-white border border-darkborder'}`;
             allBtn.innerText = 'Todas';
@@ -622,7 +698,6 @@
             renderWorks();
         }
 
-        // Actualizar el Dropdown del Modal según Unidad Seleccionada
         function updateWeekDropdown() {
             const unit = document.getElementById('workUnit').value;
             const weekSelect = document.getElementById('workWeek');
@@ -637,7 +712,6 @@
             });
         }
 
-        // Modal Handlers
         function openUploadModal() {
             document.getElementById('uploadModal').classList.remove('hidden');
         }
@@ -646,7 +720,6 @@
             document.getElementById('uploadModal').classList.add('hidden');
         }
 
-        // Guardar Trabajo
         function saveWork(e) {
             e.preventDefault();
             const title = document.getElementById('workTitle').value;
@@ -671,19 +744,16 @@
             renderWorks();
         }
 
-        // Renderizar Lista de Trabajos
         function renderWorks() {
             const grid = document.getElementById('worksGrid');
             const emptyState = document.getElementById('emptyState');
             grid.innerHTML = '';
 
-            // Conteo de badges
             const devAppsCount = worksData.filter(w => w.course === 'dev-apps').length;
             const algoStructCount = worksData.filter(w => w.course === 'algo-struct').length;
             document.getElementById('badgeDevApps').innerText = devAppsCount;
             document.getElementById('badgeAlgoStruct').innerText = algoStructCount;
 
-            // Filtrado
             const filtered = worksData.filter(w => {
                 const matchCourse = w.course === selectedCourse;
                 const matchUnit = selectedUnit === 'all' || w.unit === selectedUnit;

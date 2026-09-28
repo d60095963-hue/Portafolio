@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio Digital Estudiantil - UPLA</title>
+    <title>Gestor de Tareas y Entregas - UPLA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -74,6 +74,25 @@
             background: linear-gradient(135deg, #48cae4 0%, #00f5d4 100%);
             box-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
             transform: translateY(-1px);
+        }
+
+        /* Animations for adding and deleting task cards */
+        .task-card-enter {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .task-card-exit {
+            animation: fadeOut 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-12px) scale(0.95); }
         }
 
         ::-webkit-scrollbar {
@@ -262,18 +281,43 @@
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <span class="text-xs font-bold text-verde-bright uppercase tracking-widest px-2.5 py-1 rounded-full bg-verde/10 border border-verde/20">
-                            Mi Portafolio Digital Estudiantil
+                            Mi Portafolio Digital & Gestor de Tareas
                         </span>
                         <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-2">
                             Gestión de Entregas y Actividades
                         </h1>
                         <p class="text-sm text-gray-400 mt-1 max-w-2xl">
-                            Sube y organiza tus evidencias académicas distribuidas en 4 Unidades (16 semanas de ciclo).
+                            Sube, descarga, organiza y gestiona tus tareas académicas con archivos adjuntos.
                         </p>
                     </div>
                     <button onclick="openUploadModal()" class="btn-gradient text-darkbg font-extrabold px-5 py-3 rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:scale-105 transition-transform self-start md:self-auto">
                         <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                        <span>Subir Trabajo</span>
+                        <span>Agregar Tarea / Trabajo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar & Completion Filter -->
+            <div class="glass-card rounded-xl p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+                <!-- Text Search -->
+                <div class="relative w-full md:w-80">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="handleSearchInput()" placeholder="Buscar por título o descripción..." class="w-full pl-9 pr-4 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-celeste">
+                </div>
+
+                <!-- Status Filter Pills -->
+                <div class="flex items-center space-x-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                    <span class="text-xs text-gray-400 font-semibold mr-1 whitespace-nowrap"><i class="fa-solid fa-filter text-celeste mr-1"></i> Estado:</span>
+                    <button onclick="setFilterStatus('all')" id="filterBtn-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-celeste/20 text-celeste border border-celeste/40 transition-all">
+                        Todas (<span id="countAll">0</span>)
+                    </button>
+                    <button onclick="setFilterStatus('pending')" id="filterBtn-pending" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all">
+                        Pendientes (<span id="countPending">0</span>)
+                    </button>
+                    <button onclick="setFilterStatus('completed')" id="filterBtn-completed" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all">
+                        Completadas (<span id="countCompleted">0</span>)
                     </button>
                 </div>
             </div>
@@ -340,7 +384,7 @@
                 <div class="w-16 h-16 rounded-full bg-darkbg flex items-center justify-center mb-4 text-celeste text-2xl border border-celeste/20">
                     <i class="fa-solid fa-folder-open"></i>
                 </div>
-                <h3 class="text-base font-bold text-white">No hay trabajos registrados</h3>
+                <h3 class="text-base font-bold text-white">No hay tareas encontradas</h3>
                 <p class="text-xs text-gray-400 mt-1 max-w-sm">No se encontraron entregas en este filtro. ¡Haz clic en subir trabajo para añadir una!</p>
                 <button onclick="openUploadModal()" class="mt-4 px-4 py-2 bg-celeste/20 text-celeste border border-celeste/40 hover:bg-celeste/30 rounded-xl text-xs font-bold transition-all">
                     + Registrar Trabajo
@@ -357,13 +401,13 @@
         </footer>
     </div>
 
-    <!-- UPLOAD WORK MODAL -->
+    <!-- UPLOAD WORK MODAL (WITH DRAG & DROP FILE ATTACHMENT) -->
     <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
         <div class="w-full max-w-xl glass-card rounded-2xl p-6 border border-verde-bright/30 relative max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-5 pb-3 border-b border-darkborder">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-cloud-arrow-up text-verde-bright text-lg"></i>
-                    <h3 class="text-base font-bold text-white">Subir Trabajo Académico</h3>
+                    <h3 class="text-base font-bold text-white">Agregar Tarea o Evidencia</h3>
                 </div>
                 <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white p-1 text-lg">
                     <i class="fa-solid fa-xmark"></i>
@@ -372,7 +416,7 @@
 
             <form id="workForm" onsubmit="saveWork(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Título del Trabajo / Actividad</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Título de la Tarea / Actividad</label>
                     <input type="text" id="workTitle" required placeholder="Ej: Guía Práctica 01 - Matriz de Adyacencia" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
                 </div>
 
@@ -400,27 +444,24 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Tipo de Documento</label>
-                    <select id="workType" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                        <option value="java">Código Java (.java)</option>
-                        <option value="pdf">Documento PDF (.pdf)</option>
-                        <option value="word">Documento Word (.docx)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Descripción corta</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Descripción de la Tarea</label>
                     <textarea id="workDescription" rows="2" placeholder="Resumen o explicación de la actividad realizada..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright resize-none"></textarea>
                 </div>
 
+                <!-- DRAG AND DROP FILE ATTACHMENT BOX -->
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Enlace del Archivo / Repositorio (Drive, GitHub, etc.)</label>
-                    <input type="url" id="workLink" required placeholder="https://github.com/..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Adjuntar Archivo de la Tarea (PDF, Java, Word, Zip, etc.)</label>
+                    <div id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)" onclick="document.getElementById('taskFileInput').click()" class="border-2 border-dashed border-darkborder hover:border-celeste rounded-xl p-4 text-center cursor-pointer transition-colors bg-darkbg/50">
+                        <i class="fa-solid fa-file-arrow-up text-celeste text-2xl mb-1"></i>
+                        <p id="fileDropText" class="text-xs text-gray-300">Arrastra tu archivo aquí o <span class="text-celeste font-bold underline">examina tus carpetas</span></p>
+                        <p id="fileSelectedInfo" class="text-xs text-verde-bright font-mono font-semibold mt-1 hidden"></p>
+                    </div>
+                    <input type="file" id="taskFileInput" onchange="handleFileSelect(event)" class="hidden">
                 </div>
 
                 <div class="pt-3 border-t border-darkborder flex justify-end space-x-3">
                     <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 transition-colors">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 btn-gradient text-darkbg font-bold rounded-xl text-xs">Guardar Trabajo</button>
+                    <button type="submit" class="px-5 py-2 btn-gradient text-darkbg font-bold rounded-xl text-xs">Guardar Tarea</button>
                 </div>
             </form>
         </div>
@@ -493,6 +534,21 @@
         </div>
     </div>
 
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
+        <div class="w-full max-w-sm glass-card rounded-2xl p-6 border border-red-500/30 text-center relative">
+            <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1">¿Eliminar esta tarea?</h3>
+            <p class="text-xs text-gray-400 mb-5">Esta acción no se puede deshacer. Se borrará la tarea y su archivo adjunto.</p>
+            <div class="flex justify-center space-x-3">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 font-medium">Cancelar</button>
+                <button onclick="confirmDeleteWork()" class="px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-xl text-xs font-bold transition-all">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPT LOGIC -->
     <script>
         const unitWeeksMapping = {
@@ -506,11 +562,45 @@
         let selectedCourse = 'dev-apps';
         let selectedUnit = 'all';
         let selectedWeek = 'all';
+        let filterStatus = 'all'; // 'all', 'pending', 'completed'
+        let searchQuery = '';
+        
         let tempAvatarBase64 = '';
+        let pendingAttachment = null; // Stores file object { name, type, size, base64 }
+        let workIdToDelete = null;
 
+        // Initial default state with mock tasks
         let worksData = JSON.parse(localStorage.getItem('upla_works')) || [
-            { id: 1, title: 'Práctica Calificada 1 - Arrays', course: 'dev-apps', unit: 'U1', week: 2, type: 'java', description: 'Ejercicios con arreglos unidimensionales.', link: 'https://github.com', date: '2026-09-10' },
-            { id: 2, title: 'Informe de Estructura de Datos', course: 'algo-struct', unit: 'U2', week: 6, type: 'pdf', description: 'Uso e implementación de Listas Enlazadas.', link: 'https://drive.google.com', date: '2026-09-12' }
+            { 
+                id: 1, 
+                title: 'Práctica Calificada 1 - Arrays', 
+                course: 'dev-apps', 
+                unit: 'U1', 
+                week: 2, 
+                completed: false, 
+                description: 'Ejercicios con arreglos unidimensionales.', 
+                file: {
+                    fileName: 'Practica1_Arrays.java',
+                    fileType: 'text/plain',
+                    base64: 'data:text/plain;base64,cHVibGljIGNsYXNzIEFycmF5c0RlbW8gewogICAgcHVibGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgewogICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiSG9sYSBVUExBCEVsZW1lbnRvcyBkZWwgQXJyYXkiKTsKICAgIH0KfQ=='
+                },
+                date: '2026-09-10' 
+            },
+            { 
+                id: 2, 
+                title: 'Informe de Estructura de Datos', 
+                course: 'algo-struct', 
+                unit: 'U2', 
+                week: 6, 
+                completed: true, 
+                description: 'Uso e implementación de Listas Enlazadas.', 
+                file: {
+                    fileName: 'Informe_Estructuras.pdf',
+                    fileType: 'application/pdf',
+                    base64: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iag=="'
+                },
+                date: '2026-09-12' 
+            }
         ];
 
         function switchAuthTab(tab) {
@@ -631,6 +721,170 @@
             document.getElementById('authContainer').classList.remove('hidden');
         }
 
+        // Drag and Drop Attachment Functions
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('dropZone').classList.add('border-verde-bright', 'bg-verde/10');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            document.getElementById('dropZone').classList.remove('border-verde-bright', 'bg-verde/10');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            handleDragLeave(e);
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                processFileAttachment(e.dataTransfer.files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files && e.target.files[0]) {
+                processFileAttachment(e.target.files[0]);
+            }
+        }
+
+        function processFileAttachment(file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                pendingAttachment = {
+                    fileName: file.name,
+                    fileType: file.type || 'application/octet-stream',
+                    base64: evt.target.result
+                };
+
+                const fileInfo = document.getElementById('fileSelectedInfo');
+                fileInfo.innerText = `✓ Adjuntado: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                fileInfo.classList.remove('hidden');
+                document.getElementById('fileDropText').classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetFileAttachmentUI() {
+            pendingAttachment = null;
+            document.getElementById('fileSelectedInfo').classList.add('hidden');
+            document.getElementById('fileDropText').classList.remove('hidden');
+            document.getElementById('taskFileInput').value = '';
+        }
+
+        function openUploadModal() {
+            resetFileAttachmentUI();
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+            resetFileAttachmentUI();
+        }
+
+        function saveWork(e) {
+            e.preventDefault();
+            const title = document.getElementById('workTitle').value;
+            const course = document.getElementById('workCourse').value;
+            const unit = document.getElementById('workUnit').value;
+            const week = parseInt(document.getElementById('workWeek').value);
+            const description = document.getElementById('workDescription').value;
+
+            const newWork = {
+                id: Date.now(),
+                title, 
+                course, 
+                unit, 
+                week, 
+                completed: false,
+                description, 
+                file: pendingAttachment || null,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            worksData.unshift(newWork);
+            localStorage.setItem('upla_works', JSON.stringify(worksData));
+
+            closeUploadModal();
+            document.getElementById('workForm').reset();
+            renderWorks();
+        }
+
+        // DOWNLOAD ATTACHED FILE
+        function downloadTaskFile(workId) {
+            const work = worksData.find(w => w.id === workId);
+            if (!work || !work.file || !work.file.base64) {
+                alert('Esta tarea no contiene ningún archivo adjunto para descargar.');
+                return;
+            }
+
+            // Convert Base64 back to Blob for robust download
+            const base64Data = work.file.base64;
+            const link = document.createElement('a');
+            link.href = base64Data;
+            link.download = work.file.fileName || 'archivo_tarea';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // TOGGLE COMPLETE / PENDING STATUS
+        function toggleTaskStatus(workId) {
+            const work = worksData.find(w => w.id === workId);
+            if (work) {
+                work.completed = !work.completed;
+                localStorage.setItem('upla_works', JSON.stringify(worksData));
+                renderWorks();
+            }
+        }
+
+        // DELETE MODAL AND ANIMATED REMOVAL
+        function requestDeleteWork(workId) {
+            workIdToDelete = workId;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            workIdToDelete = null;
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        function confirmDeleteWork() {
+            if (!workIdToDelete) return;
+
+            const cardElem = document.getElementById(`work-card-${workIdToDelete}`);
+            if (cardElem) {
+                cardElem.classList.add('task-card-exit');
+                setTimeout(() => {
+                    worksData = worksData.filter(w => w.id !== workIdToDelete);
+                    localStorage.setItem('upla_works', JSON.stringify(worksData));
+                    closeDeleteModal();
+                    renderWorks();
+                }, 300);
+            } else {
+                worksData = worksData.filter(w => w.id !== workIdToDelete);
+                localStorage.setItem('upla_works', JSON.stringify(worksData));
+                closeDeleteModal();
+                renderWorks();
+            }
+        }
+
+        function setFilterStatus(status) {
+            filterStatus = status;
+            ['all', 'pending', 'completed'].forEach(s => {
+                const btn = document.getElementById(`filterBtn-${s}`);
+                if (s === status) {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-celeste/20 text-celeste border border-celeste/40 transition-all";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all";
+                }
+            });
+            renderWorks();
+        }
+
+        function handleSearchInput() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            renderWorks();
+        }
+
         function selectCourse(course) {
             selectedCourse = course;
             const tab1 = document.getElementById('courseTab1');
@@ -712,53 +966,31 @@
             });
         }
 
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-        }
-
-        function saveWork(e) {
-            e.preventDefault();
-            const title = document.getElementById('workTitle').value;
-            const course = document.getElementById('workCourse').value;
-            const unit = document.getElementById('workUnit').value;
-            const week = parseInt(document.getElementById('workWeek').value);
-            const type = document.getElementById('workType').value;
-            const description = document.getElementById('workDescription').value;
-            const link = document.getElementById('workLink').value;
-
-            const newWork = {
-                id: Date.now(),
-                title, course, unit, week, type, description, link,
-                date: new Date().toISOString().split('T')[0]
-            };
-
-            worksData.unshift(newWork);
-            localStorage.setItem('upla_works', JSON.stringify(worksData));
-
-            closeUploadModal();
-            document.getElementById('workForm').reset();
-            renderWorks();
-        }
-
         function renderWorks() {
             const grid = document.getElementById('worksGrid');
             const emptyState = document.getElementById('emptyState');
             grid.innerHTML = '';
 
+            // Update Course Badges
             const devAppsCount = worksData.filter(w => w.course === 'dev-apps').length;
             const algoStructCount = worksData.filter(w => w.course === 'algo-struct').length;
             document.getElementById('badgeDevApps').innerText = devAppsCount;
             document.getElementById('badgeAlgoStruct').innerText = algoStructCount;
 
+            // Update Filter Status Counts
+            const courseFiltered = worksData.filter(w => w.course === selectedCourse);
+            document.getElementById('countAll').innerText = courseFiltered.length;
+            document.getElementById('countPending').innerText = courseFiltered.filter(w => !w.completed).length;
+            document.getElementById('countCompleted').innerText = courseFiltered.filter(w => w.completed).length;
+
+            // Apply Filters (Course + Unit + Week + Status + Search)
             const filtered = worksData.filter(w => {
                 const matchCourse = w.course === selectedCourse;
                 const matchUnit = selectedUnit === 'all' || w.unit === selectedUnit;
                 const matchWeek = selectedWeek === 'all' || w.week == selectedWeek;
-                return matchCourse && matchUnit && matchWeek;
+                const matchStatus = filterStatus === 'all' ? true : (filterStatus === 'completed' ? w.completed : !w.completed);
+                const matchSearch = !searchQuery || w.title.toLowerCase().includes(searchQuery) || (w.description && w.description.toLowerCase().includes(searchQuery));
+                return matchCourse && matchUnit && matchWeek && matchStatus && matchSearch;
             });
 
             if (filtered.length === 0) {
@@ -769,13 +1001,19 @@
                 emptyState.classList.remove('flex');
 
                 filtered.forEach(work => {
-                    let typeBadge = '';
-                    if (work.type === 'java') typeBadge = '<span class="px-2 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30 font-mono text-[10px]">.JAVA</span>';
-                    else if (work.type === 'pdf') typeBadge = '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30 font-mono text-[10px]">.PDF</span>';
-                    else typeBadge = '<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono text-[10px]">.DOCX</span>';
-
                     const card = document.createElement('div');
-                    card.className = "glass-card rounded-2xl p-5 border border-darkborder flex flex-col justify-between hover:translate-y-[-2px] transition-transform";
+                    card.id = `work-card-${work.id}`;
+                    card.className = `glass-card rounded-2xl p-5 border ${work.completed ? 'border-verde-bright/30 bg-verde/5' : 'border-darkborder'} flex flex-col justify-between task-card-enter transition-all`;
+
+                    const fileButtonHtml = work.file ? `
+                        <button onclick="downloadTaskFile(${work.id})" class="px-3 py-1.5 rounded-xl bg-celeste/10 hover:bg-celeste/20 text-celeste border border-celeste/30 font-bold flex items-center space-x-1.5 transition-all text-xs" title="Descargar ${work.file.fileName}">
+                            <i class="fa-solid fa-download text-xs"></i>
+                            <span class="truncate max-w-[120px]">${work.file.fileName}</span>
+                        </button>
+                    ` : `
+                        <span class="text-[11px] text-gray-500 italic"><i class="fa-solid fa-paperclip mr-1"></i>Sin adjunto</span>
+                    `;
+
                     card.innerHTML = `
                         <div>
                             <div class="flex justify-between items-start mb-3">
@@ -783,17 +1021,24 @@
                                     <span class="px-2 py-0.5 rounded bg-celeste/20 text-celeste text-[10px] font-bold border border-celeste/30">${work.unit}</span>
                                     <span class="px-2 py-0.5 rounded bg-verde/20 text-verde-bright text-[10px] font-bold border border-verde/30">Semana ${work.week}</span>
                                 </div>
-                                ${typeBadge}
+                                <button onclick="toggleTaskStatus(${work.id})" class="text-xs px-2.5 py-1 rounded-full font-semibold flex items-center space-x-1 transition-all ${work.completed ? 'bg-verde-bright/20 text-verde-bright border border-verde-bright/40' : 'bg-gray-800 text-gray-400 border border-darkborder hover:text-white'}">
+                                    <i class="fa-solid ${work.completed ? 'fa-circle-check' : 'fa-circle-notch'}"></i>
+                                    <span>${work.completed ? 'Completado' : 'Pendiente'}</span>
+                                </button>
                             </div>
-                            <h4 class="text-sm font-bold text-white mb-2 leading-snug">${work.title}</h4>
-                            <p class="text-xs text-gray-400 mb-4 line-clamp-2">${work.description || 'Sin descripción opcional provista.'}</p>
+                            <h4 class="text-sm font-bold text-white mb-2 leading-snug ${work.completed ? 'line-through text-gray-400' : ''}">${work.title}</h4>
+                            <p class="text-xs text-gray-400 mb-4 line-clamp-2">${work.description || 'Sin descripción provista.'}</p>
                         </div>
+
                         <div class="pt-3 border-t border-darkborder flex justify-between items-center text-xs">
-                            <span class="text-gray-500 text-[10px]"><i class="fa-regular fa-clock mr-1"></i>${work.date}</span>
-                            <a href="${work.link}" target="_blank" class="text-verde-bright hover:underline font-bold flex items-center space-x-1">
-                                <span>Ver Archivo</span>
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                            </a>
+                            ${fileButtonHtml}
+                            
+                            <div class="flex items-center space-x-2">
+                                <span class="text-gray-500 text-[10px]"><i class="fa-regular fa-clock mr-1"></i>${work.date}</span>
+                                <button onclick="requestDeleteWork(${work.id})" class="p-1.5 text-gray-500 hover:text-red-400 transition-colors" title="Eliminar Tarea">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                </button>
+                            </div>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -803,23 +1048,3 @@
     </script>
 </body>
 </html>
-async function eliminarTarea(idTarea) {
-  const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");
-  if (!confirmacion) return;
-
-  try {
-    const respuesta = await fetch(`/api/tareas/eliminar/${idTarea}`, {
-      method: 'DELETE',
-    });
-
-    if (respuesta.ok) {
-      alert("Tarea eliminada con éxito.");
-      // Actualizar la lista en pantalla o remover el elemento del DOM
-      document.getElementById(`tarea-${idTarea}`).remove();
-    } else {
-      alert("Ocurrió un error al intentar eliminar la tarea.");
-    }
-  } catch (error) {
-    console.error("Error en la petición:", error);
-  }
-}

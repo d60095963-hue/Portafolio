@@ -104,12 +104,6 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-
-        /* Dropzone Active */
-        .drag-over {
-            border-color: #E0E0E0 !important;
-            background: rgba(58, 58, 64, 0.5) !important;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between relative selection:bg-smoke-500 selection:text-white">
@@ -124,12 +118,10 @@
         <div id="authView" class="min-h-screen flex items-center justify-center p-4 sm:p-6">
             <div class="smoke-card w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-2xl relative overflow-hidden">
                 
-                <!-- Overlay Decorativo Calavera de Fondo -->
                 <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-smoke-100">
                     <i class="fa-solid fa-skull text-9xl"></i>
                 </div>
 
-                <!-- Branding UPLA -->
                 <div class="flex flex-col items-center mb-6 text-center">
                     <div class="relative group cursor-pointer mb-3" onclick="openLogoEditModal()" title="Haga clic para personalizar el logo">
                         <img id="uplaAuthLogo" src="https://placehold.co/120x120/121214/F0F0F5?text=UPLA+LOGO" 
@@ -143,7 +135,6 @@
                     <p class="text-xs text-smoke-300 mt-1">Portafolio Académico Digital</p>
                 </div>
 
-                <!-- Formulario de Login Principal -->
                 <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-smoke-300 mb-1">Usuario / Correo</label>
@@ -166,13 +157,11 @@
                     </button>
                 </form>
 
-                <!-- Divisor -->
                 <div class="relative my-6">
                     <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-smoke-600"></div></div>
                     <div class="relative flex justify-center text-xs uppercase"><span class="bg-smoke-700/80 px-2 text-smoke-400">O ingresar como</span></div>
                 </div>
 
-                <!-- Accesos Secundarios -->
                 <div class="space-y-2.5">
                     <button type="button" onclick="loginAsTeacher()" class="w-full py-2.5 bg-smoke-800 hover:bg-smoke-700 text-smoke-200 border border-smoke-600/50 rounded-lg text-sm font-medium transition-all flex items-center justify-center space-x-2 group">
                         <i class="fa-solid fa-user-tie text-silver-accent group-hover:text-white transition-colors"></i>
@@ -191,7 +180,6 @@
         <div id="dashboardView" class="hidden min-h-screen flex flex-col justify-between">
             
             <header class="smoke-card sticky top-0 z-30 px-4 sm:px-8 py-3 border-b border-smoke-600/50 flex flex-wrap items-center justify-between gap-4">
-                <!-- Logo UPLA & Titulo -->
                 <div class="flex items-center space-x-3">
                     <div class="relative group cursor-pointer" onclick="openLogoEditModal()" title="Cambiar Logo UPLA">
                         <img id="uplaDashLogo" src="https://placehold.co/120x120/121214/F0F0F5?text=UPLA+LOGO" alt="Logo UPLA" class="h-10 w-10 object-contain rounded-full bg-smoke-800 border border-smoke-500/30">
@@ -202,38 +190,7 @@
                     </div>
                 </div>
 
-                <!-- Datos de Usuario, Respaldos & Controles -->
-                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
-                    
-                    <!-- BOTONES DE RESPALDO / BACKUP -->
-                    <div class="flex items-center gap-2">
-                        <!-- Botón Exportar -->
-                        <button 
-                            onclick="exportarBackup()" 
-                            title="Descargar copia de seguridad con todas tus tareas"
-                            class="flex items-center gap-1.5 bg-smoke-800 hover:bg-smoke-700 text-smoke-200 text-xs px-3 py-1.5 rounded-lg border border-smoke-600 transition shadow">
-                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            <span class="hidden sm:inline">Exportar Datos</span>
-                        </button>
-
-                        <!-- Botón Importar -->
-                        <button 
-                            onclick="document.getElementById('importFileInput').click()" 
-                            title="Cargar copia de seguridad desde un archivo JSON"
-                            class="flex items-center gap-1.5 bg-smoke-800 hover:bg-smoke-700 text-smoke-200 text-xs px-3 py-1.5 rounded-lg border border-smoke-600 transition shadow">
-                            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                            </svg>
-                            <span class="hidden sm:inline">Importar Datos</span>
-                        </button>
-
-                        <!-- Input oculto para seleccionar el archivo JSON -->
-                        <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importarBackup(event)" />
-                    </div>
-
-                    <!-- Targeta de Usuario -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
                     <div onclick="openProfileModal()" class="flex items-center space-x-3 p-1.5 pr-3 rounded-full bg-smoke-800/80 hover:bg-smoke-700/80 border border-smoke-600/40 cursor-pointer transition-all" title="Ver / Editar Perfil">
                         <img id="headerUserAvatar" src="https://placehold.co/80x80/2A2A2E/F0F0F5?text=User" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-smoke-400">
                         <div class="text-left hidden sm:block">
@@ -245,7 +202,6 @@
                         </div>
                     </div>
 
-                    <!-- Botón Cerrar Sesión -->
                     <button onclick="handleLogout()" class="p-2 sm:px-3 sm:py-2 rounded-lg bg-smoke-800 hover:bg-red-950/40 text-smoke-300 hover:text-red-400 border border-smoke-600/40 hover:border-red-800/50 transition-all text-xs flex items-center space-x-2" title="Cerrar Sesión">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span class="hidden sm:inline">Cerrar Sesión</span>
@@ -255,13 +211,12 @@
 
             <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
                 
-                <!-- Banner de Rol Docente (Si corresponde) -->
                 <div id="teacherRoleNotice" class="hidden smoke-card p-4 rounded-xl border-l-4 border-amber-500 bg-amber-950/10 text-amber-200 flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <i class="fa-solid fa-eye text-xl"></i>
                         <div>
                             <p class="font-semibold text-sm">Modo de Revisión Docente / Visitante Activo</p>
-                            <p class="text-xs text-amber-300/80">Tiene permisos exclusivamente de lectura y descarga de tareas. Los cambios, subidas y eliminaciones están deshabilitados.</p>
+                            <p class="text-xs text-amber-300/80">Tiene permisos exclusivamente de lectura y apertura de enlaces de tareas. La adición y eliminación de enlaces está deshabilitada.</p>
                         </div>
                     </div>
                 </div>
@@ -278,7 +233,6 @@
                     </button>
                 </div>
 
-                <!-- Cabecera del Curso Selección -->
                 <div class="smoke-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <span class="text-xs uppercase tracking-widest text-smoke-400 font-semibold">Curso Universitario</span>
@@ -292,9 +246,7 @@
                 </div>
 
                 <!-- Contenedor de Unidades (I, II, III, IV) -->
-                <div id="courseUnitsContainer" class="space-y-8">
-                    <!-- Generado dinámicamente mediante JS -->
-                </div>
+                <div id="courseUnitsContainer" class="space-y-8"></div>
 
             </main>
 
@@ -366,7 +318,6 @@
                     <input type="password" id="regPassword" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="••••••••">
                 </div>
 
-                <!-- Subida Foto Perfil -->
                 <div>
                     <label class="block text-xs font-semibold text-smoke-300 mb-1">Foto de Perfil (.jpg, .png)</label>
                     <div class="flex items-center space-x-4">
@@ -481,10 +432,8 @@
         const STORAGE_KEY_LOGO = 'upla_portfolio_logo';
         const STORAGE_KEY_COURSES = 'upla_portfolio_courses_data';
 
-        // Logo Por Defecto de UPLA
         const DEFAULT_UPLA_LOGO = "https://placehold.co/120x120/121214/F0F0F5?text=UPLA";
 
-        // Estructura Académica Inicial (16 semanas / 4 Unidades por curso)
         const DEFAULT_COURSES_DATA = {
             course1: {
                 title: "Algoritmos y Estructura de Datos",
@@ -507,12 +456,11 @@
             return weeks;
         }
 
-        // Estado Global runtime
         let currentUser = null;
         let activeCourse = 'course1';
         let coursesData = {};
 
-        // Canvas de Humo y Calaveras
+        // Canvas de Humo e Interacción
         const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -637,17 +585,8 @@
 
         function animateCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            skulls.forEach(s => {
-                s.update();
-                s.draw();
-            });
-
+            particles.forEach(p => { p.update(); p.draw(); });
+            skulls.forEach(s => { s.update(); s.draw(); });
             requestAnimationFrame(animateCanvas);
         }
 
@@ -812,9 +751,7 @@
             currentUser.photo = document.getElementById('editPhotoPreview').src;
 
             const newPass = document.getElementById('editPassword').value;
-            if (newPass) {
-                currentUser.password = newPass;
-            }
+            if (newPass) currentUser.password = newPass;
 
             localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
             localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(currentUser));
@@ -897,6 +834,7 @@
             renderCourseView();
         }
 
+        /* LÓGICA DE RENDERING CON ENLACES DIRECTOS A LA NUBE */
         function renderCourseView() {
             const tab1 = document.getElementById('tabCourse1');
             const tab2 = document.getElementById('tabCourse2');
@@ -923,7 +861,7 @@
 
             const isTeacher = currentUser && currentUser.role === 'Docente';
 
-            units.forEach((unit, idx) => {
+            units.forEach((unit) => {
                 const unitElement = document.createElement('div');
                 unitElement.className = "smoke-card p-6 rounded-2xl border border-smoke-600/40 space-y-4";
                 
@@ -932,25 +870,24 @@
                     const weekData = coursesData[activeCourse].weeks[weekNum];
                     
                     let filesHtml = '';
-                    if (weekData.files.length === 0) {
-                        filesHtml = `<p class="text-xs text-smoke-400 italic my-2">No hay archivos entregados para esta semana.</p>`;
+                    if (!weekData.files || weekData.files.length === 0) {
+                        filesHtml = `<p class="text-xs text-smoke-400 italic my-2">No hay tareas o enlaces guardados.</p>`;
                     } else {
                         filesHtml = `<div class="space-y-2 my-3">`;
                         weekData.files.forEach((file, fileIdx) => {
-                            const iconClass = getFileIcon(file.name);
                             filesHtml += `
                                 <div class="flex items-center justify-between p-2 rounded-lg bg-smoke-800/90 border border-smoke-600/30 text-xs">
                                     <div class="flex items-center space-x-2 overflow-hidden pr-2">
-                                        <i class="${iconClass} text-sm text-silver-accent"></i>
-                                        <span class="truncate text-smoke-200" title="${file.name}">${file.name}</span>
-                                        <span class="text-[10px] text-smoke-400">(${file.size})</span>
+                                        <i class="${file.icon || 'fa-solid fa-link text-silver-accent'} text-sm"></i>
+                                        <span class="truncate text-smoke-200" title="${file.name}">${escapeHtml(file.name)}</span>
                                     </div>
-                                    <div class="flex items-center space-x-2 flex-shrink-0">
-                                        <a href="${file.data}" download="${file.name}" class="p-1 px-2 rounded bg-smoke-700 hover:bg-smoke-600 text-smoke-100 transition-colors" title="Descargar archivo">
-                                            <i class="fa-solid fa-download"></i>
+                                    <div class="flex items-center space-x-1 flex-shrink-0">
+                                        <a href="${file.url}" target="_blank" rel="noopener noreferrer" class="p-1 px-2 rounded bg-smoke-700 hover:bg-smoke-600 text-smoke-100 transition-colors flex items-center space-x-1" title="Abrir enlace externo">
+                                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                            <span>Ver</span>
                                         </a>
                                         ${!isTeacher ? `
-                                            <button onclick="deleteFile('${activeCourse}', ${weekNum},${fileIdx})" class="p-1 px-2 rounded bg-red-950/40 hover:bg-red-900/60 text-red-300 transition-colors" title="Eliminar archivo">
+                                            <button onclick="deleteLinkAssignment('${activeCourse}', ${weekNum},${fileIdx})" class="p-1 px-2 rounded bg-red-950/40 hover:bg-red-900/60 text-red-300 transition-colors" title="Eliminar enlace">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         ` : ''}
@@ -976,16 +913,11 @@
                             </div>
 
                             ${!isTeacher ? `
-                                <div class="drop-zone border-2 border-dashed border-smoke-600/60 rounded-lg p-3 text-center transition-all cursor-pointer hover:border-smoke-400"
-                                     ondragover="handleDragOver(event)" 
-                                     ondragleave="handleDragLeave(event)" 
-                                     ondrop="handleFileDrop(event, '${activeCourse}',${weekNum})"
-                                     onclick="triggerFileInput('${activeCourse}',${weekNum})">
-                                    <i class="fa-solid fa-cloud-arrow-up text-lg text-smoke-400 mb-1"></i>
-                                    <p class="text-[11px] text-smoke-300">Arrastre archivos o <span class="text-silver-accent underline">examine</span></p>
-                                    <p class="text-[9px] text-smoke-400 mt-0.5">.zip, .pdf, .docx, .pptx, .png, .jpg</p>
-                                    <input type="file" id="fileInput_${weekNum}" multiple class="hidden" onchange="handleFileSelect(event, '${activeCourse}',${weekNum})">
-                                </div>
+                                <button onclick="addLinkAssignment('${activeCourse}',${weekNum})" 
+                                        class="w-full py-2.5 px-3 border border-dashed border-smoke-600/80 hover:border-smoke-400 bg-smoke-800/30 hover:bg-smoke-700/40 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center space-x-2 text-xs text-smoke-200">
+                                    <i class="fa-solid fa-cloud-arrow-up text-silver-accent"></i>
+                                    <span>Agregar Enlace (Drive / GitHub)</span>
+                                </button>
                             ` : ''}
                         </div>
                     `;
@@ -1005,68 +937,48 @@
             });
         }
 
-        function triggerFileInput(courseKey, weekNum) {
-            const input = document.getElementById(`fileInput_${weekNum}`);
-            if (input) input.click();
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.classList.add('drag-over');
-        }
-
-        function handleDragLeave(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.classList.remove('drag-over');
-        }
-
-        function handleFileDrop(e, courseKey, weekNum) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.classList.remove('drag-over');
-
+        /* FUNCIONES PARA GESTIÓN DE ENLACES EN LA NUBE */
+        function addLinkAssignment(courseKey, weekNum) {
             if (currentUser && currentUser.role === 'Docente') return;
 
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                processUploadedFiles(files, courseKey, weekNum);
+            const title = prompt("Ingrese el nombre o descripción de la entrega (Ej. Tarea Semana 1 - Algoritmos):");
+            if (!title || !title.trim()) return;
+
+            const url = prompt("Ingrese o pegue el enlace público del archivo (Google Drive, GitHub, OneDrive, etc.):");
+            if (!url || !url.trim()) return;
+
+            const cleanUrl = url.trim();
+
+            // Detectar icono según el dominio
+            let platformIcon = "fa-solid fa-link text-silver-accent";
+            if (cleanUrl.includes("drive.google.com")) {
+                platformIcon = "fa-brands fa-google-drive text-emerald-400";
+            } else if (cleanUrl.includes("github.com")) {
+                platformIcon = "fa-brands fa-github text-white";
+            } else if (cleanUrl.includes("onedrive") || cleanUrl.includes("1drv.ms")) {
+                platformIcon = "fa-solid fa-cloud text-blue-400";
             }
-        }
 
-        function handleFileSelect(e, courseKey, weekNum) {
-            if (currentUser && currentUser.role === 'Docente') return;
-            const files = e.target.files;
-            if (files.length > 0) {
-                processUploadedFiles(files, courseKey, weekNum);
+            const fileObj = {
+                name: title.trim(),
+                url: cleanUrl,
+                icon: platformIcon,
+                date: new Date().toLocaleDateString()
+            };
+
+            if (!coursesData[courseKey].weeks[weekNum].files) {
+                coursesData[courseKey].weeks[weekNum].files = [];
             }
+
+            coursesData[courseKey].weeks[weekNum].files.push(fileObj);
+            saveCoursesToStorage();
+            renderCourseView();
         }
 
-        function processUploadedFiles(files, courseKey, weekNum) {
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const fileObj = {
-                        name: file.name,
-                        size: formatBytes(file.size),
-                        type: file.type,
-                        data: e.target.result,
-                        date: new Date().toLocaleDateString()
-                    };
-
-                    coursesData[courseKey].weeks[weekNum].files.push(fileObj);
-                    saveCoursesToStorage();
-                    renderCourseView();
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function deleteFile(courseKey, weekNum, fileIdx) {
+        function deleteLinkAssignment(courseKey, weekNum, fileIdx) {
             if (currentUser && currentUser.role === 'Docente') return;
             
-            if (confirm("¿Está seguro de eliminar esta tarea cargada?")) {
+            if (confirm("¿Está seguro de eliminar este enlace de entrega?")) {
                 coursesData[courseKey].weeks[weekNum].files.splice(fileIdx, 1);
                 saveCoursesToStorage();
                 renderCourseView();
@@ -1086,116 +998,8 @@
             }
         }
 
-        function getFileIcon(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            switch (ext) {
-                case 'pdf': return 'fa-solid fa-file-pdf text-red-400';
-                case 'zip':
-                case 'rar': return 'fa-solid fa-file-zipper text-amber-400';
-                case 'doc':
-                case 'docx': return 'fa-solid fa-file-word text-blue-400';
-                case 'ppt':
-                case 'pptx': return 'fa-solid fa-file-powerpoint text-orange-400';
-                case 'jpg':
-                case 'jpeg':
-                case 'png':
-                case 'webp': return 'fa-solid fa-file-image text-emerald-400';
-                default: return 'fa-solid fa-file-lines text-smoke-300';
-            }
-        }
-
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
-
         function escapeHtml(str) {
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        // ==========================================
-        // FUNCIÓN PARA EXPORTAR DATOS (BACKUP JSON)
-        // ==========================================
-        function exportarBackup() {
-            try {
-                // 1. Extraer todos los datos almacenados en localStorage
-                const backupData = {};
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    backupData[key] = localStorage.getItem(key);
-                }
-
-                // 2. Comprobar si hay datos para exportar
-                if (Object.keys(backupData).length === 0) {
-                    alert("⚠️ No hay datos ni tareas guardadas para exportar.");
-                    return;
-                }
-
-                // 3. Convertir los datos a un String JSON estructurado
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-                
-                // 4. Crear un elemento de descarga temporal
-                const downloadAnchor = document.createElement('a');
-                downloadAnchor.setAttribute("href", dataStr);
-                
-                // Nombre del archivo con la fecha actual
-                const fecha = new Date().toISOString().slice(0,10);
-                downloadAnchor.setAttribute("download", `Portafolio_UPLA_Backup_${fecha}.json`);
-                
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                downloadAnchor.remove();
-
-                alert("✅ Copia de seguridad exportada con éxito.");
-            } catch (error) {
-                console.error("Error al exportar:", error);
-                alert("❌ Ocurrió un error al intentar exportar los datos.");
-            }
-        }
-
-        // ==========================================
-        // FUNCIÓN PARA IMPORTAR DATOS (RESTAURAR JSON)
-        // ==========================================
-        function importarBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-
-                    if (typeof importedData !== 'object' || importedData === null) {
-                        throw new Error("El archivo no contiene un formato de copia de seguridad válido.");
-                    }
-
-                    // Confirmar antes de sobrescribir
-                    const confirmacion = confirm(
-                        "⚠️ Se van a restaurar todas las tareas, datos de perfil y cursos.\n\n¿Deseas continuar?"
-                    );
-
-                    if (confirmacion) {
-                        // Limpiar el localStorage actual y cargar los nuevos datos
-                        localStorage.clear();
-                        Object.keys(importedData).forEach(key => {
-                            localStorage.setItem(key, importedData[key]);
-                        });
-
-                        alert("🎉 ¡Datos e información restaurados con éxito! La página se recargará ahora.");
-                        window.location.reload();
-                    }
-                } catch (error) {
-                    console.error("Error al importar:", error);
-                    alert("❌ El archivo seleccionado no es un respaldo JSON válido.");
-                }
-            };
-
-            reader.readAsText(file);
         }
     </script>
 </body>

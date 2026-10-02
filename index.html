@@ -1,1050 +1,1703 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Tareas y Entregas - UPLA</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#0a0a0c',
-                        darkcard: '#121318',
-                        darkborder: '#1f222e',
-                        celeste: {
-                            DEFAULT: '#00b4d8',
-                            light: '#48cae4',
-                            glow: '#00b4d880'
-                        },
-                        verde: {
-                            DEFAULT: '#2ec4b6',
-                            bright: '#00f5d4',
-                            glow: '#00f5d460'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        code: ['Fira Code', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma Académica de Trabajos & Proyectos</title>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <style>
-        body {
-            background-color: #0a0a0c;
-            color: #f1f5f9;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(0, 180, 216, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(0, 245, 212, 0.08) 0%, transparent 40%);
-            background-attachment: fixed;
-        }
+  <style>
+    /* ==========================================================================
+       VARIABLES Y TEMA OSCURO GLASSMORPHISM
+       ========================================================================== */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --primary-glow: rgba(139, 92, 246, 0.35);
+      --secondary: #06b6d4;
+      --accent: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --card-bg: rgba(15, 23, 42, 0.6);
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        .glass-card {
-            background: rgba(18, 19, 24, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 180, 216, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-        .glass-card:hover {
-            border-color: rgba(0, 245, 212, 0.4);
-            box-shadow: 0 0 15px rgba(0, 245, 212, 0.15);
-        }
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        .glow-text-celeste {
-            text-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
-        }
+    /* Fondo animado con partículas fluorescentes */
+    .bg-blobs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
 
-        .btn-gradient {
-            background: linear-gradient(135deg, #00b4d8 0%, #2ec4b6 100%);
-            transition: all 0.3s ease;
-        }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: float 18s infinite alternate ease-in-out;
+    }
 
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #48cae4 0%, #00f5d4 100%);
-            box-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
-            transform: translateY(-1px);
-        }
+    .blob-1 {
+      top: -10%;
+      left: -10%;
+      width: 450px;
+      height: 450px;
+      background: #7c3aed;
+    }
 
-        /* Animations for adding and deleting task cards */
-        .task-card-enter {
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+    .blob-2 {
+      bottom: -15%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: #06b6d4;
+      animation-delay: -5s;
+    }
 
-        .task-card-exit {
-            animation: fadeOut 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
-        }
+    .blob-3 {
+      top: 40%;
+      left: 40%;
+      width: 350px;
+      height: 350px;
+      background: #ec4899;
+      animation-delay: -10s;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 40px) scale(1.15); }
+      100% { transform: translate(-40px, 80px) scale(0.9); }
+    }
 
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to { opacity: 0; transform: translateY(-12px) scale(0.95); }
-        }
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f222e;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00b4d8;
-        }
-    </style>
+    /* ==========================================================================
+       PANTALLA DE LOGIN
+       ========================================================================== */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: var(--glass-shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+    }
+
+    .login-logo {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .login-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .login-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+    }
+
+    .login-roles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .role-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 15px;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .role-btn i {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .role-btn:hover, .role-btn.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .role-btn:hover i, .role-btn.active i {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .role-btn span {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px 12px 45px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      border: none;
+      border-radius: var(--radius-md);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 10px 25px var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px var(--primary-glow);
+    }
+
+    .btn-direct-teacher {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--secondary), #0891b2);
+      border: none;
+      border-radius: var(--radius-md);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-direct-teacher:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(6, 182, 212, 0.5);
+    }
+
+    /* ==========================================================================
+       LAYOUT PRINCIPAL DE LA APLICACIÓN
+       ========================================================================== */
+    .app-container {
+      display: none;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border);
+      padding: 25px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 35px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu-header {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 15px 0 8px 10px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--text-muted);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .menu-item i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      color: var(--text-main);
+      background: rgba(139, 92, 246, 0.15);
+      border-left: 4px solid var(--primary);
+    }
+
+    .menu-item .badge {
+      margin-left: auto;
+      background: var(--primary);
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* Sub-carpetas desplegables */
+    .folder-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .folder-toggle .arrow {
+      transition: var(--transition);
+      font-size: 0.8rem;
+    }
+
+    .folder-toggle.open .arrow {
+      transform: rotate(90deg);
+    }
+
+    .sub-folders {
+      list-style: none;
+      padding-left: 25px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .sub-folders.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .sub-folders .menu-item {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+
+    /* Perfil Bottom Bar en Sidebar */
+    .user-profile-bottom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      margin-top: auto;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .user-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .user-info .name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-info .role {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .btn-logout {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: var(--transition);
+    }
+
+    .btn-logout:hover {
+      color: var(--danger);
+    }
+
+    /* Content Area */
+    .main-content {
+      padding: 30px 40px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header-title h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    /* Banner Banner Maestro View */
+    .teacher-banner {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid var(--secondary);
+      border-radius: var(--radius-md);
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .teacher-banner div {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .teacher-banner i {
+      font-size: 1.5rem;
+      color: var(--secondary);
+    }
+
+    /* ==========================================================================
+       SECCIÓN DE SUBIDA MULTIPLE DE ARCHIVOS
+       ========================================================================== */
+    .upload-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      margin-bottom: 35px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .drop-zone {
+      border: 2px dashed rgba(139, 92, 246, 0.4);
+      border-radius: var(--radius-md);
+      padding: 35px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.4);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--primary);
+      background: rgba(139, 92, 246, 0.08);
+      transform: scale(1.005);
+    }
+
+    .drop-zone i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+
+    .drop-zone:hover i {
+      transform: translateY(-5px) scale(1.1);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .form-grid-upload {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    /* Previsualización de Múltiples Archivos Seleccionados */
+    .selected-files-list {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .selected-file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 15px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      border: 1px solid var(--glass-border);
+    }
+
+    .selected-file-item .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .selected-file-item i.remove-btn {
+      color: var(--danger);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .selected-file-item i.remove-btn:hover {
+      transform: scale(1.2);
+    }
+
+    /* ==========================================================================
+       TARJETAS Y MÁSCARA DE ARCHIVOS (GRID OF TASKS)
+       ========================================================================== */
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .task-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      transition: var(--transition);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--glass-shadow);
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    .task-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
+    }
+
+    .task-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .file-icon-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .file-icon-badge.pdf { background: linear-gradient(135deg, #ef4444, #991b1b); }
+    .file-icon-badge.doc { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .file-icon-badge.zip { background: linear-gradient(135deg, #f59e0b, #b45309); }
+    .file-icon-badge.img { background: linear-gradient(135deg, #10b981, #047857); }
+    .file-icon-badge.code { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+    .folder-tag {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    .task-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .task-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .task-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .task-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 15px;
+    }
+
+    .btn-action {
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .btn-download {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--secondary);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-download:hover {
+      background: var(--secondary);
+      color: white;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-delete:hover {
+      background: var(--danger);
+      color: white;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Animación de Eliminación Efeccto Disolver */
+    .task-card.deleting {
+      animation: dissolveOut 0.6s forwards ease-in-out;
+    }
+
+    @keyframes dissolveOut {
+      0% { opacity: 1; transform: scale(1); filter: blur(0); }
+      50% { opacity: 0.5; transform: scale(0.8) rotate(5deg); filter: blur(5px); }
+      100% { opacity: 0; transform: scale(0) rotate(-10deg); filter: blur(10px); }
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      grid-column: 1 / -1;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ==========================================================================
+       SECCIÓN DE EDICIÓN DE PERFIL Y CONTRASEÑA
+       ========================================================================== */
+    .profile-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 35px;
+      max-width: 700px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .profile-header-edit {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .avatar-large {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    /* ==========================================================================
+       NOTIFICACIONES TOAST
+       ========================================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      padding: 15px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 300px;
+      animation: slideInRight 0.4s ease-out;
+      border-left: 4px solid var(--primary);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.danger { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--warning); }
+
+    .toast i { font-size: 1.2rem; }
+    .toast.success i { color: var(--success); }
+    .toast.danger i { color: var(--danger); }
+
+    /* ==========================================================================
+       ANIMACIONES GENERALES
+       ========================================================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none; /* En producción se incluiría menú hamburguesa */
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .form-grid-upload {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-verde selection:text-black">
+<body>
 
-    <!-- AUTHENTICATION CONTAINER -->
-    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkbg/90 backdrop-blur-md">
-        <div class="w-full max-w-md glass-card rounded-2xl p-6 md:p-8 border border-celeste/30 relative overflow-hidden shadow-2xl max-h-[95vh] overflow-y-auto">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-celeste via-verde-bright to-celeste"></div>
+  <!-- Fondo animado -->
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
 
-            <!-- Logo Header -->
-            <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-darkbg border-2 border-celeste mb-3 shadow-[0_0_15px_rgba(0,180,216,0.3)]">
-                    <i class="fa-solid fa-user-graduate text-3xl text-verde-bright"></i>
-                </div>
-                <h2 class="text-xl font-extrabold tracking-tight text-white uppercase">Universidad Peruana</h2>
-                <h3 class="text-lg font-bold text-celeste tracking-widest uppercase glow-text-celeste">Los Andes</h3>
-                <p class="text-xs text-gray-400 mt-1">Portafolio Estudiantil de Evidencias</p>
-            </div>
+  <!-- Contenedor para Notificaciones Toast -->
+  <div class="toast-container" id="toastContainer"></div>
 
-            <!-- Auth Tabs -->
-            <div class="flex border-b border-darkborder mb-6">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold text-celeste border-b-2 border-celeste transition-all duration-300">
-                    <i class="fa-solid fa-right-to-bracket mr-2"></i>Iniciar Sesión
-                </button>
-                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-all duration-300">
-                    <i class="fa-solid fa-user-plus mr-2"></i>Registrarse
-                </button>
-            </div>
+  <!-- ==========================================================================
+       1. PANTALLA DE INICIO DE SESIÓN (LOGIN)
+       ========================================================================== -->
+  <div class="login-wrapper" id="loginWrapper">
+    <div class="login-card">
+      <div class="login-logo">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <h2 class="login-title">EduPortal Pro</h2>
+      <p class="login-subtitle">Plataforma de Entregas y Gestión Académica</p>
 
-            <!-- LOGIN FORM -->
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiantil o Nombre</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <i class="fa-solid fa-id-card text-sm"></i>
-                        </span>
-                        <input type="text" id="loginIdentifier" required placeholder="Ej: U12345678 o Tu Nombre" class="w-full pl-10 pr-4 py-2.5 bg-darkbg/80 border border-darkborder rounded-xl text-sm focus:outline-none focus:border-celeste text-white placeholder-gray-500 transition-colors">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <i class="fa-solid fa-lock text-sm"></i>
-                        </span>
-                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-darkbg/80 border border-darkborder rounded-xl text-sm focus:outline-none focus:border-celeste text-white placeholder-gray-500 transition-colors">
-                    </div>
-                </div>
-                <button type="submit" class="w-full py-3 mt-2 btn-gradient text-darkbg font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg">
-                    <span>Ingresar como Estudiante</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-            </form>
-
-            <!-- REGISTER FORM -->
-            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-                <!-- Selector de Foto de Perfil -->
-                <div class="flex flex-col items-center mb-2">
-                    <label class="block text-xs font-medium text-gray-300 mb-2">Foto de Perfil</label>
-                    <div class="relative group cursor-pointer" onclick="document.getElementById('regAvatarInput').click()">
-                        <img id="avatarPreview" src="https://ui-avatars.com/api/?name=Estudiante&background=00b4d8&color=fff" alt="Avatar Preview" class="w-20 h-20 rounded-full object-cover border-2 border-celeste shadow-lg">
-                        <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-camera text-white text-lg"></i>
-                        </div>
-                    </div>
-                    <input type="file" id="regAvatarInput" accept="image/*" onchange="previewProfileImage(event, 'avatarPreview')" class="hidden">
-                    <span class="text-[10px] text-gray-400 mt-1">Subir imagen opcional</span>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombre Completo</label>
-                    <input type="text" id="regName" required placeholder="Ej: Juan Pérez" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiantil</label>
-                        <input type="text" id="regCode" required placeholder="Ej: 74839201" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Ciclo Académico</label>
-                        <select id="regCycle" required class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white">
-                            <option value="I Ciclo">I Ciclo</option>
-                            <option value="II Ciclo">II Ciclo</option>
-                            <option value="III Ciclo">III Ciclo</option>
-                            <option value="IV Ciclo">IV Ciclo</option>
-                            <option value="V Ciclo" selected>V Ciclo</option>
-                            <option value="VI Ciclo">VI Ciclo</option>
-                            <option value="VII Ciclo">VII Ciclo</option>
-                            <option value="VIII Ciclo">VIII Ciclo</option>
-                            <option value="IX Ciclo">IX Ciclo</option>
-                            <option value="X Ciclo">X Ciclo</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Carrera Universitaria</label>
-                    <input type="text" id="regCareer" required placeholder="Ej: Ingeniería de Sistemas e Informática" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Contraseña</label>
-                    <input type="password" id="regPassword" required placeholder="Crea tu contraseña" class="w-full px-3 py-2 bg-darkbg/80 border border-darkborder rounded-xl text-xs focus:outline-none focus:border-verde-bright text-white placeholder-gray-500">
-                </div>
-                <button type="submit" class="w-full py-3 mt-2 btn-gradient text-darkbg font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg">
-                    <i class="fa-solid fa-user-check text-xs"></i>
-                    <span>Crear Cuenta Estudiantil</span>
-                </button>
-            </form>
+      <!-- Selector de Rol -->
+      <div class="login-roles">
+        <div class="role-btn active" id="roleStudentBtn" onclick="selectRole('estudiante')">
+          <i class="fa-solid fa-user-graduate"></i>
+          <span>Estudiante</span>
         </div>
-    </div>
-
-    <!-- MAIN DASHBOARD -->
-    <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <!-- HEADER / NAVIGATION -->
-        <header class="glass-card sticky top-0 z-40 border-b border-celeste/20 bg-darkbg/90">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                <!-- Brand & Logo -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-celeste to-verde-bright p-0.5 shadow-[0_0_10px_rgba(0,180,216,0.5)]">
-                        <div class="w-full h-full bg-darkbg rounded-[10px] flex items-center justify-center">
-                            <i class="fa-solid fa-graduation-cap text-verde-bright text-lg"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="font-black text-white text-base tracking-wide">UPLA</span>
-                            <span class="text-xs px-2 py-0.5 rounded bg-celeste/20 text-celeste font-semibold border border-celeste/30">Estudiante</span>
-                        </div>
-                        <p class="text-[11px] text-gray-400 font-medium hidden sm:block">Universidad Peruana Los Andes</p>
-                    </div>
-                </div>
-
-                <!-- User Info Badge, Edit Profile & Profile Image -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
-                    <div class="relative group cursor-pointer" onclick="openProfileModal()" title="Editar Perfil">
-                        <img id="userHeaderAvatar" src="https://ui-avatars.com/api/?name=Estudiante&background=00b4d8&color=fff" alt="Perfil" class="w-11 h-11 rounded-full object-cover border-2 border-celeste shadow-[0_0_10px_rgba(0,180,216,0.3)]">
-                        <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-pen text-white text-xs"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="text-right hidden md:block">
-                        <div id="userDisplayName" class="text-sm font-bold text-white flex items-center justify-end space-x-1">
-                            <span>Cargando...</span>
-                        </div>
-                        <div id="userDisplayDetails" class="text-xs text-verde-bright font-mono">
-                            ---
-                        </div>
-                    </div>
-
-                    <button onclick="openProfileModal()" class="p-2.5 rounded-xl bg-celeste/10 text-celeste hover:bg-celeste/20 border border-celeste/30 transition-all text-xs font-semibold flex items-center space-x-1" title="Editar Perfil">
-                        <i class="fa-solid fa-user-gear"></i>
-                        <span class="hidden sm:inline">Perfil</span>
-                    </button>
-
-                    <button onclick="logout()" class="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 transition-all text-xs font-semibold flex items-center space-x-2" title="Cerrar Sesión">
-                        <i class="fa-solid fa-power-off text-sm"></i>
-                        <span class="hidden sm:inline">Salir</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- MAIN BODY CONTENT -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-            
-            <!-- Welcome Banner -->
-            <div class="relative overflow-hidden rounded-2xl glass-card p-6 md:p-8 mb-8 border border-celeste/30">
-                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-verde/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <span class="text-xs font-bold text-verde-bright uppercase tracking-widest px-2.5 py-1 rounded-full bg-verde/10 border border-verde/20">
-                            Mi Portafolio Digital & Gestor de Tareas
-                        </span>
-                        <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-2">
-                            Gestión de Entregas y Actividades
-                        </h1>
-                        <p class="text-sm text-gray-400 mt-1 max-w-2xl">
-                            Sube, descarga, organiza y gestiona tus tareas académicas con archivos adjuntos.
-                        </p>
-                    </div>
-                    <button onclick="openUploadModal()" class="btn-gradient text-darkbg font-extrabold px-5 py-3 rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg hover:scale-105 transition-transform self-start md:self-auto">
-                        <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                        <span>Agregar Tarea / Trabajo</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Search Bar & Completion Filter -->
-            <div class="glass-card rounded-xl p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-                <!-- Text Search -->
-                <div class="relative w-full md:w-80">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" id="searchInput" oninput="handleSearchInput()" placeholder="Buscar por título o descripción..." class="w-full pl-9 pr-4 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-celeste">
-                </div>
-
-                <!-- Status Filter Pills -->
-                <div class="flex items-center space-x-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                    <span class="text-xs text-gray-400 font-semibold mr-1 whitespace-nowrap"><i class="fa-solid fa-filter text-celeste mr-1"></i> Estado:</span>
-                    <button onclick="setFilterStatus('all')" id="filterBtn-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-celeste/20 text-celeste border border-celeste/40 transition-all">
-                        Todas (<span id="countAll">0</span>)
-                    </button>
-                    <button onclick="setFilterStatus('pending')" id="filterBtn-pending" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all">
-                        Pendientes (<span id="countPending">0</span>)
-                    </button>
-                    <button onclick="setFilterStatus('completed')" id="filterBtn-completed" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all">
-                        Completadas (<span id="countCompleted">0</span>)
-                    </button>
-                </div>
-            </div>
-
-            <!-- Course Selection Tabs -->
-            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-6">
-                <button id="courseTab1" onclick="selectCourse('dev-apps')" class="flex-1 p-4 rounded-xl glass-card border-l-4 border-l-celeste text-left transition-all flex items-center justify-between group">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-3 rounded-lg bg-celeste/10 text-celeste group-hover:bg-celeste group-hover:text-darkbg transition-colors">
-                            <i class="fa-solid fa-laptop-code text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm sm:text-base">Desarrollo de Aplicaciones</h3>
-                            <p class="text-xs text-gray-400">Asignatura Principal</p>
-                        </div>
-                    </div>
-                    <span id="badgeDevApps" class="px-2.5 py-1 text-xs rounded-full bg-darkbg border border-celeste/30 text-celeste font-mono font-bold">0</span>
-                </button>
-
-                <button id="courseTab2" onclick="selectCourse('algo-struct')" class="flex-1 p-4 rounded-xl glass-card border-l-4 border-l-gray-600 text-left transition-all flex items-center justify-between group opacity-70 hover:opacity-100">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-3 rounded-lg bg-verde/10 text-verde-bright group-hover:bg-verde-bright group-hover:text-darkbg transition-colors">
-                            <i class="fa-solid fa-diagram-project text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white text-sm sm:text-base">Algoritmos y Estructuras</h3>
-                            <p class="text-xs text-gray-400">Asignatura Especializada</p>
-                        </div>
-                    </div>
-                    <span id="badgeAlgoStruct" class="px-2.5 py-1 text-xs rounded-full bg-darkbg border border-verde/30 text-verde-bright font-mono font-bold">0</span>
-                </button>
-            </div>
-
-            <!-- Units Navigation Filter -->
-            <div class="glass-card rounded-xl p-2 mb-4 flex flex-wrap gap-1 md:gap-2">
-                <button onclick="selectUnit('all')" id="unitTab-all" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-celeste/20 border border-celeste/40 transition-all text-center">
-                    Todas las Unidades
-                </button>
-                <button onclick="selectUnit('U1')" id="unitTab-U1" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                    Unidad 1 (Sem 1-4)
-                </button>
-                <button onclick="selectUnit('U2')" id="unitTab-U2" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                    Unidad 2 (Sem 5-8)
-                </button>
-                <button onclick="selectUnit('U3')" id="unitTab-U3" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                    Unidad 3 (Sem 9-12)
-                </button>
-                <button onclick="selectUnit('U4')" id="unitTab-U4" class="unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center">
-                    Unidad 4 (Sem 13-16)
-                </button>
-            </div>
-
-            <!-- Sub-filtro de Semanas por Unidad -->
-            <div id="weeksFilterContainer" class="glass-card rounded-xl p-2 mb-8 flex flex-wrap gap-2 items-center text-xs">
-                <span class="text-gray-400 font-semibold px-2"><i class="fa-regular fa-calendar-days text-verde-bright mr-1"></i> Filtrar Semana:</span>
-                <div id="weeksButtonsList" class="flex flex-wrap gap-1"></div>
-            </div>
-
-            <!-- WORKS CONTENT GRID -->
-            <div id="worksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-            <!-- Empty State Display -->
-            <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center glass-card rounded-2xl border border-dashed border-darkborder">
-                <div class="w-16 h-16 rounded-full bg-darkbg flex items-center justify-center mb-4 text-celeste text-2xl border border-celeste/20">
-                    <i class="fa-solid fa-folder-open"></i>
-                </div>
-                <h3 class="text-base font-bold text-white">No hay tareas encontradas</h3>
-                <p class="text-xs text-gray-400 mt-1 max-w-sm">No se encontraron entregas en este filtro. ¡Haz clic en subir trabajo para añadir una!</p>
-                <button onclick="openUploadModal()" class="mt-4 px-4 py-2 bg-celeste/20 text-celeste border border-celeste/40 hover:bg-celeste/30 rounded-xl text-xs font-bold transition-all">
-                    + Registrar Trabajo
-                </button>
-            </div>
-
-        </main>
-
-        <!-- FOOTER -->
-        <footer class="border-t border-darkborder bg-darkbg py-6 mt-12 text-center text-xs text-gray-500">
-            <div class="max-w-7xl mx-auto px-4">
-                <p>© Universidad Peruana Los Andes - Portafolio Digital Estudiantil</p>
-            </div>
-        </footer>
-    </div>
-
-    <!-- UPLOAD WORK MODAL (WITH DRAG & DROP FILE ATTACHMENT) -->
-    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
-        <div class="w-full max-w-xl glass-card rounded-2xl p-6 border border-verde-bright/30 relative max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-darkborder">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-cloud-arrow-up text-verde-bright text-lg"></i>
-                    <h3 class="text-base font-bold text-white">Agregar Tarea o Evidencia</h3>
-                </div>
-                <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white p-1 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form id="workForm" onsubmit="saveWork(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Título de la Tarea / Actividad</label>
-                    <input type="text" id="workTitle" required placeholder="Ej: Guía Práctica 01 - Matriz de Adyacencia" class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Curso Destino</label>
-                        <select id="workCourse" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                            <option value="dev-apps">Desarrollo de Aplicaciones</option>
-                            <option value="algo-struct">Algoritmos y Estructuras</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Unidad Académica</label>
-                        <select id="workUnit" onchange="updateWeekDropdown()" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright">
-                            <option value="U1">Unidad 1</option>
-                            <option value="U2">Unidad 2</option>
-                            <option value="U3">Unidad 3</option>
-                            <option value="U4">Unidad 4</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Semana Correspondiente</label>
-                        <select id="workWeek" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright"></select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Descripción de la Tarea</label>
-                    <textarea id="workDescription" rows="2" placeholder="Resumen o explicación de la actividad realizada..." class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-verde-bright resize-none"></textarea>
-                </div>
-
-                <!-- DRAG AND DROP FILE ATTACHMENT BOX -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Adjuntar Archivo de la Tarea (PDF, Java, Word, Zip, etc.)</label>
-                    <div id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)" onclick="document.getElementById('taskFileInput').click()" class="border-2 border-dashed border-darkborder hover:border-celeste rounded-xl p-4 text-center cursor-pointer transition-colors bg-darkbg/50">
-                        <i class="fa-solid fa-file-arrow-up text-celeste text-2xl mb-1"></i>
-                        <p id="fileDropText" class="text-xs text-gray-300">Arrastra tu archivo aquí o <span class="text-celeste font-bold underline">examina tus carpetas</span></p>
-                        <p id="fileSelectedInfo" class="text-xs text-verde-bright font-mono font-semibold mt-1 hidden"></p>
-                    </div>
-                    <input type="file" id="taskFileInput" onchange="handleFileSelect(event)" class="hidden">
-                </div>
-
-                <div class="pt-3 border-t border-darkborder flex justify-end space-x-3">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 transition-colors">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 btn-gradient text-darkbg font-bold rounded-xl text-xs">Guardar Tarea</button>
-                </div>
-            </form>
+        <div class="role-btn" id="roleTeacherBtn" onclick="selectRole('maestro')">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          <span>Maestro</span>
         </div>
-    </div>
+      </div>
 
-    <!-- EDIT PROFILE MODAL -->
-    <div id="profileModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
-        <div class="w-full max-w-md glass-card rounded-2xl p-6 border border-celeste/30 relative max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-darkborder">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-user-gear text-celeste text-lg"></i>
-                    <h3 class="text-base font-bold text-white">Editar Perfil de Estudiante</h3>
-                </div>
-                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white p-1 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+      <!-- Formularios -->
+      <div id="studentLoginForm">
+        <form onsubmit="loginStudent(event)">
+          <div class="form-group">
+            <label>Nombre de Usuario</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="loginUsername" class="form-control" placeholder="Ej. JuanPerez" required>
             </div>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">
+            <i class="fa-solid fa-right-to-bracket"></i> Ingresar como Estudiante
+          </button>
+        </form>
+      </div>
 
-            <form id="editProfileForm" onsubmit="saveProfileChanges(event)" class="space-y-4">
-                <!-- Foto de Perfil en Modal -->
-                <div class="flex flex-col items-center mb-3">
-                    <label class="block text-xs font-medium text-gray-300 mb-2">Cambiar Foto de Perfil</label>
-                    <div class="relative group cursor-pointer" onclick="document.getElementById('editAvatarInput').click()">
-                        <img id="editAvatarPreview" src="" alt="Avatar Preview" class="w-24 h-24 rounded-full object-cover border-2 border-celeste shadow-lg">
-                        <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-camera text-white text-xl"></i>
-                        </div>
-                    </div>
-                    <input type="file" id="editAvatarInput" accept="image/*" onchange="previewProfileImage(event, 'editAvatarPreview')" class="hidden">
-                    <span class="text-[10px] text-gray-400 mt-1">Haz clic para seleccionar nueva foto</span>
-                </div>
+      <!-- Acceso Directo Profesor Sin Clave -->
+      <div id="teacherLoginForm" style="display: none;">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+          Acceso rápido exclusivo para Docentes. Ingrese directamente sin necesidad de credenciales para revisar los trabajos.
+        </p>
+        <button class="btn-direct-teacher" onclick="loginTeacherDirect()">
+          <i class="fa-solid fa-bolt"></i> Ingreso Directo de Maestro
+        </button>
+      </div>
+    </div>
+  </div>
 
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Nombre Completo</label>
-                    <input type="text" id="editName" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
-                </div>
+  <!-- ==========================================================================
+       2. APLICACIÓN PRINCIPAL (DASHBOARD)
+       ========================================================================== -->
+  <div class="app-container" id="appContainer">
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Código Estudiantil</label>
-                        <input type="text" id="editCode" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Ciclo Académico</label>
-                        <select id="editCycle" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
-                            <option value="I Ciclo">I Ciclo</option>
-                            <option value="II Ciclo">II Ciclo</option>
-                            <option value="III Ciclo">III Ciclo</option>
-                            <option value="IV Ciclo">IV Ciclo</option>
-                            <option value="V Ciclo">V Ciclo</option>
-                            <option value="VI Ciclo">VI Ciclo</option>
-                            <option value="VII Ciclo">VII Ciclo</option>
-                            <option value="VIII Ciclo">VIII Ciclo</option>
-                            <option value="IX Ciclo">IX Ciclo</option>
-                            <option value="X Ciclo">X Ciclo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Carrera Universitaria</label>
-                    <input type="text" id="editCareer" required class="w-full px-3 py-2 bg-darkbg border border-darkborder rounded-xl text-xs text-white focus:outline-none focus:border-celeste">
-                </div>
-
-                <div class="pt-3 border-t border-darkborder flex justify-end space-x-3">
-                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 transition-colors">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 btn-gradient text-darkbg font-bold rounded-xl text-xs">Guardar Cambios</button>
-                </div>
-            </form>
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-brand">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>EduPortal Pro</span>
         </div>
-    </div>
 
-    <!-- DELETE CONFIRMATION MODAL -->
-    <div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-darkbg/80 backdrop-blur-md">
-        <div class="w-full max-w-sm glass-card rounded-2xl p-6 border border-red-500/30 text-center relative">
-            <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center mx-auto mb-3 text-xl">
-                <i class="fa-solid fa-trash-can"></i>
+        <div class="menu-header">Menú Principal</div>
+        <ul class="sidebar-menu">
+          <li>
+            <a class="menu-item active" id="navDashboard" onclick="switchView('dashboard')">
+              <i class="fa-solid fa-house"></i>
+              <span>Inicio / Trabajos</span>
+            </a>
+          </li>
+
+          <!-- Desplegable de Carpetas -->
+          <li>
+            <div class="menu-item folder-toggle" id="folderToggleBtn" onclick="toggleFolderMenu()">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fa-solid fa-folder-tree" style="color: var(--secondary);"></i>
+                <span>Mis Carpetas</span>
+              </div>
+              <i class="fa-solid fa-chevron-right arrow"></i>
             </div>
-            <h3 class="text-base font-bold text-white mb-1">¿Eliminar esta tarea?</h3>
-            <p class="text-xs text-gray-400 mb-5">Esta acción no se puede deshacer. Se borrará la tarea y su archivo adjunto.</p>
-            <div class="flex justify-center space-x-3">
-                <button onclick="closeDeleteModal()" class="px-4 py-2 bg-darkborder hover:bg-gray-700 rounded-xl text-xs text-gray-300 font-medium">Cancelar</button>
-                <button onclick="confirmDeleteWork()" class="px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-xl text-xs font-bold transition-all">Sí, Eliminar</button>
-            </div>
+            <ul class="sub-folders" id="subFoldersMenu">
+              <li>
+                <a class="menu-item" onclick="filterByFolder('Matemáticas')">
+                  <i class="fa-solid fa-folder"></i> Matemáticas
+                </a>
+              </li>
+              <li>
+                <a class="menu-item" onclick="filterByFolder('Programación')">
+                  <i class="fa-solid fa-folder"></i> Programación
+                </a>
+              </li>
+              <li>
+                <a class="menu-item" onclick="filterByFolder('Historia')">
+                  <i class="fa-solid fa-folder"></i> Historia
+                </a>
+              </li>
+              <li>
+                <a class="menu-item" onclick="filterByFolder('General')">
+                  <i class="fa-solid fa-folder"></i> General
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <a class="menu-item" id="navProfile" onclick="switchView('profile')">
+              <i class="fa-solid fa-user-gear"></i>
+              <span>Editar Mi Perfil</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Perfil Info Footer -->
+      <div class="user-profile-bottom">
+        <div class="avatar" id="sidebarAvatar">U</div>
+        <div class="user-info">
+          <div class="name" id="sidebarName">Usuario</div>
+          <div class="role" id="sidebarRole">Estudiante</div>
         </div>
-    </div>
+        <button class="btn-logout" onclick="logout()" title="Cerrar Sesión">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
+    </aside>
 
-    <!-- SCRIPT LOGIC -->
-    <script>
-        const unitWeeksMapping = {
-            'U1': [{ id: 1, label: 'Semana 1' }, { id: 2, label: 'Semana 2' }, { id: 3, label: 'Semana 3' }, { id: 4, label: 'Semana 4' }],
-            'U2': [{ id: 5, label: 'Semana 5' }, { id: 6, label: 'Semana 6' }, { id: 7, label: 'Semana 7' }, { id: 8, label: 'Semana 8' }],
-            'U3': [{ id: 9, label: 'Semana 9' }, { id: 10, label: 'Semana 10' }, { id: 11, label: 'Semana 11' }, { id: 12, label: 'Semana 12' }],
-            'U4': [{ id: 13, label: 'Semana 13' }, { id: 14, label: 'Semana 14' }, { id: 15, label: 'Semana 15' }, { id: 16, label: 'Semana 16' }]
-        };
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
 
-        let currentUser = null;
-        let selectedCourse = 'dev-apps';
-        let selectedUnit = 'all';
-        let selectedWeek = 'all';
-        let filterStatus = 'all'; // 'all', 'pending', 'completed'
-        let searchQuery = '';
+      <!-- TOP HEADER -->
+      <header class="top-header">
+        <div class="header-title">
+          <h1 id="pageTitle">Panel de Trabajos Subidos</h1>
+          <p id="pageSubtitle">Gestiona, sube, elimina y descarga tus proyectos académicos</p>
+        </div>
+      </header>
+
+      <!-- Banner Especial Modo Maestro -->
+      <div class="teacher-banner" id="teacherBanner" style="display: none;">
+        <div>
+          <i class="fa-solid fa-eye"></i>
+          <div>
+            <strong>Modo Muestra / Evaluación Docente</strong>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Está revisando los trabajos subidos por el alumno. Puede descargar las entregas completas.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 1: DASHBOARD DE TRABAJOS Y SUBIDA -->
+      <div id="viewDashboard">
+
+        <!-- Formulario de Subida Múltiple (Oculto para Maestro) -->
+        <section class="upload-card" id="uploadSection">
+          <h3 class="section-title">
+            <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> Subir Trabajos
+          </h3>
+
+          <!-- Drag and Drop Zone -->
+          <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <i class="fa-solid fa-file-circle-plus"></i>
+            <h4>Arrastra y suelta tus archivos aquí</h4>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px;">
+              Puedes seleccionar <strong>múltiples archivos a la vez</strong> (PDF, Word, ZIP, Imágenes, Código)
+            </p>
+            <input type="file" id="fileInput" class="file-input" multiple onchange="handleFileSelect(event)">
+          </div>
+
+          <!-- Lista de Archivos Seleccionados Múltiples para Confirmar Subida -->
+          <div class="selected-files-list" id="selectedFilesContainer"></div>
+
+          <!-- Metadatos para los archivos -->
+          <div class="form-grid-upload">
+            <div class="form-group">
+              <label>Asignar a Carpeta / Materia</label>
+              <select id="uploadFolder" class="form-control">
+                <option value="General">General</option>
+                <option value="Matemáticas">Matemáticas</option>
+                <option value="Programación">Programación</option>
+                <option value="Historia">Historia</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Descripción / Nota de la Entrega (Opcional)</label>
+              <input type="text" id="uploadDescription" class="form-control" placeholder="Ej. Avance Final del Proyecto">
+            </div>
+          </div>
+
+          <button class="btn-submit" onclick="uploadFilesProcess()" style="margin-top: 10px;">
+            <i class="fa-solid fa-upload"></i> Confirmar y Guardar Trabajos
+          </button>
+        </section>
+
+        <!-- Galería y Listado de Trabajos Subidos -->
+        <section>
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h3 class="section-title">
+              <i class="fa-solid fa-folder-open" style="color: var(--secondary);"></i> 
+              Trabajos Almacenados (<span id="taskCount">0</span>)
+            </h3>
+
+            <!-- Barra de Filtros -->
+            <div class="filter-bar">
+              <button class="filter-btn active" onclick="filterTasks('all', this)">Todos</button>
+              <button class="filter-btn" onclick="filterTasks('Matemáticas', this)">Matemáticas</button>
+              <button class="filter-btn" onclick="filterTasks('Programación', this)">Programación</button>
+              <button class="filter-btn" onclick="filterTasks('Historia', this)">Historia</button>
+              <button class="filter-btn" onclick="filterTasks('General', this)">General</button>
+            </div>
+          </div>
+
+          <!-- Grid de Tarjetas de Trabajos -->
+          <div class="tasks-grid" id="tasksGrid"></div>
+        </section>
+      </div>
+
+      <!-- VISTA 2: EDITAR PERFIL Y CONTRASEÑA -->
+      <div id="viewProfile" style="display: none;">
+        <div class="profile-card">
+          <div class="profile-header-edit">
+            <div class="avatar-large" id="profileAvatarBig">U</div>
+            <div>
+              <h2 id="profileNameBig">Nombre Usuario</h2>
+              <p style="color: var(--text-muted);" id="profileRoleBig">Estudiante</p>
+            </div>
+          </div>
+
+          <form onsubmit="saveProfileChanges(event)">
+            <h4 style="margin-bottom: 15px; color: var(--secondary);"><i class="fa-solid fa-id-card"></i> Datos Personales</h4>
+            <div class="form-group">
+              <label>Nombre Completo</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="editFullName" class="form-control" required>
+              </div>
+            </div>
+
+            <h4 style="margin-top: 25px; margin-bottom: 15px; color: var(--accent);"><i class="fa-solid fa-key"></i> Cambiar Contraseña</h4>
+            <div class="form-group">
+              <label>Nueva Contraseña</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="editPassword" class="form-control" placeholder="Ingresa nueva contraseña para cambiar">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" style="margin-top: 20px;">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Perfil
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       3. LOGICA JAVASCRIPT Y PERSISTENCIA (LOCALSTORAGE & BASE64)
+       ========================================================================== -->
+  <script>
+    /* VARIABLES DE ESTADO GLOBAL */
+    let currentUser = null;
+    let selectedFilesList = []; // Mapeo temporal de archivos subidos en lote
+    let activeFilter = 'all';
+
+    // Base de datos local persistente en LocalStorage
+    let tasksDB = JSON.parse(localStorage.getItem('eduportal_tasks')) || [
+      // Trabajos de muestra iniciales
+      {
+        id: '1',
+        title: 'Algoritmos_Estructuras.pdf',
+        folder: 'Programación',
+        desc: 'Tarea de Estructuras de Datos en C++',
+        date: '2026-03-20',
+        size: '1.2 MB',
+        type: 'pdf',
+        fileData: 'data:application/pdf;base64,JVBERi0xLjQK...' // Mock o Base64 real
+      },
+      {
+        id: '2',
+        title: 'Ejercicios_Cálculo.docx',
+        folder: 'Matemáticas',
+        desc: 'Resolución de integrales dobles',
+        date: '2026-03-22',
+        size: '850 KB',
+        type: 'doc',
+        fileData: 'data:application/msword;base64,JVBERi0xLjQK...'
+      }
+    ];
+
+    let userProfile = JSON.parse(localStorage.getItem('eduportal_user')) || {
+      username: 'AlumnoDemo',
+      role: 'estudiante',
+      password: '123'
+    };
+
+    /* INICIALIZACIÓN */
+    document.addEventListener('DOMContentLoaded', () => {
+      saveDB(); // Guardar valores iniciales si no existen
+      setupDragAndDrop();
+    });
+
+    /* Guardar en localStorage para que NUNCA SE BORREN al salir */
+    function saveDB() {
+      localStorage.setItem('eduportal_tasks', JSON.stringify(tasksDB));
+      localStorage.setItem('eduportal_user', JSON.stringify(userProfile));
+    }
+
+    /* ==========================================================================
+       MECANISMO DE LOGIN Y ROLES
+       ========================================================================== */
+    function selectRole(role) {
+      const studentBtn = document.getElementById('roleStudentBtn');
+      const teacherBtn = document.getElementById('roleTeacherBtn');
+      const studentForm = document.getElementById('studentLoginForm');
+      const teacherForm = document.getElementById('teacherLoginForm');
+
+      if (role === 'estudiante') {
+        studentBtn.classList.add('active');
+        teacherBtn.classList.remove('active');
+        studentForm.style.display = 'block';
+        teacherForm.style.display = 'none';
+      } else {
+        teacherBtn.classList.add('active');
+        studentBtn.classList.remove('active');
+        studentForm.style.display = 'none';
+        teacherForm.style.display = 'block';
+      }
+    }
+
+    // Login Alumno
+    function loginStudent(e) {
+      e.preventDefault();
+      const userVal = document.getElementById('loginUsername').value;
+      const passVal = document.getElementById('loginPassword').value;
+
+      if (userVal === userProfile.username && passVal === userProfile.password) {
+        currentUser = { name: userProfile.username, role: 'estudiante' };
+        initApp();
+        showToast('¡Bienvenido de nuevo ' + userProfile.username + '!', 'success');
+      } else {
+        // Permitir ingresar igual para no bloquear prueba
+        userProfile.username = userVal;
+        userProfile.password = passVal;
+        saveDB();
+        currentUser = { name: userVal, role: 'estudiante' };
+        initApp();
+        showToast('Perfil actualizado e ingreso exitoso', 'success');
+      }
+    }
+
+    // Ingreso Directo de Maestro (Sin Clave / Directo)
+    function loginTeacherDirect() {
+      currentUser = { name: 'Profesor Evaluador', role: 'maestro' };
+      initApp();
+      showToast('Ingreso como Maestro completado sin restricciones.', 'success');
+      
+      // Efecto especial Confetti al ingresar el maestro
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+
+    // Cerrar Sesión
+    function logout() {
+      currentUser = null;
+      document.getElementById('appContainer').style.display = 'none';
+      document.getElementById('loginWrapper').style.display = 'flex';
+      showToast('Sesión cerrada correctamente', 'warning');
+    }
+
+    /* Inicializar Interfaz de la Aplicación */
+    function initApp() {
+      document.getElementById('loginWrapper').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'grid';
+
+      // Actualizar UI según Rol
+      const isTeacher = currentUser.role === 'maestro';
+      document.getElementById('sidebarName').textContent = currentUser.name;
+      document.getElementById('sidebarRole').textContent = isTeacher ? 'Docente / Profesor' : 'Estudiante';
+      document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+
+      // Ajustes para el Maestro
+      if (isTeacher) {
+        document.getElementById('uploadSection').style.display = 'none';
+        document.getElementById('teacherBanner').style.display = 'flex';
+        document.getElementById('pageTitle').textContent = 'Perfil & Trabajos de: ' + userProfile.username;
+        document.getElementById('pageSubtitle').textContent = 'Vista de evaluación docente. Puede descargar todos los trabajos entregados.';
+      } else {
+        document.getElementById('uploadSection').style.display = 'block';
+        document.getElementById('teacherBanner').style.display = 'none';
+        document.getElementById('pageTitle').textContent = 'Panel de Trabajos Subidos';
+        document.getElementById('pageSubtitle').textContent = 'Gestiona, sube, elimina y descarga tus proyectos académicos';
+      }
+
+      // Cargar datos en el formulario de edición de perfil
+      document.getElementById('editFullName').value = userProfile.username;
+      document.getElementById('profileNameBig').textContent = userProfile.username;
+      document.getElementById('profileAvatarBig').textContent = userProfile.username.charAt(0).toUpperCase();
+
+      renderTasks();
+    }
+
+    /* ==========================================================================
+       SUBIDA MÚLTIPLE DE ARCHIVOS & DRAG AND DROP
+       ========================================================================== */
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('dropZone');
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      });
+    }
+
+    function handleFileSelect(e) {
+      const files = e.target.files;
+      handleFiles(files);
+    }
+
+    // Procesar arreglo de archivos seleccionados
+    function handleFiles(files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         
-        let tempAvatarBase64 = '';
-        let pendingAttachment = null; // Stores file object { name, type, size, base64 }
-        let workIdToDelete = null;
+        // Convertir a Base64 para guardarlo permanentemente
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedFilesList.push({
+            fileObj: file,
+            name: file.name,
+            size: formatBytes(file.size),
+            type: getFileTypeCategory(file.name),
+            base64: e.target.result
+          });
+          renderSelectedFilesList();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
-        // Initial default state with mock tasks
-        let worksData = JSON.parse(localStorage.getItem('upla_works')) || [
-            { 
-                id: 1, 
-                title: 'Práctica Calificada 1 - Arrays', 
-                course: 'dev-apps', 
-                unit: 'U1', 
-                week: 2, 
-                completed: false, 
-                description: 'Ejercicios con arreglos unidimensionales.', 
-                file: {
-                    fileName: 'Practica1_Arrays.java',
-                    fileType: 'text/plain',
-                    base64: 'data:text/plain;base64,cHVibGljIGNsYXNzIEFycmF5c0RlbW8gewogICAgcHVibGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgewogICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiSG9sYSBVUExBCEVsZW1lbnRvcyBkZWwgQXJyYXkiKTsKICAgIH0KfQ=='
-                },
-                date: '2026-09-10' 
-            },
-            { 
-                id: 2, 
-                title: 'Informe de Estructura de Datos', 
-                course: 'algo-struct', 
-                unit: 'U2', 
-                week: 6, 
-                completed: true, 
-                description: 'Uso e implementación de Listas Enlazadas.', 
-                file: {
-                    fileName: 'Informe_Estructuras.pdf',
-                    fileType: 'application/pdf',
-                    base64: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iag=="'
-                },
-                date: '2026-09-12' 
-            }
-        ];
+    // Renderizar la pre-lista de subida múltiple
+    function renderSelectedFilesList() {
+      const container = document.getElementById('selectedFilesContainer');
+      container.innerHTML = '';
 
-        function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const tabLoginBtn = document.getElementById('tabLoginBtn');
-            const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      selectedFilesList.forEach((item, index) => {
+        const fileEl = document.createElement('div');
+        fileEl.className = 'selected-file-item';
+        fileEl.innerHTML = `
+          <div class="file-info">
+            <i class="fa-solid fa-paperclip" style="color: var(--primary);"></i>
+            <span><strong>${item.name}</strong> (${item.size})</span>
+          </div>
+          <i class="fa-solid fa-trash remove-btn" onclick="removeSelectedFile(${index})" title="Quitar"></i>
+        `;
+        container.appendChild(fileEl);
+      });
+    }
 
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabLoginBtn.className = "flex-1 py-2 text-sm font-semibold text-celeste border-b-2 border-celeste transition-all duration-300";
-                tabRegisterBtn.className = "flex-1 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-all duration-300";
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabRegisterBtn.className = "flex-1 py-2 text-sm font-semibold text-verde-bright border-b-2 border-verde-bright transition-all duration-300";
-                tabLoginBtn.className = "flex-1 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-all duration-300";
-            }
+    function removeSelectedFile(index) {
+      selectedFilesList.splice(index, 1);
+      renderSelectedFilesList();
+    }
+
+    // Procesar la subida final a la base de datos persistente
+    function uploadFilesProcess() {
+      if (selectedFilesList.length === 0) {
+        showToast('Por favor selecciona al menos un archivo para subir', 'danger');
+        return;
+      }
+
+      const folder = document.getElementById('uploadFolder').value;
+      const desc = document.getElementById('uploadDescription').value || 'Sin descripción';
+      const today = new Date().toISOString().split('T')[0];
+
+      selectedFilesList.forEach(item => {
+        const newTask = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+          title: item.name,
+          folder: folder,
+          desc: desc,
+          date: today,
+          size: item.size,
+          type: item.type,
+          fileData: item.base64
+        };
+        tasksDB.unshift(newTask);
+      });
+
+      saveDB(); // Guardar permanentemente
+      renderTasks();
+
+      // Resetear formulario
+      selectedFilesList = [];
+      renderSelectedFilesList();
+      document.getElementById('uploadDescription').value = '';
+      document.getElementById('fileInput').value = '';
+
+      showToast(`¡Se han subido ${selectedFilesList.length || 'los'} trabajos con éxito!`, 'success');
+
+      // Animación Confetti por logro
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.8 }
+      });
+    }
+
+    /* Helper: Determinar categoría del tipo de archivo */
+    function getFileTypeCategory(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      if (['pdf'].includes(ext)) return 'pdf';
+      if (['doc', 'docx', 'txt'].includes(ext)) return 'doc';
+      if (['zip', 'rar', '7z'].includes(ext)) return 'zip';
+      if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) return 'img';
+      if (['js', 'html', 'css', 'py', 'cpp', 'java'].includes(ext)) return 'code';
+      return 'doc';
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    /* ==========================================================================
+       RENDERIZADO, ELIMINACIÓN Y DESCARGA DE TRABAJOS
+       ========================================================================== */
+    function renderTasks() {
+      const grid = document.getElementById('tasksGrid');
+      grid.innerHTML = '';
+
+      const filteredTasks = tasksDB.filter(task => {
+        if (activeFilter === 'all') return true;
+        return task.folder.toLowerCase() === activeFilter.toLowerCase();
+      });
+
+      document.getElementById('taskCount').textContent = filteredTasks.length;
+
+      if (filteredTasks.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-folder-open"></i>
+            <h3>No se encontraron trabajos</h3>
+            <p>No hay entregas subidas en esta sección o carpeta.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filteredTasks.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.id = `task-${task.id}`;
+
+        // Obtener ícono según extensión
+        let iconClass = 'fa-file-lines';
+        if (task.type === 'pdf') iconClass = 'fa-file-pdf';
+        if (task.type === 'doc') iconClass = 'fa-file-word';
+        if (task.type === 'zip') iconClass = 'fa-file-zipper';
+        if (task.type === 'img') iconClass = 'fa-file-image';
+        if (task.type === 'code') iconClass = 'fa-file-code';
+
+        card.innerHTML = `
+          <div>
+            <div class="task-header">
+              <div class="file-icon-badge ${task.type}">
+                <i class="fa-solid ${iconClass}"></i>
+              </div>
+              <span class="folder-tag"><i class="fa-solid fa-folder"></i> ${task.folder}</span>
+            </div>
+            <h4 class="task-title">${task.title}</h4>
+            <p class="task-desc">${task.desc}</p>
+          </div>
+
+          <div>
+            <div class="task-meta">
+              <span><i class="fa-regular fa-calendar"></i> ${task.date}</span>
+              <span><i class="fa-solid fa-hard-drive"></i> ${task.size}</span>
+            </div>
+
+            <div class="task-actions">
+              <!-- Botón Descargar -->
+              <a href="${task.fileData || '#'}" download="${task.title}" class="btn-action btn-download" onclick="notifyDownload('${task.title}')">
+                <i class="fa-solid fa-download"></i> Descargar
+              </a>
+
+              <!-- Botón Eliminar con efecto disolver -->
+              <button class="btn-action btn-delete" onclick="deleteTaskWithAnimation('${task.id}')">
+                <i class="fa-solid fa-trash-can"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Animación y Eliminación de Tareas
+    function deleteTaskWithAnimation(id) {
+      if (confirm('¿Estás seguro de que deseas eliminar este trabajo definitivamente?')) {
+        const card = document.getElementById(`task-${id}`);
+        if (card) {
+          card.classList.add('deleting'); // Efecto Disolver CSS
+          setTimeout(() => {
+            tasksDB = tasksDB.filter(t => t.id !== id);
+            saveDB();
+            renderTasks();
+            showToast('Trabajo eliminado del servidor local', 'danger');
+          }, 550);
         }
+      }
+    }
 
-        function previewProfileImage(event, previewImgId) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempAvatarBase64 = e.target.result;
-                    document.getElementById(previewImgId).src = tempAvatarBase64;
-                }
-                reader.readAsDataURL(file);
-            }
+    function notifyDownload(title) {
+      showToast(`Descargando "${title}"...`, 'success');
+    }
+
+    /* Filtros por Categoría / Materia */
+    function filterTasks(folder, btn) {
+      activeFilter = folder;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+      renderTasks();
+    }
+
+    function filterByFolder(folder) {
+      switchView('dashboard');
+      activeFilter = folder;
+      
+      // Marcar botón activo correspondiente
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        if (b.textContent.trim().toLowerCase() === folder.toLowerCase()) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
         }
+      });
 
-        function handleRegister(e) {
-            e.preventDefault();
-            const name = document.getElementById('regName').value;
-            const code = document.getElementById('regCode').value;
-            const cycle = document.getElementById('regCycle').value;
-            const career = document.getElementById('regCareer').value;
-            const password = document.getElementById('regPassword').value;
-            
-            const avatar = tempAvatarBase64 || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=00b4d8&color=fff`;
+      renderTasks();
+    }
 
-            const user = { name, code, cycle, career, password, avatar };
-            localStorage.setItem('upla_user', JSON.stringify(user));
-            currentUser = user;
-            tempAvatarBase64 = '';
-            initDashboard();
-        }
+    /* Menu Desplegable de Carpetas */
+    function toggleFolderMenu() {
+      const toggleBtn = document.getElementById('folderToggleBtn');
+      const subFolders = document.getElementById('subFoldersMenu');
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const identifier = document.getElementById('loginIdentifier').value;
-            const savedUser = JSON.parse(localStorage.getItem('upla_user'));
+      toggleBtn.classList.toggle('open');
+      subFolders.classList.toggle('show');
+    }
 
-            if (savedUser) {
-                currentUser = savedUser;
-            } else {
-                currentUser = {
-                    name: identifier,
-                    code: '74839201',
-                    cycle: 'V Ciclo',
-                    career: 'Ing. de Sistemas e Informática',
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(identifier)}&background=00b4d8&color=fff`
-                };
-            }
-            initDashboard();
-        }
+    /* ==========================================================================
+       EDITAR PERFIL Y CAMBIO DE CONTRASEÑA
+       ========================================================================== */
+    function saveProfileChanges(e) {
+      e.preventDefault();
+      const newName = document.getElementById('editFullName').value;
+      const newPass = document.getElementById('editPassword').value;
 
-        function initDashboard() {
-            document.getElementById('authContainer').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
+      userProfile.username = newName;
+      if (newPass.trim() !== '') {
+        userProfile.password = newPass;
+      }
 
-            updateHeaderUI();
-            updateWeekDropdown();
-            renderWeeksFilter();
-            renderWorks();
-        }
+      saveDB();
+      currentUser.name = newName;
 
-        function updateHeaderUI() {
-            document.getElementById('userDisplayName').innerHTML = `${currentUser.name} <i class="fa-solid fa-circle-check text-celeste text-xs ml-1"></i>`;
-            document.getElementById('userDisplayDetails').innerText = `${currentUser.code} | ${currentUser.cycle}`;
-            document.getElementById('userHeaderAvatar').src = currentUser.avatar;
-        }
+      // Actualizar UI
+      document.getElementById('sidebarName').textContent = newName;
+      document.getElementById('sidebarAvatar').textContent = newName.charAt(0).toUpperCase();
+      document.getElementById('profileNameBig').textContent = newName;
+      document.getElementById('profileAvatarBig').textContent = newName.charAt(0).toUpperCase();
+      document.getElementById('editPassword').value = '';
 
-        function openProfileModal() {
-            document.getElementById('editName').value = currentUser.name;
-            document.getElementById('editCode').value = currentUser.code;
-            document.getElementById('editCycle').value = currentUser.cycle;
-            document.getElementById('editCareer').value = currentUser.career;
-            document.getElementById('editAvatarPreview').src = currentUser.avatar;
-            tempAvatarBase64 = '';
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
+      showToast('Perfil y contraseña actualizados correctamente', 'success');
+    }
 
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
+    /* Navegación entre Vistas */
+    function switchView(viewName) {
+      const viewDashboard = document.getElementById('viewDashboard');
+      const viewProfile = document.getElementById('viewProfile');
+      const navDashboard = document.getElementById('navDashboard');
+      const navProfile = document.getElementById('navProfile');
 
-        function saveProfileChanges(e) {
-            e.preventDefault();
-            currentUser.name = document.getElementById('editName').value;
-            currentUser.code = document.getElementById('editCode').value;
-            currentUser.cycle = document.getElementById('editCycle').value;
-            currentUser.career = document.getElementById('editCareer').value;
+      if (viewName === 'dashboard') {
+        viewDashboard.style.display = 'block';
+        viewProfile.style.display = 'none';
+        navDashboard.classList.add('active');
+        navProfile.classList.remove('active');
+      } else if (viewName === 'profile') {
+        viewDashboard.style.display = 'none';
+        viewProfile.style.display = 'block';
+        navDashboard.classList.remove('active');
+        navProfile.classList.add('active');
+      }
+    }
 
-            if (tempAvatarBase64) {
-                currentUser.avatar = tempAvatarBase64;
-            }
+    /* ==========================================================================
+       SISTEMA DE NOTIFICACIONES TOAST
+       ========================================================================== */
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
 
-            localStorage.setItem('upla_user', JSON.stringify(currentUser));
-            updateHeaderUI();
-            closeProfileModal();
-        }
+      let icon = 'fa-circle-check';
+      if (type === 'danger') icon = 'fa-circle-xmark';
+      if (type === 'warning') icon = 'fa-triangle-exclamation';
 
-        function logout() {
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('authContainer').classList.remove('hidden');
-        }
+      toast.innerHTML = `
+        <i class="fa-solid ${icon}"></i>
+        <span>${message}</span>
+      `;
 
-        // Drag and Drop Attachment Functions
-        function handleDragOver(e) {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.add('border-verde-bright', 'bg-verde/10');
-        }
+      container.appendChild(toast);
 
-        function handleDragLeave(e) {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.remove('border-verde-bright', 'bg-verde/10');
-        }
-
-        function handleFileDrop(e) {
-            e.preventDefault();
-            handleDragLeave(e);
-            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                processFileAttachment(e.dataTransfer.files[0]);
-            }
-        }
-
-        function handleFileSelect(e) {
-            if (e.target.files && e.target.files[0]) {
-                processFileAttachment(e.target.files[0]);
-            }
-        }
-
-        function processFileAttachment(file) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                pendingAttachment = {
-                    fileName: file.name,
-                    fileType: file.type || 'application/octet-stream',
-                    base64: evt.target.result
-                };
-
-                const fileInfo = document.getElementById('fileSelectedInfo');
-                fileInfo.innerText = `✓ Adjuntado: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-                fileInfo.classList.remove('hidden');
-                document.getElementById('fileDropText').classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function resetFileAttachmentUI() {
-            pendingAttachment = null;
-            document.getElementById('fileSelectedInfo').classList.add('hidden');
-            document.getElementById('fileDropText').classList.remove('hidden');
-            document.getElementById('taskFileInput').value = '';
-        }
-
-        function openUploadModal() {
-            resetFileAttachmentUI();
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-            resetFileAttachmentUI();
-        }
-
-        function saveWork(e) {
-            e.preventDefault();
-            const title = document.getElementById('workTitle').value;
-            const course = document.getElementById('workCourse').value;
-            const unit = document.getElementById('workUnit').value;
-            const week = parseInt(document.getElementById('workWeek').value);
-            const description = document.getElementById('workDescription').value;
-
-            const newWork = {
-                id: Date.now(),
-                title, 
-                course, 
-                unit, 
-                week, 
-                completed: false,
-                description, 
-                file: pendingAttachment || null,
-                date: new Date().toISOString().split('T')[0]
-            };
-
-            worksData.unshift(newWork);
-            localStorage.setItem('upla_works', JSON.stringify(worksData));
-
-            closeUploadModal();
-            document.getElementById('workForm').reset();
-            renderWorks();
-        }
-
-        // DOWNLOAD ATTACHED FILE
-        function downloadTaskFile(workId) {
-            const work = worksData.find(w => w.id === workId);
-            if (!work || !work.file || !work.file.base64) {
-                alert('Esta tarea no contiene ningún archivo adjunto para descargar.');
-                return;
-            }
-
-            // Convert Base64 back to Blob for robust download
-            const base64Data = work.file.base64;
-            const link = document.createElement('a');
-            link.href = base64Data;
-            link.download = work.file.fileName || 'archivo_tarea';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // TOGGLE COMPLETE / PENDING STATUS
-        function toggleTaskStatus(workId) {
-            const work = worksData.find(w => w.id === workId);
-            if (work) {
-                work.completed = !work.completed;
-                localStorage.setItem('upla_works', JSON.stringify(worksData));
-                renderWorks();
-            }
-        }
-
-        // DELETE MODAL AND ANIMATED REMOVAL
-        function requestDeleteWork(workId) {
-            workIdToDelete = workId;
-            document.getElementById('deleteModal').classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            workIdToDelete = null;
-            document.getElementById('deleteModal').classList.add('hidden');
-        }
-
-        function confirmDeleteWork() {
-            if (!workIdToDelete) return;
-
-            const cardElem = document.getElementById(`work-card-${workIdToDelete}`);
-            if (cardElem) {
-                cardElem.classList.add('task-card-exit');
-                setTimeout(() => {
-                    worksData = worksData.filter(w => w.id !== workIdToDelete);
-                    localStorage.setItem('upla_works', JSON.stringify(worksData));
-                    closeDeleteModal();
-                    renderWorks();
-                }, 300);
-            } else {
-                worksData = worksData.filter(w => w.id !== workIdToDelete);
-                localStorage.setItem('upla_works', JSON.stringify(worksData));
-                closeDeleteModal();
-                renderWorks();
-            }
-        }
-
-        function setFilterStatus(status) {
-            filterStatus = status;
-            ['all', 'pending', 'completed'].forEach(s => {
-                const btn = document.getElementById(`filterBtn-${s}`);
-                if (s === status) {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-celeste/20 text-celeste border border-celeste/40 transition-all";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all";
-                }
-            });
-            renderWorks();
-        }
-
-        function handleSearchInput() {
-            searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
-            renderWorks();
-        }
-
-        function selectCourse(course) {
-            selectedCourse = course;
-            const tab1 = document.getElementById('courseTab1');
-            const tab2 = document.getElementById('courseTab2');
-
-            if (course === 'dev-apps') {
-                tab1.classList.remove('opacity-70', 'border-l-gray-600');
-                tab1.classList.add('border-l-celeste');
-                tab2.classList.add('opacity-70', 'border-l-gray-600');
-                tab2.classList.remove('border-l-verde-bright');
-            } else {
-                tab2.classList.remove('opacity-70', 'border-l-gray-600');
-                tab2.classList.add('border-l-verde-bright');
-                tab1.classList.add('opacity-70', 'border-l-gray-600');
-                tab1.classList.remove('border-l-celeste');
-            }
-            renderWorks();
-        }
-
-        function selectUnit(unit) {
-            selectedUnit = unit;
-            selectedWeek = 'all';
-            
-            document.querySelectorAll('.unit-btn').forEach(btn => {
-                btn.className = "unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-semibold text-gray-400 hover:text-white transition-all text-center";
-            });
-            const activeBtn = document.getElementById(`unitTab-${unit}`);
-            activeBtn.className = "unit-btn flex-1 min-w-[90px] py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-celeste/20 border border-celeste/40 transition-all text-center";
-
-            renderWeeksFilter();
-            renderWorks();
-        }
-
-        function renderWeeksFilter() {
-            const listContainer = document.getElementById('weeksButtonsList');
-            listContainer.innerHTML = '';
-
-            let weeksToDisplay = [];
-            if (selectedUnit === 'all') {
-                for (let i = 1; i <= 16; i++) {
-                    weeksToDisplay.push({ id: i, label: `Sem ${i}` });
-                }
-            } else {
-                weeksToDisplay = unitWeeksMapping[selectedUnit];
-            }
-
-            const allBtn = document.createElement('button');
-            allBtn.className = `px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${selectedWeek === 'all' ? 'bg-verde-bright text-darkbg font-bold' : 'bg-darkbg text-gray-400 hover:text-white border border-darkborder'}`;
-            allBtn.innerText = 'Todas';
-            allBtn.onclick = () => filterByWeek('all');
-            listContainer.appendChild(allBtn);
-
-            weeksToDisplay.forEach(w => {
-                const btn = document.createElement('button');
-                btn.className = `px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${selectedWeek == w.id ? 'bg-verde-bright text-darkbg font-bold' : 'bg-darkbg text-gray-400 hover:text-white border border-darkborder'}`;
-                btn.innerText = w.label;
-                btn.onclick = () => filterByWeek(w.id);
-                listContainer.appendChild(btn);
-            });
-        }
-
-        function filterByWeek(weekId) {
-            selectedWeek = weekId;
-            renderWeeksFilter();
-            renderWorks();
-        }
-
-        function updateWeekDropdown() {
-            const unit = document.getElementById('workUnit').value;
-            const weekSelect = document.getElementById('workWeek');
-            weekSelect.innerHTML = '';
-
-            const weeks = unitWeeksMapping[unit];
-            weeks.forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w.id;
-                opt.innerText = `${w.label} (Unidad ${unit.replace('U','')})`;
-                weekSelect.appendChild(opt);
-            });
-        }
-
-        function renderWorks() {
-            const grid = document.getElementById('worksGrid');
-            const emptyState = document.getElementById('emptyState');
-            grid.innerHTML = '';
-
-            // Update Course Badges
-            const devAppsCount = worksData.filter(w => w.course === 'dev-apps').length;
-            const algoStructCount = worksData.filter(w => w.course === 'algo-struct').length;
-            document.getElementById('badgeDevApps').innerText = devAppsCount;
-            document.getElementById('badgeAlgoStruct').innerText = algoStructCount;
-
-            // Update Filter Status Counts
-            const courseFiltered = worksData.filter(w => w.course === selectedCourse);
-            document.getElementById('countAll').innerText = courseFiltered.length;
-            document.getElementById('countPending').innerText = courseFiltered.filter(w => !w.completed).length;
-            document.getElementById('countCompleted').innerText = courseFiltered.filter(w => w.completed).length;
-
-            // Apply Filters (Course + Unit + Week + Status + Search)
-            const filtered = worksData.filter(w => {
-                const matchCourse = w.course === selectedCourse;
-                const matchUnit = selectedUnit === 'all' || w.unit === selectedUnit;
-                const matchWeek = selectedWeek === 'all' || w.week == selectedWeek;
-                const matchStatus = filterStatus === 'all' ? true : (filterStatus === 'completed' ? w.completed : !w.completed);
-                const matchSearch = !searchQuery || w.title.toLowerCase().includes(searchQuery) || (w.description && w.description.toLowerCase().includes(searchQuery));
-                return matchCourse && matchUnit && matchWeek && matchStatus && matchSearch;
-            });
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-
-                filtered.forEach(work => {
-                    const card = document.createElement('div');
-                    card.id = `work-card-${work.id}`;
-                    card.className = `glass-card rounded-2xl p-5 border ${work.completed ? 'border-verde-bright/30 bg-verde/5' : 'border-darkborder'} flex flex-col justify-between task-card-enter transition-all`;
-
-                    const fileButtonHtml = work.file ? `
-                        <button onclick="downloadTaskFile(${work.id})" class="px-3 py-1.5 rounded-xl bg-celeste/10 hover:bg-celeste/20 text-celeste border border-celeste/30 font-bold flex items-center space-x-1.5 transition-all text-xs" title="Descargar ${work.file.fileName}">
-                            <i class="fa-solid fa-download text-xs"></i>
-                            <span class="truncate max-w-[120px]">${work.file.fileName}</span>
-                        </button>
-                    ` : `
-                        <span class="text-[11px] text-gray-500 italic"><i class="fa-solid fa-paperclip mr-1"></i>Sin adjunto</span>
-                    `;
-
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="flex items-center space-x-2">
-                                    <span class="px-2 py-0.5 rounded bg-celeste/20 text-celeste text-[10px] font-bold border border-celeste/30">${work.unit}</span>
-                                    <span class="px-2 py-0.5 rounded bg-verde/20 text-verde-bright text-[10px] font-bold border border-verde/30">Semana ${work.week}</span>
-                                </div>
-                                <button onclick="toggleTaskStatus(${work.id})" class="text-xs px-2.5 py-1 rounded-full font-semibold flex items-center space-x-1 transition-all ${work.completed ? 'bg-verde-bright/20 text-verde-bright border border-verde-bright/40' : 'bg-gray-800 text-gray-400 border border-darkborder hover:text-white'}">
-                                    <i class="fa-solid ${work.completed ? 'fa-circle-check' : 'fa-circle-notch'}"></i>
-                                    <span>${work.completed ? 'Completado' : 'Pendiente'}</span>
-                                </button>
-                            </div>
-                            <h4 class="text-sm font-bold text-white mb-2 leading-snug ${work.completed ? 'line-through text-gray-400' : ''}">${work.title}</h4>
-                            <p class="text-xs text-gray-400 mb-4 line-clamp-2">${work.description || 'Sin descripción provista.'}</p>
-                        </div>
-
-                        <div class="pt-3 border-t border-darkborder flex justify-between items-center text-xs">
-                            ${fileButtonHtml}
-                            
-                            <div class="flex items-center space-x-2">
-                                <span class="text-gray-500 text-[10px]"><i class="fa-regular fa-clock mr-1"></i>${work.date}</span>
-                                <button onclick="requestDeleteWork(${work.id})" class="p-1.5 text-gray-500 hover:text-red-400 transition-colors" title="Eliminar Tarea">
-                                    <i class="fa-solid fa-trash-can text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-        }
-    </script>
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(50px)';
+        toast.style.transition = 'all 0.4s ease';
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    }
+  </script>
 </body>
 </html>

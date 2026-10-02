@@ -120,7 +120,6 @@
     <!-- App Container -->
     <div id="app" class="relative z-10 min-h-screen flex flex-col justify-between">
 
-        
         <!-- ==================== VISTA DE LOGIN & REGISTRO ==================== -->
         <div id="authView" class="min-h-screen flex items-center justify-center p-4 sm:p-6">
             <div class="smoke-card w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-2xl relative overflow-hidden">
@@ -188,7 +187,6 @@
             </div>
         </div>
 
-
         <!-- ==================== DASHBOARD / VISTA PRINCIPAL ==================== -->
         <div id="dashboardView" class="hidden min-h-screen flex flex-col justify-between">
             
@@ -204,8 +202,37 @@
                     </div>
                 </div>
 
-                <!-- Datos de Usuario & Controles -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Datos de Usuario, Respaldos & Controles -->
+                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+                    
+                    <!-- BOTONES DE RESPALDO / BACKUP -->
+                    <div class="flex items-center gap-2">
+                        <!-- Botón Exportar -->
+                        <button 
+                            onclick="exportarBackup()" 
+                            title="Descargar copia de seguridad con todas tus tareas"
+                            class="flex items-center gap-1.5 bg-smoke-800 hover:bg-smoke-700 text-smoke-200 text-xs px-3 py-1.5 rounded-lg border border-smoke-600 transition shadow">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            <span class="hidden sm:inline">Exportar Datos</span>
+                        </button>
+
+                        <!-- Botón Importar -->
+                        <button 
+                            onclick="document.getElementById('importFileInput').click()" 
+                            title="Cargar copia de seguridad desde un archivo JSON"
+                            class="flex items-center gap-1.5 bg-smoke-800 hover:bg-smoke-700 text-smoke-200 text-xs px-3 py-1.5 rounded-lg border border-smoke-600 transition shadow">
+                            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            <span class="hidden sm:inline">Importar Datos</span>
+                        </button>
+
+                        <!-- Input oculto para seleccionar el archivo JSON -->
+                        <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importarBackup(event)" />
+                    </div>
+
                     <!-- Targeta de Usuario -->
                     <div onclick="openProfileModal()" class="flex items-center space-x-3 p-1.5 pr-3 rounded-full bg-smoke-800/80 hover:bg-smoke-700/80 border border-smoke-600/40 cursor-pointer transition-all" title="Ver / Editar Perfil">
                         <img id="headerUserAvatar" src="https://placehold.co/80x80/2A2A2E/F0F0F5?text=User" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-smoke-400">
@@ -219,33 +246,7 @@
                     </div>
 
                     <!-- Botón Cerrar Sesión -->
-                    <button onclick="handleLogout(<!-- BOTONES DE RESPALDO / BACKUP -->
-<div class="flex items-center gap-2 mr-4">
-  <!-- Botón Exportar -->
-  <button 
-    onclick="exportarBackup()" 
-    title="Descargar copia de seguridad con todas tus tareas"
-    class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs px-3 py-1.5 rounded border border-neutral-600 transition shadow">
-    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-    </svg>
-    Exportar Datos
-  </button>
-
-  <!-- Botón Importar -->
-  <button 
-    onclick="document.getElementById('importFileInput').click()" 
-    title="Cargar copia de seguridad desde un archivo JSON"
-    class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs px-3 py-1.5 rounded border border-neutral-600 transition shadow">
-    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-    </svg>
-    Importar Datos
-  </button>
-
-  <!-- Input oculto para seleccionar el archivo JSON -->
-  <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importarBackup(event)" />
-</div>)" class="p-2 sm:px-3 sm:py-2 rounded-lg bg-smoke-800 hover:bg-red-950/40 text-smoke-300 hover:text-red-400 border border-smoke-600/40 hover:border-red-800/50 transition-all text-xs flex items-center space-x-2" title="Cerrar Sesión">
+                    <button onclick="handleLogout()" class="p-2 sm:px-3 sm:py-2 rounded-lg bg-smoke-800 hover:bg-red-950/40 text-smoke-300 hover:text-red-400 border border-smoke-600/40 hover:border-red-800/50 transition-all text-xs flex items-center space-x-2" title="Cerrar Sesión">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span class="hidden sm:inline">Cerrar Sesión</span>
                     </button>
@@ -309,7 +310,6 @@
         </div>
 
     </div>
-
 
     <!-- ==================== MODAL REGISTRO DE USUARIO ==================== -->
     <div id="registerModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -382,7 +382,6 @@
             </form>
         </div>
     </div>
-
 
     <!-- ==================== MODAL EDICIÓN DE PERFIL ==================== -->
     <div id="profileModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -475,9 +474,7 @@
         </div>
     </div>
 
-
     <script>
-        
         // Claves para LocalStorage
         const STORAGE_KEY_USER = 'upla_portfolio_user';
         const STORAGE_KEY_SESSION = 'upla_portfolio_session';
@@ -515,7 +512,7 @@
         let activeCourse = 'course1';
         let coursesData = {};
 
-        
+        // Canvas de Humo y Calaveras
         const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -541,7 +538,7 @@
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 40 + 20;
                 this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * -0.5 - 0.1; // Sube lentamente
+                this.speedY = Math.random() * -0.5 - 0.1;
                 this.opacity = Math.random() * 0.15 + 0.05;
             }
 
@@ -549,7 +546,6 @@
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                // Reacción al puntero
                 if (mouse.x !== null && mouse.y !== null) {
                     let dx = mouse.x - this.x;
                     let dy = mouse.y - this.y;
@@ -560,7 +556,6 @@
                     }
                 }
 
-                // Reiniciar al salir
                 if (this.y < -50) {
                     this.y = canvas.height + 50;
                     this.x = Math.random() * canvas.width;
@@ -589,7 +584,7 @@
                 this.y = Math.random() * canvas.height;
                 this.scale = Math.random() * 0.3 + 0.2;
                 this.speedY = -0.15;
-                this.opacity = Math.random() * 0.04 + 0.01; // Sutil
+                this.opacity = Math.random() * 0.04 + 0.01;
             }
 
             update() {
@@ -606,20 +601,17 @@
                 ctx.scale(this.scale, this.scale);
                 ctx.fillStyle = `rgba(240, 240, 245, ${this.opacity})`;
                 
-                // Dibujo simplificado de silueta de calavera vía Path
                 ctx.beginPath();
                 ctx.arc(0, 0, 30, Math.PI, 0, false);
                 ctx.rect(-20, 0, 40, 25);
                 ctx.fill();
 
-                // Cuencas Oculares
                 ctx.fillStyle = 'rgba(11, 11, 13, 0.9)';
                 ctx.beginPath();
                 ctx.arc(-10, 0, 7, 0, Math.PI * 2);
                 ctx.arc(10, 0, 7, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Nariz
                 ctx.beginPath();
                 ctx.moveTo(0, 8);
                 ctx.lineTo(-4, 15);
@@ -646,13 +638,11 @@
         function animateCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Capa de humo
             particles.forEach(p => {
                 p.update();
                 p.draw();
             });
 
-            // Capa de siluetas de calaveras
             skulls.forEach(s => {
                 s.update();
                 s.draw();
@@ -660,7 +650,6 @@
 
             requestAnimationFrame(animateCanvas);
         }
-
 
         window.onload = function() {
             resizeCanvas();
@@ -704,7 +693,6 @@
             localStorage.setItem(STORAGE_KEY_COURSES, JSON.stringify(coursesData));
         }
 
-
         function handleLogin(e) {
             e.preventDefault();
             const userInput = document.getElementById('loginUsername').value.trim();
@@ -721,7 +709,6 @@
                 }
             }
 
-            // Fallback para primer ingreso si no hay usuario guardado previamente
             if (userInput && passInput) {
                 currentUser = {
                     firstName: userInput,
@@ -797,7 +784,6 @@
             showDashboard();
         }
 
-
         function openProfileModal() {
             if (!currentUser || currentUser.role === 'Docente') {
                 alert("El perfil del visitante de solo lectura no se puede editar.");
@@ -847,7 +833,6 @@
             }
         }
 
-
         function openLogoEditModal() {
             document.getElementById('logoModal').classList.remove('hidden');
         }
@@ -876,7 +861,6 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
 
         function showAuth() {
             document.getElementById('authView').classList.remove('hidden');
@@ -914,7 +898,6 @@
         }
 
         function renderCourseView() {
-            // Actualizar estilo de pestañas
             const tab1 = document.getElementById('tabCourse1');
             const tab2 = document.getElementById('tabCourse2');
 
@@ -928,7 +911,6 @@
 
             document.getElementById('currentCourseTitle').textContent = coursesData[activeCourse].title;
 
-            // Renderizar las 4 Unidades y sus 16 Semanas en total
             const container = document.getElementById('courseUnitsContainer');
             container.innerHTML = '';
 
@@ -949,7 +931,6 @@
                 unit.weeks.forEach(weekNum => {
                     const weekData = coursesData[activeCourse].weeks[weekNum];
                     
-                    // Lista de archivos
                     let filesHtml = '';
                     if (weekData.files.length === 0) {
                         filesHtml = `<p class="text-xs text-smoke-400 italic my-2">No hay archivos entregados para esta semana.</p>`;
@@ -969,7 +950,7 @@
                                             <i class="fa-solid fa-download"></i>
                                         </a>
                                         ${!isTeacher ? `
-                                            <button onclick="deleteFile('${activeCourse}', ${weekNum}, ${fileIdx})" class="p-1 px-2 rounded bg-red-950/40 hover:bg-red-900/60 text-red-300 transition-colors" title="Eliminar archivo">
+                                            <button onclick="deleteFile('${activeCourse}', ${weekNum},${fileIdx})" class="p-1 px-2 rounded bg-red-950/40 hover:bg-red-900/60 text-red-300 transition-colors" title="Eliminar archivo">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         ` : ''}
@@ -983,30 +964,27 @@
                     weeksHtml += `
                         <div class="p-4 rounded-xl bg-smoke-800/50 border border-smoke-600/30 flex flex-col justify-between space-y-3">
                             <div>
-                                <!-- Titulo Editable -->
                                 <div class="flex items-center justify-between gap-2 mb-2">
                                     <span class="text-[10px] uppercase font-semibold text-silver-accent bg-smoke-700/60 px-2 py-0.5 rounded">Semana ${weekNum}</span>
-                                    ${!isTeacher ? `<button onclick="editWeekTitle('${activeCourse}', ${weekNum})" class="text-xs text-smoke-400 hover:text-white" title="Editar Título"><i class="fa-solid fa-pen"></i></button>` : ''}
+                                    ${!isTeacher ? `<button onclick="editWeekTitle('${activeCourse}',${weekNum})" class="text-xs text-smoke-400 hover:text-white" title="Editar Título"><i class="fa-solid fa-pen"></i></button>` : ''}
                                 </div>
                                 <h4 id="weekTitle_${weekNum}" class="font-semibold text-sm text-smoke-100 line-clamp-2">${escapeHtml(weekData.title)}</h4>
                             </div>
 
-                            <!-- Lista de archivos -->
                             <div>
                                 ${filesHtml}
                             </div>
 
-                            <!-- Area Drag & Drop / File Input -->
                             ${!isTeacher ? `
                                 <div class="drop-zone border-2 border-dashed border-smoke-600/60 rounded-lg p-3 text-center transition-all cursor-pointer hover:border-smoke-400"
                                      ondragover="handleDragOver(event)" 
                                      ondragleave="handleDragLeave(event)" 
-                                     ondrop="handleFileDrop(event, '${activeCourse}', ${weekNum})"
-                                     onclick="triggerFileInput('${activeCourse}', ${weekNum})">
+                                     ondrop="handleFileDrop(event, '${activeCourse}',${weekNum})"
+                                     onclick="triggerFileInput('${activeCourse}',${weekNum})">
                                     <i class="fa-solid fa-cloud-arrow-up text-lg text-smoke-400 mb-1"></i>
                                     <p class="text-[11px] text-smoke-300">Arrastre archivos o <span class="text-silver-accent underline">examine</span></p>
                                     <p class="text-[9px] text-smoke-400 mt-0.5">.zip, .pdf, .docx, .pptx, .png, .jpg</p>
-                                    <input type="file" id="fileInput_${weekNum}" multiple class="hidden" onchange="handleFileSelect(event, '${activeCourse}', ${weekNum})">
+                                    <input type="file" id="fileInput_${weekNum}" multiple class="hidden" onchange="handleFileSelect(event, '${activeCourse}',${weekNum})">
                                 </div>
                             ` : ''}
                         </div>
@@ -1026,7 +1004,6 @@
                 container.appendChild(unitElement);
             });
         }
-
 
         function triggerFileInput(courseKey, weekNum) {
             const input = document.getElementById(`fileInput_${weekNum}`);
@@ -1074,7 +1051,7 @@
                         name: file.name,
                         size: formatBytes(file.size),
                         type: file.type,
-                        data: e.target.result, // Base64
+                        data: e.target.result,
                         date: new Date().toLocaleDateString()
                     };
 
@@ -1109,7 +1086,6 @@
             }
         }
 
-
         function getFileIcon(filename) {
             const ext = filename.split('.').pop().toLowerCase();
             switch (ext) {
@@ -1140,86 +1116,87 @@
         function escapeHtml(str) {
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
+
         // ==========================================
-// FUNCIÓN PARA EXPORTAR DATOS (BACKUP JSON)
-// ==========================================
-function exportarBackup() {
-  try {
-    // 1. Extraer todos los datos almacenados en localStorage
-    const backupData = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      backupData[key] = localStorage.getItem(key);
-    }
+        // FUNCIÓN PARA EXPORTAR DATOS (BACKUP JSON)
+        // ==========================================
+        function exportarBackup() {
+            try {
+                // 1. Extraer todos los datos almacenados en localStorage
+                const backupData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    backupData[key] = localStorage.getItem(key);
+                }
 
-    // 2. Comprobar si hay datos para exportar
-    if (Object.keys(backupData).length === 0) {
-      alert("⚠️ No hay datos ni tareas guardadas para exportar.");
-      return;
-    }
+                // 2. Comprobar si hay datos para exportar
+                if (Object.keys(backupData).length === 0) {
+                    alert("⚠️ No hay datos ni tareas guardadas para exportar.");
+                    return;
+                }
 
-    // 3. Convertir los datos a un String JSON estructurado
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-    
-    // 4. Crear un elemento de descarga temporal
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    
-    // Nombre del archivo con la fecha actual
-    const fecha = new Date().toISOString().slice(0,10);
-    downloadAnchor.setAttribute("download", `Portafolio_UPLA_Backup_${fecha}.json`);
-    
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
+                // 3. Convertir los datos a un String JSON estructurado
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+                
+                // 4. Crear un elemento de descarga temporal
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                
+                // Nombre del archivo con la fecha actual
+                const fecha = new Date().toISOString().slice(0,10);
+                downloadAnchor.setAttribute("download", `Portafolio_UPLA_Backup_${fecha}.json`);
+                
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
 
-    alert("✅ Copia de seguridad exportada con éxito.");
-  } catch (error) {
-    console.error("Error al exportar:", error);
-    alert("❌ Ocurrió un error al intentar exportar los datos.");
-  }
-}
+                alert("✅ Copia de seguridad exportada con éxito.");
+            } catch (error) {
+                console.error("Error al exportar:", error);
+                alert("❌ Ocurrió un error al intentar exportar los datos.");
+            }
+        }
 
-// ==========================================
-// FUNCIÓN PARA IMPORTAR DATOS (RESTAURAR JSON)
-// ==========================================
-function importarBackup(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+        // ==========================================
+        // FUNCIÓN PARA IMPORTAR DATOS (RESTAURAR JSON)
+        // ==========================================
+        function importarBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-  const reader = new FileReader();
-  
-  reader.onload = function(e) {
-    try {
-      const importedData = JSON.parse(e.target.result);
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
 
-      if (typeof importedData !== 'object' || importedData === null) {
-        throw new Error("El archivo no contiene un formato de copia de seguridad válido.");
-      }
+                    if (typeof importedData !== 'object' || importedData === null) {
+                        throw new Error("El archivo no contiene un formato de copia de seguridad válido.");
+                    }
 
-      // Confirmar antes de sobrescribir
-      const confirmacion = confirm(
-        "⚠️ Se van a restaurar todas las tareas, datos de perfil y cursos.\n\n¿Deseas continuar?"
-      );
+                    // Confirmar antes de sobrescribir
+                    const confirmacion = confirm(
+                        "⚠️ Se van a restaurar todas las tareas, datos de perfil y cursos.\n\n¿Deseas continuar?"
+                    );
 
-      if (confirmacion) {
-        // Limpiar el localStorage actual y cargar los nuevos datos
-        localStorage.clear();
-        Object.keys(importedData).forEach(key => {
-          localStorage.setItem(key, importedData[key]);
-        });
+                    if (confirmacion) {
+                        // Limpiar el localStorage actual y cargar los nuevos datos
+                        localStorage.clear();
+                        Object.keys(importedData).forEach(key => {
+                            localStorage.setItem(key, importedData[key]);
+                        });
 
-        alert("🎉 ¡Datos e información restaurados con éxito! La página se recargará ahora.");
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Error al importar:", error);
-      alert("❌ El archivo seleccionado no es un respaldo JSON válido.");
-    }
-  };
+                        alert("🎉 ¡Datos e información restaurados con éxito! La página se recargará ahora.");
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    console.error("Error al importar:", error);
+                    alert("❌ El archivo seleccionado no es un respaldo JSON válido.");
+                }
+            };
 
-  reader.readAsText(file);
-}
+            reader.readAsText(file);
+        }
     </script>
 </body>
 </html>

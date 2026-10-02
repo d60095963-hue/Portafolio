@@ -293,7 +293,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding-bottom: 18px;
             border-bottom: 1px solid var(--glass-border);
         }
@@ -311,13 +311,29 @@
             letter-spacing: 0.5px;
         }
 
+        .edit-logo-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px dashed var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .edit-logo-box label {
+            font-size: 0.7rem;
+            color: var(--cyan-aura);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
         .menu-section {
             font-size: 0.72rem;
             font-weight: 800;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin: 20px 0 10px 8px;
+            margin: 15px 0 10px 8px;
         }
 
         .menu-item {
@@ -532,7 +548,7 @@
                 </button>
             </div>
 
-            <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop" class="upla-official-logo" alt="Logo UPLA">
+            <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop" class="upla-official-logo upla-logo-target" alt="Logo UPLA">
             <h2 class="auth-title">✦ Espectral Edu UPLA</h2>
             <p class="auth-subtitle">Universidad Peruana Los Andes • Entorno Académico DUAL</p>
 
@@ -573,11 +589,20 @@
         <!-- BARRA LATERAL -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" class="sidebar-logo" alt="Logo UPLA">
+                <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" class="sidebar-logo upla-logo-target" alt="Logo UPLA">
                 <div>
                     <div class="sidebar-title">✦ Espectral Edu</div>
                     <span style="font-size:0.7rem; color:var(--text-muted)">UPLA Digital</span>
                 </div>
+            </div>
+
+            <!-- CONTROL PARA EDITAR LOGO EN TIEMPO REAL -->
+            <div class="edit-logo-box">
+                <label><i class="fa-solid fa-image"></i> Cambiar Logo UPLA (URL)</label>
+                <input type="text" id="inputLogoUrl" class="form-control" style="padding:6px; font-size:0.75rem;" 
+                       placeholder="https://link-imagen.png" 
+                       value="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop"
+                       oninput="updateLogoUrl(this.value)">
             </div>
 
             <button class="btn-direct-teacher" style="margin-bottom:15px;" onclick="directTeacherLogin()">
@@ -680,7 +705,7 @@
                 <div class="card">
                     <h2><i class="fa-solid fa-clipboard-check"></i> Panel de Revisión de Tareas</h2>
                     <p style="color: var(--text-muted); margin-bottom: 15px;">
-                        Sección exclusiva docente para revisión, descarga y calificación de entregables.
+                        Sección de revisión y descarga de entregables.
                     </p>
 
                     <table class="teacher-table">
@@ -689,9 +714,7 @@
                                 <th>Estudiante</th>
                                 <th>Tarea Subida</th>
                                 <th>Archivo</th>
-                                <th>Nota (0-20)</th>
                                 <th>Retroalimentación</th>
-                                <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="lista-tareas">
@@ -699,17 +722,13 @@
                                 <td>Carlos Mendoza</td>
                                 <td>Semana 4: Maquetación CSS</td>
                                 <td><button class="btn-action" onclick="descargarArchivo('Tarea_Mendoza.pdf')"><i class="fa-solid fa-download"></i> Descargar</button></td>
-                                <td><input type="number" min="0" max="20" class="form-control" placeholder="Nota" style="width: 80px;"></td>
-                                <td><input type="text" class="form-control" placeholder="Comentarios..."></td>
-                                <td><button class="btn-action" onclick="guardarCalificacion(this)"><i class="fa-solid fa-floppy-disk"></i> Guardar</button></td>
+                                <td><input type="text" class="form-control" placeholder="Comentarios del docente..."></td>
                             </tr>
                             <tr>
                                 <td>Ana Gómez</td>
                                 <td>Semana 7: Consumo API</td>
                                 <td><button class="btn-action" onclick="descargarArchivo('Proyecto_Gomez.zip')"><i class="fa-solid fa-download"></i> Descargar</button></td>
-                                <td><input type="number" min="0" max="20" class="form-control" placeholder="Nota" style="width: 80px;"></td>
-                                <td><input type="text" class="form-control" placeholder="Comentarios..."></td>
-                                <td><button class="btn-action" onclick="guardarCalificacion(this)"><i class="fa-solid fa-floppy-disk"></i> Guardar</button></td>
+                                <td><input type="text" class="form-control" placeholder="Comentarios del docente..."></td>
                             </tr>
                         </tbody>
                     </table>
@@ -736,6 +755,15 @@
     <!-- SCRIPT PRINCIPAL DE LÓGICA E INTERACTIVIDAD -->
     <script>
         let currentRole = 'estudiante';
+
+        // Función para actualizar dinámicamente el logo de la UPLA
+        function updateLogoUrl(url) {
+            if(!url) return;
+            const logos = document.querySelectorAll('.upla-logo-target');
+            logos.forEach(img => {
+                img.src = url;
+            });
+        }
 
         // Gestión de Selección de Rol en Autenticación
         function setRole(role) {
@@ -808,19 +836,6 @@
         // Funciones del Panel Docente
         function descargarArchivo(nombreArchivo) {
             showToast("Descargando entregable: " + nombreArchivo);
-        }
-
-        function guardarCalificacion(btn) {
-            const fila = btn.closest('tr');
-            const nota = fila.querySelector('input[type="number"]').value;
-            const retro = fila.querySelector('input[type="text"]').value;
-
-            if (nota === "") {
-                alert("Por favor ingrese una calificación antes de guardar.");
-                return;
-            }
-
-            showToast(`Calificación guardada: Nota [${nota}]`);
         }
 
         // Notificaciones Toast

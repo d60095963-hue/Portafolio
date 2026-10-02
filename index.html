@@ -21,6 +21,7 @@
       --purple-aura: #8b5cf6;
       --cyan-aura: #06b6d4;
       --green-accent: #10b981;
+      --amber-accent: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --radius-lg: 20px;
@@ -215,26 +216,6 @@
       box-shadow: 0 0 18px rgba(6, 182, 212, 0.4);
     }
 
-    .avatar-preview-box {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 2px solid var(--purple-aura);
-      margin: 0 auto 15px auto;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.6);
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-    }
-
-    .avatar-preview-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
     .btn-primary-action {
       width: 100%;
       padding: 14px;
@@ -259,11 +240,28 @@
       box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
     }
 
-    .auth-toggle-link {
-      color: var(--cyan-aura);
-      font-weight: 700;
+    .btn-direct-teacher {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      border-radius: var(--radius-md);
+      color: white;
+      font-weight: 800;
+      font-size: 0.88rem;
       cursor: pointer;
-      text-decoration: underline;
+      transition: var(--transition);
+      box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-direct-teacher:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
     }
 
     /* PANEL PRINCIPAL DE LA APLICACIÓN */
@@ -272,7 +270,7 @@
       z-index: 10;
       display: none;
       min-height: 100vh;
-      grid-template-columns: 290px 1fr;
+      grid-template-columns: 310px 1fr;
     }
 
     .sidebar {
@@ -368,12 +366,6 @@
       overflow: hidden;
       border: 2px solid var(--purple-aura);
       flex-shrink: 0;
-    }
-
-    .avatar-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
     .main-content {
@@ -523,13 +515,41 @@
       resize: vertical;
     }
 
-    /* CALCULADORA DE NOTAS UPLA */
-    .grade-calc-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+    /* TABLA DE EVALUACIÓN Y REVISIÓN PARA EL DOCENTE */
+    .teacher-table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 15px;
     }
+
+    .teacher-table th, .teacher-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.88rem;
+    }
+
+    .teacher-table th {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--purple-aura);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .teacher-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #d97706; }
+    .badge-graded { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #059669; }
 
     .toast-box {
       position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
@@ -590,7 +610,7 @@
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
           <label><i class="fa-solid fa-id-card"></i> Código UPLA / Usuario</label>
-          <input type="text" class="form-control" placeholder="Ej. u20231045" value="u20231045" required>
+          <input type="text" id="loginUsername" class="form-control" placeholder="Ej. u20231045 o docente.upla" value="u20231045" required>
         </div>
         <div class="form-group">
           <label><i class="fa-solid fa-lock"></i> Contraseña</label>
@@ -600,50 +620,11 @@
           <span>Ingresar a la Plataforma</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
-        <p style="margin-top:18px; font-size:0.85rem; color:var(--text-muted);">
-          ¿Nuevo estudiante? <span class="auth-toggle-link" onclick="toggleAuthMode('register')">Registra tu Perfil</span>
-        </p>
-      </form>
-
-      <!-- FORMULARIO DE REGISTRO -->
-      <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
-        <div class="avatar-preview-box" id="regAvatarPreview">
-          <i class="fa-solid fa-skull" style="font-size:2rem; color:var(--purple-aura);"></i>
-        </div>
-        <div class="form-group">
-          <label><i class="fa-solid fa-camera"></i> Foto de Perfil</label>
-          <input type="file" id="regPhotoInput" class="form-control" accept="image/*" onchange="previewRegisterPhoto(event)">
-        </div>
-        <div class="form-group">
-          <label><i class="fa-solid fa-user"></i> Nombre Completo</label>
-          <input type="text" id="regName" class="form-control" placeholder="Nombres y Apellidos" required>
-        </div>
-        <div class="form-group">
-          <label><i class="fa-solid fa-layer-group"></i> Ciclo Académico</label>
-          <select id="regCycle" class="form-control">
-            <option value="I Ciclo">I Ciclo</option>
-            <option value="II Ciclo">II Ciclo</option>
-            <option value="III Ciclo">III Ciclo</option>
-            <option value="IV Ciclo">IV Ciclo</option>
-            <option value="V Ciclo" selected>V Ciclo</option>
-            <option value="VI Ciclo">VI Ciclo</option>
-            <option value="VII Ciclo">VII Ciclo</option>
-            <option value="VIII Ciclo">VIII Ciclo</option>
-            <option value="IX Ciclo">IX Ciclo</option>
-            <option value="X Ciclo">X Ciclo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label><i class="fa-solid fa-graduation-cap"></i> Carrera Profesional</label>
-          <input type="text" id="regCareer" class="form-control" value="Ingeniería de Sistemas e Informática" required>
-        </div>
-        <button type="submit" class="btn-primary-action">
-          <i class="fa-solid fa-user-plus"></i>
-          <span>Completar Registro</span>
+        
+        <!-- BOTÓN DE INGRESO DIRECTO DOCENTE -->
+        <button type="button" class="btn-direct-teacher" onclick="directTeacherLogin()">
+          <i class="fa-solid fa-user-shield"></i> Ingreso Directo como Docente
         </button>
-        <p style="margin-top:18px; font-size:0.85rem; color:var(--text-muted);">
-          ¿Ya estás registrado? <span class="auth-toggle-link" onclick="toggleAuthMode('login')">Inicia Sesión</span>
-        </p>
       </form>
     </div>
   </div>
@@ -664,14 +645,17 @@
       <a class="menu-item active" id="navDashboard" onclick="showDashboardView()">
         <i class="fa-solid fa-chart-pie"></i> Panel & Métricas
       </a>
-      <a class="menu-item" onclick="showProfileView()">
-        <i class="fa-solid fa-user-gear"></i> Mi Perfil
+      
+      <!-- MENÚ DE REVISIÓN SOLO VISIBLE PARA EL DOCENTE -->
+      <a class="menu-item" id="navTeacherReview" style="display:none; color:var(--amber-accent);" onclick="showTeacherReviewView()">
+        <i class="fa-solid fa-list-check"></i> Revisión de Tareas (Docente)
       </a>
+
       <a class="menu-item" onclick="showGradeCalcView()">
         <i class="fa-solid fa-calculator"></i> Promedio UPLA
       </a>
 
-      <div class="menu-section">Cursos & Semanas</div>
+      <div class="menu-section">CURSO 1: ALGORITMOS</div>
       <div class="menu-item" onclick="toggleFolder('c1_units')">
         <i class="fa-solid fa-laptop-code"></i> Algoritmos & Estructuras
       </div>
@@ -694,11 +678,34 @@
         </script>
       </div>
 
+      <div class="menu-section">CURSO 2: APLICACIONES I</div>
+      <div class="menu-item" onclick="toggleFolder('c2_units')">
+        <i class="fa-solid fa-mobile-screen-button"></i> Desarrollo de Aplicaciones I
+      </div>
+      <div id="c2_units">
+        <script>
+          for(let u=1; u<=4; u++) {
+            document.write(`
+              <div class="menu-item tree-unit" onclick="toggleFolder('c2_u${u}_weeks')">
+                <i class="fa-regular fa-folder-open"></i> Unidad ${u}
+              </div>
+              <div id="c2_u${u}_weeks" style="display:none;">
+                ${[1,2,3,4].map(w => `
+                  <div class="menu-item tree-week" onclick="openWeek('Desarrollo de Aplicaciones I', ${u},${w})">
+                    <i class="fa-solid fa-layer-group"></i> Semana ${w}
+                  </div>
+                `).join('')}
+              </div>
+            `);
+          }
+        </script>
+      </div>
+
       <div class="user-profile-widget">
         <div class="avatar-circle" id="userAvatar">U</div>
         <div style="flex:1; overflow:hidden;">
-          <div style="font-weight:700; font-size:0.85rem;" id="userDisplayName">Estudiante UPLA</div>
-          <div style="font-size:0.7rem; color:var(--text-muted);" id="userDisplayRole">V Ciclo - Sistemas</div>
+          <div style="font-weight:700; font-size:0.85rem;" id="userDisplayName">Usuario UPLA</div>
+          <div style="font-size:0.7rem; color:var(--text-muted);" id="userDisplayRole">Rol: Estudiante</div>
         </div>
         <button onclick="logout()" style="background:none; border:none; color:#ef4444; cursor:pointer;" title="Cerrar Sesión">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -732,33 +739,31 @@
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon" style="color:var(--cyan-aura); background:rgba(6,182,212,0.2);"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="stat-icon" style="color:var(--cyan-aura); background:rgba(6,182,212,0.2);"><i class="fa-solid fa-book-open"></i></div>
             <div>
-              <div class="stat-value">16 / 16</div>
-              <div class="stat-label">Semanas Académicas</div>
+              <div class="stat-value">2 Cursos</div>
+              <div class="stat-label">Algoritmos & Aplicaciones I</div>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-icon" style="color:var(--green-accent); background:rgba(16,185,129,0.2);"><i class="fa-solid fa-award"></i></div>
             <div>
-              <div class="stat-value" id="statAverage">16.8</div>
+              <div class="stat-value" id="statAverage">17.2</div>
               <div class="stat-label">Promedio Estimado</div>
             </div>
           </div>
         </div>
 
         <div class="interactive-card">
-          <h3><i class="fa-solid fa-terminal" style="color: var(--purple-aura);"></i> Entorno Didáctico: Probador de Código</h3>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Escribe y ejecuta pruebas rápidas de algoritmo en vivo:</p>
+          <h3><i class="fa-solid fa-terminal" style="color: var(--purple-aura);"></i> Entorno Didáctico: Console Code Runner</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Escribe y prueba lógica de algoritmos o componentes para Desarrollo de Aplicaciones I:</p>
           
           <div class="code-editor-box">
-            <textarea id="interactiveCode" class="code-input" spellcheck="false">// Código Didáctico de Ejemplo UPLA
-function evaluarAlgoritmo(n) {
-  let suma = 0;
-  for(let i=1; i<=n; i++) suma += i;
-  return `La suma de los primeros ${n} números es: ${suma}`;
+            <textarea id="interactiveCode" class="code-input" spellcheck="false">// Demo Didáctico - Desarrollo de Aplicaciones I (UPLA)
+function renderAppInfo(appName, version) {
+  return `[APP READY] ${appName} v${version} iniciada en servidor local.`;
 }
-console.log(evaluarAlgoritmo(10));</textarea>
+console.log(renderAppInfo('Sistema Portafolio UPLA', '2.0.0'));</textarea>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
             <button class="btn-primary-action" style="width:auto; padding:10px 20px;" onclick="runInteractiveCode()">
@@ -773,7 +778,7 @@ console.log(evaluarAlgoritmo(10));</textarea>
       <div id="viewWeek" style="display: none;">
         <div class="class-card">
           <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:700;">TEMA DE LA CLASE SEMANAL:</label>
-          <input type="text" id="classNameInput" class="form-control" placeholder="Ej. Estructuras de Datos, Grafos y Arboles" onchange="saveClassName()">
+          <input type="text" id="classNameInput" class="form-control" placeholder="Ej. Arquitectura Clean & Patrón MVC en Aplicaciones" onchange="saveClassName()">
         </div>
 
         <div class="upload-box">
@@ -781,7 +786,7 @@ console.log(evaluarAlgoritmo(10));</textarea>
           <div class="drop-area" onclick="document.getElementById('fileInput').click()">
             <i class="fa-solid fa-file-circle-plus" style="font-size: 2.8rem; color: var(--purple-aura); margin-bottom: 12px;"></i>
             <h4>Haz clic o arrastra tus archivos aquí</h4>
-            <p style="color: var(--text-muted); font-size: 0.82rem; margin-top:4px;">Soporta archivos de código (.cpp, .java, .py), PDF, imágenes y ZIP</p>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin-top:4px;">Soporta archivos de código (.cpp, .java, .js, .py), PDF, imágenes y repositorios ZIP</p>
             <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFileUpload(event)">
           </div>
         </div>
@@ -790,40 +795,28 @@ console.log(evaluarAlgoritmo(10));</textarea>
         <div class="files-grid" id="filesGrid"></div>
       </div>
 
-      <!-- VISTA 3: MI PERFIL -->
-      <div id="viewProfile" style="display: none;">
-        <div class="class-card" style="max-width: 580px;">
-          <h2><i class="fa-solid fa-user-gear"></i> Configuración de Perfil UPLA</h2>
-          <form onsubmit="saveProfileChanges(event)" style="margin-top:20px;">
-            <div style="text-align:center; margin-bottom:20px;">
-              <div class="avatar-preview-box" id="editAvatarPreview"></div>
-              <input type="file" id="editPhotoInput" class="form-control" accept="image/*" onchange="previewEditPhoto(event)">
-            </div>
-            <div class="form-group">
-              <label>Nombre Completo</label>
-              <input type="text" id="profileName" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label>Ciclo Académico</label>
-              <select id="profileCycle" class="form-control">
-                <option value="I Ciclo">I Ciclo</option>
-                <option value="II Ciclo">II Ciclo</option>
-                <option value="III Ciclo">III Ciclo</option>
-                <option value="IV Ciclo">IV Ciclo</option>
-                <option value="V Ciclo">V Ciclo</option>
-                <option value="VI Ciclo">VI Ciclo</option>
-                <option value="VII Ciclo">VII Ciclo</option>
-                <option value="VIII Ciclo">VIII Ciclo</option>
-                <option value="IX Ciclo">IX Ciclo</option>
-                <option value="X Ciclo">X Ciclo</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Carrera Profesional</label>
-              <input type="text" id="profileCareer" class="form-control" required>
-            </div>
-            <button type="submit" class="btn-primary-action"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios de Perfil</button>
-          </form>
+      <!-- VISTA 3: PANORAMA DEL DOCENTE PARA REVISAR TAREAS -->
+      <div id="viewTeacherReview" style="display: none;">
+        <div class="class-card">
+          <h2><i class="fa-solid fa-chalkboard-user" style="color:var(--amber-accent);"></i> Panel de Evaluación Docente UPLA</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Visualización directa e insubstituible de todos los trabajos entregados por los alumnos:</p>
+          
+          <table class="teacher-table">
+            <thead>
+              <tr>
+                <th>Curso</th>
+                <th>Semana</th>
+                <th>Archivo</th>
+                <th>Estudiante</th>
+                <th>Estado</th>
+                <th>Nota</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="teacherTasksTableBody">
+              <!-- Carga Dinámica de Tareas subidas -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -833,7 +826,7 @@ console.log(evaluarAlgoritmo(10));</textarea>
           <h2><i class="fa-solid fa-calculator"></i> Calculadora Ponderada UPLA</h2>
           <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Calcula tu promedio acumulado evaluando P1, P2 y Trabajo Práctico:</p>
           
-          <div class="grade-calc-grid">
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:15px;">
             <div class="form-group">
               <label>Parcial 1 (30%)</label>
               <input type="number" id="calcP1" class="form-control" min="0" max="20" value="16">
@@ -877,9 +870,7 @@ console.log(evaluarAlgoritmo(10));</textarea>
     resizeCanvas();
 
     class SmokeParticle {
-      constructor() {
-        this.reset();
-      }
+      constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = canvas.height + Math.random() * 100;
@@ -887,15 +878,13 @@ console.log(evaluarAlgoritmo(10));</textarea>
         this.speedY = Math.random() * 1 + 0.3;
         this.speedX = (Math.random() - 0.5) * 0.5;
         this.opacity = Math.random() * 0.4 + 0.1;
-        this.isSkull = Math.random() < 0.15; // 15% de probabilidad de ser calavera
+        this.isSkull = Math.random() < 0.15;
       }
       update() {
         this.y -= this.speedY;
         this.x += this.speedX;
         this.opacity -= 0.001;
-        if (this.y < -50 || this.opacity <= 0) {
-          this.reset();
-        }
+        if (this.y < -50 || this.opacity <= 0) this.reset();
       }
       draw() {
         ctx.save();
@@ -920,22 +909,17 @@ console.log(evaluarAlgoritmo(10));</textarea>
       }
     }
 
-    for (let i = 0; i < 45; i++) {
-      particles.push(new SmokeParticle());
-    }
+    for (let i = 0; i < 45; i++) particles.push(new SmokeParticle());
 
     function animateParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      particles.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animateParticles);
     }
     animateParticles();
 
     /* -------------------------------------------------------------
-       Lógica Principal de la Plataforma
+       Lógica de Aplicación
     ------------------------------------------------------------- */
     let currentRole = 'estudiante';
     let currentCourse = 'Algoritmos y Estructuras de Datos';
@@ -944,12 +928,19 @@ console.log(evaluarAlgoritmo(10));</textarea>
 
     let currentUser = {
       name: 'Estudiante UPLA',
-      career: 'Ingeniería de Sistemas',
-      cycle: 'V Ciclo',
-      photo: null
+      role: 'estudiante'
     };
 
-    let storedFiles = {};
+    // Almacenamiento inicial con datos de demostración
+    let storedFiles = {
+      'Algoritmos y Estructuras de Datos_u1_w1': [
+        { id: 101, name: 'Tarea1_Algoritmos_UPLA.cpp', size: '14.2 KB', student: 'u20231045', grade: '18', status: 'Calificado', url: '#' }
+      ],
+      'Desarrollo de Aplicaciones I_u1_w1': [
+        { id: 102, name: 'Proyecto_App_Movil_Semana1.zip', size: '1.4 MB', student: 'u20231045', grade: 'Sin Calificar', status: 'Pendiente', url: '#' }
+      ]
+    };
+
     let classTopics = {};
 
     function setRole(role) {
@@ -958,54 +949,41 @@ console.log(evaluarAlgoritmo(10));</textarea>
       document.getElementById('roleTeacherBtn').classList.toggle('active', role === 'maestro');
     }
 
-    function toggleAuthMode(mode) {
-      document.getElementById('loginForm').style.display = mode === 'register' ? 'none' : 'block';
-      document.getElementById('registerForm').style.display = mode === 'register' ? 'block' : 'none';
-    }
-
-    function previewRegisterPhoto(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          currentUser.photo = evt.target.result;
-          document.getElementById('regAvatarPreview').innerHTML = `<img src="${evt.target.result}">`;
-        }
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function previewEditPhoto(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          currentUser.photo = evt.target.result;
-          updateUserUI();
-        }
-        reader.readAsDataURL(file);
-      }
-    }
-
     function handleLogin(e) {
       e.preventDefault();
-      document.getElementById('authWrapper').style.display = 'none';
-      document.getElementById('appContainer').style.display = 'grid';
-      showToast('Sesión iniciada en el Portafolio UPLA');
-      showDashboardView();
+      const userVal = document.getElementById('loginUsername').value;
+      if (currentRole === 'maestro' || userVal.toLowerCase().includes('docente')) {
+        currentUser.name = 'Docente UPLA';
+        currentUser.role = 'maestro';
+      } else {
+        currentUser.name = userVal || 'Estudiante UPLA';
+        currentUser.role = 'estudiante';
+      }
+      initSession();
     }
 
-    function handleRegister(e) {
-      e.preventDefault();
-      currentUser.name = document.getElementById('regName').value;
-      currentUser.cycle = document.getElementById('regCycle').value;
-      currentUser.career = document.getElementById('regCareer').value;
+    function directTeacherLogin() {
+      currentRole = 'maestro';
+      currentUser.name = 'Ing. Catedrático UPLA';
+      currentUser.role = 'maestro';
+      initSession();
+    }
 
-      updateUserUI();
+    function initSession() {
       document.getElementById('authWrapper').style.display = 'none';
       document.getElementById('appContainer').style.display = 'grid';
-      showToast('Cuenta creada con éxito');
-      confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
+      
+      // Mostrar u ocultar herramientas del docente
+      const teacherBtn = document.getElementById('navTeacherReview');
+      if (currentUser.role === 'maestro') {
+        teacherBtn.style.display = 'flex';
+        showToast('Bienvenido Docente UPLA. Acceso concedido.');
+      } else {
+        teacherBtn.style.display = 'none';
+        showToast('Sesión iniciada correctamente.');
+      }
+      
+      updateUserUI();
       showDashboardView();
     }
 
@@ -1022,7 +1000,7 @@ console.log(evaluarAlgoritmo(10));</textarea>
     function hideAllViews() {
       document.getElementById('viewDashboard').style.display = 'none';
       document.getElementById('viewWeek').style.display = 'none';
-      document.getElementById('viewProfile').style.display = 'none';
+      document.getElementById('viewTeacherReview').style.display = 'none';
       document.getElementById('viewGradeCalc').style.display = 'none';
     }
 
@@ -1030,25 +1008,23 @@ console.log(evaluarAlgoritmo(10));</textarea>
       hideAllViews();
       document.getElementById('viewDashboard').style.display = 'block';
       document.getElementById('mainTitle').innerText = 'Panel Didáctico & Académico';
-      document.getElementById('mainSubtitle').innerText = 'Seguimiento de entregas y pruebas de código';
+      document.getElementById('mainSubtitle').innerText = 'Gestión interactiva de tus cursos UPLA';
       updateStats();
     }
 
-    function showProfileView() {
+    function showTeacherReviewView() {
       hideAllViews();
-      document.getElementById('viewProfile').style.display = 'block';
-      document.getElementById('mainTitle').innerText = 'Mi Perfil Estudiantil';
-      document.getElementById('mainSubtitle').innerText = 'Gestiona tus datos personales y carrera';
-      document.getElementById('profileName').value = currentUser.name;
-      document.getElementById('profileCycle').value = currentUser.cycle;
-      document.getElementById('profileCareer').value = currentUser.career;
+      document.getElementById('viewTeacherReview').style.display = 'block';
+      document.getElementById('mainTitle').innerText = 'Revisión y Calificación de Tareas';
+      document.getElementById('mainSubtitle').innerText = 'Vista de Catedrático para monitorear entregas de los alumnos';
+      renderTeacherTable();
     }
 
     function showGradeCalcView() {
       hideAllViews();
       document.getElementById('viewGradeCalc').style.display = 'block';
       document.getElementById('mainTitle').innerText = 'Calculadora UPLA';
-      document.getElementById('mainSubtitle').innerText = 'Estimación de promedios con pesos oficial UPLA';
+      document.getElementById('mainSubtitle').innerText = 'Estimación de promedios ponderados';
     }
 
     function getKey() { return `${currentCourse}_u${currentUnit}_w${currentWeek}`; }
@@ -1080,14 +1056,17 @@ console.log(evaluarAlgoritmo(10));</textarea>
           id: Date.now() + Math.random(),
           name: f.name,
           size: (f.size / 1024).toFixed(1) + ' KB',
+          student: currentUser.name,
+          grade: 'Sin Calificar',
+          status: 'Pendiente',
           url: URL.createObjectURL(f)
         });
       });
 
       renderFiles();
       updateStats();
-      showToast('Archivos cargados con éxito');
-      confetti({ particleCount: 30, spread: 50 });
+      showToast('Archivos subidos exitosamente');
+      confetti({ particleCount: 35, spread: 60 });
     }
 
     function renderFiles() {
@@ -1096,7 +1075,7 @@ console.log(evaluarAlgoritmo(10));</textarea>
       const list = storedFiles[getKey()] || [];
 
       if(!list.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:0.9rem;">No hay archivos o entregas subidas para esta semana.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:0.9rem;">No hay archivos entregados para esta semana.</div>`;
         return;
       }
 
@@ -1107,7 +1086,8 @@ console.log(evaluarAlgoritmo(10));</textarea>
           <div>
             <div style="font-size: 1.8rem; color: var(--purple-aura);"><i class="fa-solid fa-file-code"></i></div>
             <div style="font-weight:700; margin-top:8px; font-size:0.92rem;">${f.name}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${f.size}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Tamaño: ${f.size}</div>
+            <div style="font-size:0.78rem; color:var(--cyan-aura); margin-top:4px;">Nota: <strong>${f.grade}</strong></div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:15px;">
             <a href="${f.url}" download="${f.name}" class="btn-file-action btn-dl"><i class="fa-solid fa-download"></i> Descargar</a>
@@ -1125,35 +1105,68 @@ console.log(evaluarAlgoritmo(10));</textarea>
       showToast('Archivo eliminado');
     }
 
-    function saveProfileChanges(e) {
-      e.preventDefault();
-      currentUser.name = document.getElementById('profileName').value;
-      currentUser.cycle = document.getElementById('profileCycle').value;
-      currentUser.career = document.getElementById('profileCareer').value;
-      updateUserUI();
-      showToast('Perfil actualizado correctamente');
+    function renderTeacherTable() {
+      const tbody = document.getElementById('teacherTasksTableBody');
+      tbody.innerHTML = '';
+
+      let hasTasks = false;
+      Object.keys(storedFiles).forEach(key => {
+        const parts = key.split('_');
+        const course = parts[0];
+        const week = parts[2];
+
+        storedFiles[key].forEach(f => {
+          hasTasks = true;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${course}</strong></td>
+            <td>${week.toUpperCase()}</td>
+            <td><i class="fa-solid fa-file-lines" style="color:var(--purple-aura);"></i> ${f.name}</td>
+            <td>${f.student}</td>
+            <td>
+              <span class="badge-status ${f.status === 'Calificado' ? 'badge-graded' : 'badge-pending'}">
+                ${f.status}
+              </span>
+            </td>
+            <td><strong>${f.grade}</strong></td>
+            <td>
+              <button onclick="gradeTask('${key}', ${f.id})" class="btn-file-action btn-dl" style="padding:4px 10px; font-size:0.75rem;">
+                <i class="fa-solid fa-pen-to-square"></i> Calificar
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+
+      if(!hasTasks) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No hay entregas pendientes en ningún curso.</td></tr>`;
+      }
+    }
+
+    function gradeTask(key, id) {
+      const task = storedFiles[key].find(f => f.id === id);
+      if(task) {
+        const score = prompt(`Asignar nota (0 - 20) para ${task.name}:`, task.grade === 'Sin Calificar' ? '18' : task.grade);
+        if(score !== null) {
+          task.grade = score;
+          task.status = 'Calificado';
+          renderTeacherTable();
+          showToast('Calificación registrada con éxito');
+          confetti({ particleCount: 25, spread: 50 });
+        }
+      }
     }
 
     function updateUserUI() {
       document.getElementById('userDisplayName').innerText = currentUser.name;
-      document.getElementById('userDisplayRole').innerText = `${currentUser.cycle} - ${currentUser.career}`;
-      const avatarEl = document.getElementById('userAvatar');
-      const editPreview = document.getElementById('editAvatarPreview');
-
-      if(currentUser.photo) {
-        avatarEl.innerHTML = `<img src="${currentUser.photo}">`;
-        if(editPreview) editPreview.innerHTML = `<img src="${currentUser.photo}">`;
-      } else {
-        avatarEl.innerText = currentUser.name.charAt(0).toUpperCase();
-        if(editPreview) editPreview.innerHTML = `<i class="fa-solid fa-skull" style="font-size:2rem; color:var(--purple-aura);"></i>`;
-      }
+      document.getElementById('userDisplayRole').innerText = `Rol: ${currentUser.role === 'maestro' ? 'Docente Catedrático' : 'Estudiante UPLA'}`;
+      document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
     }
 
     function updateStats() {
       let total = 0;
-      Object.keys(storedFiles).forEach(k => {
-        total += storedFiles[k].length;
-      });
+      Object.keys(storedFiles).forEach(k => { total += storedFiles[k].length; });
       document.getElementById('statFilesCount').innerText = total;
     }
 
@@ -1169,8 +1182,8 @@ console.log(evaluarAlgoritmo(10));</textarea>
         };
         eval(code);
         console.log = originalLog;
-        outputEl.innerText = logs.join(' | ') || 'Código ejecutado sin salida en consola.';
-        showToast('Código ejecutado');
+        outputEl.innerText = logs.join(' | ') || 'Código ejecutado sin errores.';
+        showToast('Consola ejecutada');
       } catch (err) {
         outputEl.innerText = 'Error: ' + err.message;
       }

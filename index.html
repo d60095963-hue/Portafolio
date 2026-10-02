@@ -3,924 +3,1117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma Académica Espectral UPLA</title>
-    
-    <!-- Tipografía Google Fonts y FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <title>Portafolio Académico UPLA - Humo & Calaveras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Canvas Confetti para efectos didácticos -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        smoke: {
+                            900: '#0B0B0D',
+                            800: '#121214',
+                            700: '#1E1E24',
+                            600: '#2A2A2E',
+                            500: '#3A3A40',
+                            400: '#5A5A62',
+                            300: '#8E8E93',
+                            200: '#D1D1D6',
+                            100: '#F0F0F5',
+                        },
+                        silver: {
+                            glow: '#E0E0E0',
+                            accent: '#A1A1AA'
+                        }
+                    },
+                    boxShadow: {
+                        'smoke-glow': '0 0 15px rgba(224, 224, 224, 0.15), 0 0 30px rgba(142, 142, 147, 0.1)',
+                        'skull-glow': '0 0 25px rgba(240, 240, 245, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-dark: #030305;
-            --bg-card: #1e293b;
-            --glass-bg: rgba(12, 10, 20, 0.88);
-            --glass-border: rgba(139, 92, 246, 0.3);
-            --upla-blue: #007bc7;
-            --purple-aura: #8b5cf6;
-            --cyan-aura: #06b6d4;
-            --green-accent: #10b981;
-            --amber-accent: #f59e0b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --radius-lg: 20px;
-            --radius-md: 14px;
-            --radius-sm: 8px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0B0D;
+            color: #F0F0F5;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* CANVAS INTERACTIVO: PARTICULAS Y EFECTO ESPECTRAL */
-        #skullSmokeCanvas {
+        /* Canvas de Fondo */
+        #smokeCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            pointer-events: none;
             z-index: 0;
-        }
-
-        /* Aura de Neón Mística de Fondo */
-        .spectral-aura {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(6, 182, 212, 0.08) 50%, transparent 70%);
             pointer-events: none;
-            z-index: 0;
-            filter: blur(80px);
-            animation: floatAura 12s infinite alternate ease-in-out;
         }
 
-        .aura-1 { top: -100px; left: -100px; }
-        .aura-2 { bottom: -150px; right: -100px; animation-delay: -6s; }
-
-        @keyframes floatAura {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(80px, 50px) scale(1.15); }
+        /* Scrollbar Personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121214;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3A3A40;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5A5A62;
         }
 
-        /* LOGO Y CONTENEDOR */
-        .upla-official-logo {
-            width: 85px;
-            height: 85px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(0, 123, 199, 0.7));
-            transition: var(--transition);
+        /* Glassmorphism y Bordes Resplandecientes */
+        .smoke-card {
+            background: rgba(30, 30, 36, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(142, 142, 147, 0.18);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .smoke-card:hover {
+            border-color: rgba(224, 224, 224, 0.4);
+            box-shadow: 0 0 20px rgba(224, 224, 224, 0.12);
         }
 
-        .upla-official-logo:hover {
-            transform: scale(1.08) rotate(-3deg);
+        .smoke-input {
+            background: rgba(18, 18, 20, 0.8);
+            border: 1px solid rgba(90, 90, 98, 0.4);
+            color: #F0F0F5;
+            transition: all 0.2s ease;
         }
-
-        .btn-download-html {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 9px 16px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 18px rgba(16, 185, 129, 0.4);
-            transition: var(--transition);
-            text-decoration: none;
-        }
-
-        .btn-download-html:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
-        }
-
-        /* PANTALLA DE AUTENTICACIÓN */
-        .auth-wrapper {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .auth-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            width: 100%;
-            max-width: 520px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(139, 92, 246, 0.25);
-            text-align: center;
-            position: relative;
-        }
-
-        .auth-title {
-            font-size: 1.7rem;
-            font-weight: 800;
-            margin-top: 12px;
-            background: linear-gradient(135deg, #fff, var(--purple-aura));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .auth-subtitle {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            margin-bottom: 24px;
-        }
-
-        .role-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 22px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 6px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .role-btn {
-            padding: 10px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .role-btn.active {
-            background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
-            color: white;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            color: var(--text-main);
-            font-size: 0.92rem;
+        .smoke-input:focus {
+            border-color: #E0E0E0;
+            box-shadow: 0 0 10px rgba(224, 224, 224, 0.2);
             outline: none;
-            transition: var(--transition);
         }
 
-        .form-control:focus {
-            border-color: var(--cyan-aura);
-            box-shadow: 0 0 18px rgba(6, 182, 212, 0.4);
+        /* Animación Modal */
+        .modal-fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        .btn-primary-action {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
-            border: none;
-            border-radius: var(--radius-md);
-            color: white;
-            font-weight: 800;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 5px 25px rgba(139, 92, 246, 0.4);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-primary-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
-        }
-
-        .btn-direct-teacher {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            border: none;
-            border-radius: var(--radius-md);
-            color: white;
-            font-weight: 800;
-            font-size: 0.88rem;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-direct-teacher:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
-        }
-
-        /* PANEL PRINCIPAL DE LA APLICACIÓN */
-        .app-container {
-            position: relative;
-            z-index: 10;
-            display: none;
-            min-height: 100vh;
-            grid-template-columns: 280px 1fr;
-        }
-
-        .sidebar {
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            border-right: 1px solid var(--glass-border);
-            padding: 25px 16px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 20px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .sidebar-logo {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-        }
-
-        .sidebar-title {
-            font-weight: 800;
-            font-size: 1.05rem;
-            color: white;
-            letter-spacing: 0.5px;
-        }
-
-        .edit-logo-box {
-            background: rgba(0,0,0,0.4);
-            border: 1px dashed var(--glass-border);
-            border-radius: var(--radius-sm);
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-
-        .edit-logo-box label {
-            font-size: 0.7rem;
-            color: var(--cyan-aura);
-            font-weight: 700;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .menu-section {
-            font-size: 0.72rem;
-            font-weight: 800;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 15px 0 10px 8px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 14px;
-            color: var(--text-muted);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            font-size: 0.88rem;
-            margin-bottom: 4px;
-            background: transparent;
-            border: none;
-            width: 100%;
-            text-align: left;
-        }
-
-        .menu-item:hover, .menu-item.active {
-            color: #fff;
-            background: rgba(139, 92, 246, 0.22);
-            border-left: 4px solid var(--purple-aura);
-        }
-
-        .user-profile-widget {
-            margin-top: auto;
-            padding: 14px;
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            color: white;
-            font-size: 0.9rem;
-            overflow: hidden;
-            border: 2px solid var(--purple-aura);
-            flex-shrink: 0;
-        }
-
-        .main-content {
-            padding: 35px 45px;
-            overflow-y: auto;
-            max-height: 100vh;
-        }
-
-        .top-bar-branding {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 15px;
-        }
-
-        /* ESTRUCTURA DE CURSOS Y UNIDADES */
-        .units-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 18px;
-            margin-top: 15px;
-        }
-
-        .unit-box {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 18px;
-        }
-
-        .unit-box h4 {
-            color: var(--purple-aura);
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .weeks-list {
-            list-style: none;
-            font-size: 0.88rem;
-            color: var(--text-muted);
-        }
-
-        .weeks-list li {
-            padding: 6px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.08);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* TARJETAS Y CONTENEDORES GENERALES */
-        .card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: 28px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(25px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-        }
-
-        .card h2 {
-            margin-bottom: 15px;
-            color: var(--cyan-aura);
-        }
-
-        /* TABLAS DE REVISIÓN Y DOCENCIA */
-        .teacher-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .teacher-table th, .teacher-table td {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--glass-border);
-            font-size: 0.88rem;
-        }
-
-        .teacher-table th {
-            background: rgba(139, 92, 246, 0.15);
-            color: var(--purple-aura);
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .teacher-table tr:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .btn-action {
-            background-color: var(--purple-aura);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-        }
-
-        .btn-action:hover {
-            background-color: var(--cyan-aura);
-            box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
-        }
-
-        .badge-status {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: inline-block;
-        }
-
-        .badge-graded { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #059669; }
-
-        .hidden { display: none !important; }
-
-        .toast-box {
-            position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
-        }
-        
-        .toast-item {
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid var(--glass-border);
-            padding: 14px 22px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 5px solid var(--purple-aura);
-            color: #fff;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-            animation: slideIn 0.3s forwards;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* Dropzone Active */
+        .drag-over {
+            border-color: #E0E0E0 !important;
+            background: rgba(58, 58, 64, 0.5) !important;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-smoke-500 selection:text-white">
 
-    <!-- CANVAS DE PARTICULAS Y HUMO ESPECTRAL -->
-    <canvas id="skullSmokeCanvas"></canvas>
-    <div class="spectral-aura aura-1"></div>
-    <div class="spectral-aura aura-2"></div>
+    <!-- Canvas para efecto de Humo y Calaveras -->
+    <canvas id="smokeCanvas"></canvas>
 
-    <div class="toast-box" id="toastContainer"></div>
+    <!-- App Container -->
+    <div id="app" class="relative z-10 min-h-screen flex flex-col justify-between">
 
-    <!-- SECCIÓN DE AUTENTICACIÓN -->
-    <div class="auth-wrapper" id="authWrapper">
-        <div class="auth-card">
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-                <button class="btn-download-html" onclick="downloadProjectCode()">
-                    <i class="fa-solid fa-download"></i> Descargar HTML
-                </button>
-            </div>
-
-            <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop" class="upla-official-logo upla-logo-target" alt="Logo UPLA">
-            <h2 class="auth-title">✦ Espectral Edu UPLA</h2>
-            <p class="auth-subtitle">Universidad Peruana Los Andes • Entorno Académico DUAL</p>
-
-            <div class="role-selector">
-                <button class="role-btn active" id="roleStudentBtn" onclick="setRole('estudiante')">
-                    <i class="fa-solid fa-user-graduate"></i> Estudiante
-                </button>
-                <button class="role-btn" id="roleTeacherBtn" onclick="setRole('docente')">
-                    <i class="fa-solid fa-chalkboard-user"></i> Docente
-                </button>
-            </div>
-
-            <!-- FORMULARIO DE LOGIN -->
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label><i class="fa-solid fa-id-card"></i> Código UPLA / Usuario</label>
-                    <input type="text" id="loginUsername" class="form-control" placeholder="Ej. u20231045 o docente.upla" value="u20231045" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-solid fa-lock"></i> Contraseña</label>
-                    <input type="password" class="form-control" value="123456" required>
-                </div>
-                <button type="submit" class="btn-primary-action">
-                    <span>Ingresar a la Plataforma</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
+        
+        <!-- ==================== VISTA DE LOGIN & REGISTRO ==================== -->
+        <div id="authView" class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+            <div class="smoke-card w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-2xl relative overflow-hidden">
                 
-                <!-- BOTÓN DE INGRESO DIRECTO DOCENTE -->
-                <button type="button" class="btn-direct-teacher" onclick="directTeacherLogin()">
-                    <i class="fa-solid fa-user-shield"></i> ⚡ Ingreso Directo Docente
-                </button>
+                <!-- Overlay Decorativo Calavera de Fondo -->
+                <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-smoke-100">
+                    <i class="fa-solid fa-skull text-9xl"></i>
+                </div>
+
+                <!-- Branding UPLA -->
+                <div class="flex flex-col items-center mb-6 text-center">
+                    <div class="relative group cursor-pointer mb-3" onclick="openLogoEditModal()" title="Haga clic para personalizar el logo">
+                        <img id="uplaAuthLogo" src="https://placehold.co/120x120/121214/F0F0F5?text=UPLA+LOGO" 
+                             alt="Logo UPLA" 
+                             class="h-20 w-20 object-contain rounded-full p-2 bg-smoke-800 border border-smoke-500/30 group-hover:border-silver-glow transition-all duration-300">
+                        <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-pen text-xs text-white"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-wide text-smoke-100">Universidad Peruana Los Andes</h1>
+                    <p class="text-xs text-smoke-300 mt-1">Portafolio Académico Digital</p>
+                </div>
+
+                <!-- Formulario de Login Principal -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-smoke-300 mb-1">Usuario / Correo</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-smoke-400 text-sm"></i>
+                            <input type="text" id="loginUsername" required class="smoke-input w-full pl-9 pr-3 py-2.5 rounded-lg text-sm" placeholder="Código o correo universitario">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-smoke-300 mb-1">Contraseña</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-smoke-400 text-sm"></i>
+                            <input type="password" id="loginPassword" required class="smoke-input w-full pl-9 pr-3 py-2.5 rounded-lg text-sm" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-smoke-600 via-smoke-500 to-smoke-600 hover:from-smoke-500 hover:to-smoke-400 text-white font-medium rounded-lg text-sm shadow-smoke-glow transition-all duration-200 border border-smoke-400/30 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Iniciar Sesión</span>
+                    </button>
+                </form>
+
+                <!-- Divisor -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-smoke-600"></div></div>
+                    <div class="relative flex justify-center text-xs uppercase"><span class="bg-smoke-700/80 px-2 text-smoke-400">O ingresar como</span></div>
+                </div>
+
+                <!-- Accesos Secundarios -->
+                <div class="space-y-2.5">
+                    <button type="button" onclick="loginAsTeacher()" class="w-full py-2.5 bg-smoke-800 hover:bg-smoke-700 text-smoke-200 border border-smoke-600/50 rounded-lg text-sm font-medium transition-all flex items-center justify-center space-x-2 group">
+                        <i class="fa-solid fa-user-tie text-silver-accent group-hover:text-white transition-colors"></i>
+                        <span>Acceso Directo Docente (Solo Lectura)</span>
+                    </button>
+
+                    <button type="button" onclick="openRegisterModal()" class="w-full py-2.5 bg-transparent hover:bg-smoke-800/50 text-smoke-300 hover:text-white border border-dashed border-smoke-500/40 hover:border-smoke-400 rounded-lg text-sm font-medium transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Crear una cuenta de Estudiante</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== DASHBOARD / VISTA PRINCIPAL ==================== -->
+        <div id="dashboardView" class="hidden min-h-screen flex flex-col justify-between">
+            
+            <header class="smoke-card sticky top-0 z-30 px-4 sm:px-8 py-3 border-b border-smoke-600/50 flex flex-wrap items-center justify-between gap-4">
+                <!-- Logo UPLA & Titulo -->
+                <div class="flex items-center space-x-3">
+                    <div class="relative group cursor-pointer" onclick="openLogoEditModal()" title="Cambiar Logo UPLA">
+                        <img id="uplaDashLogo" src="https://placehold.co/120x120/121214/F0F0F5?text=UPLA+LOGO" alt="Logo UPLA" class="h-10 w-10 object-contain rounded-full bg-smoke-800 border border-smoke-500/30">
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-sm sm:text-base text-smoke-100 leading-tight">Portafolio Académico</h2>
+                        <span class="text-xs text-smoke-300">Universidad Peruana Los Andes</span>
+                    </div>
+                </div>
+
+                <!-- Datos de Usuario & Controles -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <!-- Targeta de Usuario -->
+                    <div onclick="openProfileModal()" class="flex items-center space-x-3 p-1.5 pr-3 rounded-full bg-smoke-800/80 hover:bg-smoke-700/80 border border-smoke-600/40 cursor-pointer transition-all" title="Ver / Editar Perfil">
+                        <img id="headerUserAvatar" src="https://placehold.co/80x80/2A2A2E/F0F0F5?text=User" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-smoke-400">
+                        <div class="text-left hidden sm:block">
+                            <p id="headerUserName" class="text-xs font-semibold text-smoke-100 leading-tight">Cargando...</p>
+                            <div class="flex items-center space-x-1">
+                                <span id="headerUserRoleBadge" class="text-[10px] px-1.5 py-0.2 rounded bg-smoke-600 text-smoke-200">Estudiante</span>
+                                <span id="headerUserCode" class="text-[10px] text-smoke-300"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón Cerrar Sesión -->
+                    <button onclick="handleLogout()" class="p-2 sm:px-3 sm:py-2 rounded-lg bg-smoke-800 hover:bg-red-950/40 text-smoke-300 hover:text-red-400 border border-smoke-600/40 hover:border-red-800/50 transition-all text-xs flex items-center space-x-2" title="Cerrar Sesión">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline">Cerrar Sesión</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+                
+                <!-- Banner de Rol Docente (Si corresponde) -->
+                <div id="teacherRoleNotice" class="hidden smoke-card p-4 rounded-xl border-l-4 border-amber-500 bg-amber-950/10 text-amber-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-eye text-xl"></i>
+                        <div>
+                            <p class="font-semibold text-sm">Modo de Revisión Docente / Visitante Activo</p>
+                            <p class="text-xs text-amber-300/80">Tiene permisos exclusivamente de lectura y descarga de tareas. Los cambios, subidas y eliminaciones están deshabilitados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestañas de Cursos -->
+                <div class="flex flex-wrap gap-2 border-b border-smoke-600/60 pb-3">
+                    <button id="tabCourse1" onclick="switchCourse('course1')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-code"></i>
+                        <span>Algoritmos y Estructura de Datos</span>
+                    </button>
+                    <button id="tabCourse2" onclick="switchCourse('course2')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Desarrollo de Aplicaciones I</span>
+                    </button>
+                </div>
+
+                <!-- Cabecera del Curso Selección -->
+                <div class="smoke-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-smoke-400 font-semibold">Curso Universitario</span>
+                        <h2 id="currentCourseTitle" class="text-2xl font-bold text-smoke-100 mt-1">Algoritmos y Estructura de Datos</h2>
+                        <p class="text-xs text-smoke-300 mt-1">Estructurado en 4 Unidades Académicas / 16 Semanas de Evaluación</p>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-smoke-800/80 px-4 py-2 rounded-xl border border-smoke-600/40 text-xs text-smoke-200">
+                        <i class="fa-solid fa-calendar-days text-silver-accent"></i>
+                        <span>Periodo Académico Actual</span>
+                    </div>
+                </div>
+
+                <!-- Contenedor de Unidades (I, II, III, IV) -->
+                <div id="courseUnitsContainer" class="space-y-8">
+                    <!-- Generado dinámicamente mediante JS -->
+                </div>
+
+            </main>
+
+            <footer class="smoke-card mt-12 py-6 border-t border-smoke-600/40 text-center text-xs text-smoke-400">
+                <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+                    <p>© 2026 Universidad Peruana Los Andes - Portafolio Estudiantil</p>
+                    <p class="flex items-center space-x-2">
+                        <span>Diseño Humo & Calaveras</span>
+                        <i class="fa-solid fa-skull text-smoke-500"></i>
+                    </p>
+                </div>
+            </footer>
+        </div>
+
+    </div>
+
+
+    <!-- ==================== MODAL REGISTRO DE USUARIO ==================== -->
+    <div id="registerModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="smoke-card w-full max-w-lg p-6 sm:p-8 rounded-2xl modal-fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 border-b border-smoke-600/50 pb-3">
+                <h3 class="text-lg font-bold text-smoke-100 flex items-center space-x-2">
+                    <i class="fa-solid fa-user-plus text-smoke-300"></i>
+                    <span>Registro de Cuenta de Estudiante</span>
+                </h3>
+                <button onclick="closeRegisterModal()" class="text-smoke-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Nombres Completos</label>
+                        <input type="text" id="regFirstName" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="Ej. Juan Carlos">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Apellidos Completos</label>
+                        <input type="text" id="regLastName" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="Ej. Pérez Gomez">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Código Universitario</label>
+                        <input type="text" id="regStudentCode" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="Ej. U202310492">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Ciclo Académico</label>
+                        <select id="regAcademicCycle" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm">
+                            <option value="Ciclo I">Ciclo I</option>
+                            <option value="Ciclo II">Ciclo II</option>
+                            <option value="Ciclo III">Ciclo III</option>
+                            <option value="Ciclo IV">Ciclo IV</option>
+                            <option value="Ciclo V">Ciclo V</option>
+                            <option value="Ciclo VI">Ciclo VI</option>
+                            <option value="Ciclo VII" selected>Ciclo VII</option>
+                            <option value="Ciclo VIII">Ciclo VIII</option>
+                            <option value="Ciclo IX">Ciclo IX</option>
+                            <option value="Ciclo X">Ciclo X</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">Carrera Universitaria</label>
+                    <input type="text" id="regCareer" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm" value="Ingeniería de Sistemas e Informática">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">Contraseña de Acceso</label>
+                    <input type="password" id="regPassword" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="••••••••">
+                </div>
+
+                <!-- Subida Foto Perfil -->
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">Foto de Perfil (.jpg, .png)</label>
+                    <div class="flex items-center space-x-4">
+                        <img id="regPhotoPreview" src="https://placehold.co/100x100/2A2A2E/F0F0F5?text=Preview" alt="Previsualización" class="w-14 h-14 rounded-full object-cover border border-smoke-500">
+                        <input type="file" id="regPhotoInput" accept="image/*" onchange="previewImage(this, 'regPhotoPreview')" class="text-xs text-smoke-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-smoke-700 file:text-smoke-100 hover:file:bg-smoke-600">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeRegisterModal()" class="px-4 py-2 rounded-lg bg-smoke-800 text-smoke-300 text-sm hover:bg-smoke-700">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-smoke-600 hover:bg-smoke-500 text-white text-sm font-medium shadow-smoke-glow">Completar Registro</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- APLICACIÓN PRINCIPAL -->
-    <div class="app-container" id="appContainer">
-        <!-- BARRA LATERAL -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" class="sidebar-logo upla-logo-target" alt="Logo UPLA">
-                <div>
-                    <div class="sidebar-title">✦ Espectral Edu</div>
-                    <span style="font-size:0.7rem; color:var(--text-muted)">UPLA Digital</span>
-                </div>
+
+    <!-- ==================== MODAL EDICIÓN DE PERFIL ==================== -->
+    <div id="profileModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="smoke-card w-full max-w-lg p-6 sm:p-8 rounded-2xl modal-fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 border-b border-smoke-600/50 pb-3">
+                <h3 class="text-lg font-bold text-smoke-100 flex items-center space-x-2">
+                    <i class="fa-solid fa-user-pen text-smoke-300"></i>
+                    <span>Editar Perfil de Usuario</span>
+                </h3>
+                <button onclick="closeProfileModal()" class="text-smoke-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- CONTROL PARA EDITAR LOGO EN TIEMPO REAL -->
-            <div class="edit-logo-box">
-                <label><i class="fa-solid fa-image"></i> Cambiar Logo UPLA (URL)</label>
-                <input type="text" id="inputLogoUrl" class="form-control" style="padding:6px; font-size:0.75rem;" 
-                       placeholder="https://link-imagen.png" 
-                       value="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop"
-                       oninput="updateLogoUrl(this.value)">
-            </div>
-
-            <button class="btn-direct-teacher" style="margin-bottom:15px;" onclick="directTeacherLogin()">
-                ⚡ Modo Docente Directo
-            </button>
-
-            <div class="menu-section">Cursos</div>
-            <button class="menu-item active" onclick="mostrarSeccion('curso-dev', this)">
-                <i class="fa-solid fa-code"></i> Desarrollo de Apps I
-            </button>
-
-            <div class="menu-section">Gestión Académica</div>
-            <button class="menu-item" id="btn-panel-docente" onclick="mostrarSeccion('panel-docente', this)">
-                <i class="fa-solid fa-list-check"></i> Revisión de Tareas
-            </button>
-            <button class="menu-item" onclick="mostrarSeccion('portafolio', this)">
-                <i class="fa-solid fa-folder-open"></i> Portafolio Evidencias
-            </button>
-
-            <div class="user-profile-widget">
-                <div class="avatar-circle" id="userAvatar">U</div>
-                <div>
-                    <div id="displayUserName" style="font-weight:700; font-size:0.85rem; color:#fff">Usuario</div>
-                    <div id="displayUserRole" style="font-size:0.75rem; color:var(--cyan-aura)">Estudiante</div>
-                </div>
-                <button onclick="logout()" style="margin-left:auto; background:transparent; border:none; color:var(--text-muted); cursor:pointer;" title="Cerrar Sesión">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
-            </div>
-        </aside>
-
-        <!-- ÁREA PRINCIPAL -->
-        <main class="main-content">
-            <div class="top-bar-branding">
-                <div>
-                    <h1 id="titulo-pagina" style="font-size: 1.6rem;">Desarrollo de Aplicaciones I</h1>
-                    <p style="font-size:0.85rem; color:var(--text-muted);">Plataforma Académica Espectral & Didáctica</p>
-                </div>
-                <span id="rol-tag" class="badge-status badge-graded">Modo: Estudiante</span>
-            </div>
-
-            <!-- SECCIÓN 1: Estructura del Curso (4 Unidades y 16 Semanas) -->
-            <div id="curso-dev" class="seccion-content">
-                <div class="card">
-                    <h2><i class="fa-solid fa-cubes"></i> Estructura del Curso: Desarrollo de Aplicaciones I</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 20px;">
-                        Plan detallado de 16 semanas distribuido en 4 Unidades Formativas.
-                    </p>
-
-                    <div class="units-container">
-                        <!-- Unidad 1 -->
-                        <div class="unit-box">
-                            <h4>Unidad 1: Fundamentos</h4>
-                            <ul class="weeks-list">
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 1: Arquitectura Web</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 2: Entornos de Dev</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 3: HTML5 y Semántica</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 4: CSS Avanzado</li>
-                            </ul>
-                        </div>
-
-                        <!-- Unidad 2 -->
-                        <div class="unit-box">
-                            <h4>Unidad 2: Lógica & JS</h4>
-                            <ul class="weeks-list">
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 5: Sintaxis JS</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 6: Manipulación DOM</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 7: Eventos y Asincronía</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 8: Evaluaciones U2</li>
-                            </ul>
-                        </div>
-
-                        <!-- Unidad 3 -->
-                        <div class="unit-box">
-                            <h4>Unidad 3: Frameworks</h4>
-                            <ul class="weeks-list">
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 9: Componentes</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 10: Estado de la App</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 11: Rutas e Integración</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 12: Consumo de APIs</li>
-                            </ul>
-                        </div>
-
-                        <!-- Unidad 4 -->
-                        <div class="unit-box">
-                            <h4>Unidad 4: Despliegue</h4>
-                            <ul class="weeks-list">
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 13: Pruebas Unitarias</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 14: Optimización</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 15: CI/CD y Hosting</li>
-                                <li><i class="fa-solid fa-angle-right"></i> Semana 16: Proyecto Final</li>
-                            </ul>
-                        </div>
+            <form id="profileForm" onsubmit="handleUpdateProfile(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Nombres</label>
+                        <input type="text" id="editFirstName" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Apellidos</label>
+                        <input type="text" id="editLastName" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm">
                     </div>
                 </div>
-            </div>
 
-            <!-- SECCIÓN 2: Panel de Revisión de Tareas para el Docente -->
-            <div id="panel-docente" class="seccion-content hidden">
-                <div class="card">
-                    <h2><i class="fa-solid fa-clipboard-check"></i> Panel de Revisión de Tareas</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 15px;">
-                        Sección de revisión y descarga de entregables.
-                    </p>
-
-                    <table class="teacher-table">
-                        <thead>
-                            <tr>
-                                <th>Estudiante</th>
-                                <th>Tarea Subida</th>
-                                <th>Archivo</th>
-                                <th>Retroalimentación</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-tareas">
-                            <tr>
-                                <td>Carlos Mendoza</td>
-                                <td>Semana 4: Maquetación CSS</td>
-                                <td><button class="btn-action" onclick="descargarArchivo('Tarea_Mendoza.pdf')"><i class="fa-solid fa-download"></i> Descargar</button></td>
-                                <td><input type="text" class="form-control" placeholder="Comentarios del docente..."></td>
-                            </tr>
-                            <tr>
-                                <td>Ana Gómez</td>
-                                <td>Semana 7: Consumo API</td>
-                                <td><button class="btn-action" onclick="descargarArchivo('Proyecto_Gomez.zip')"><i class="fa-solid fa-download"></i> Descargar</button></td>
-                                <td><input type="text" class="form-control" placeholder="Comentarios del docente..."></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 3: Portafolio de Evidencias e Historial -->
-            <div id="portafolio" class="seccion-content hidden">
-                <div class="card">
-                    <h2><i class="fa-solid fa-box-archive"></i> Portafolio de Evidencias e Historial</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 20px;">
-                        Registro consolidado de actividades y evidencias presentadas.
-                    </p>
-                    <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                        <p style="margin-bottom:10px;"><i class="fa-solid fa-circle-check" style="color:var(--green-accent)"></i> <strong>Tarea 1:</strong> Arquitectura del Proyecto - <span class="badge-status badge-graded">Entregado</span></p>
-                        <p style="margin-bottom:10px;"><i class="fa-solid fa-circle-check" style="color:var(--green-accent)"></i> <strong>Tarea 2:</strong> Prototipado UX/UI - <span class="badge-status badge-graded">Entregado</span></p>
-                        <p><i class="fa-solid fa-clock" style="color:var(--amber-accent)"></i> <strong>Tarea 3:</strong> Módulos del Sistema - <span style="color:var(--amber-accent)">Pendiente de revisión</span></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Carrera</label>
+                        <input type="text" id="editCareer" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-smoke-300 mb-1">Ciclo</label>
+                        <select id="editAcademicCycle" required class="smoke-input w-full px-3 py-2 rounded-lg text-sm">
+                            <option value="Ciclo I">Ciclo I</option>
+                            <option value="Ciclo II">Ciclo II</option>
+                            <option value="Ciclo III">Ciclo III</option>
+                            <option value="Ciclo IV">Ciclo IV</option>
+                            <option value="Ciclo V">Ciclo V</option>
+                            <option value="Ciclo VI">Ciclo VI</option>
+                            <option value="Ciclo VII">Ciclo VII</option>
+                            <option value="Ciclo VIII">Ciclo VIII</option>
+                            <option value="Ciclo IX">Ciclo IX</option>
+                            <option value="Ciclo X">Ciclo X</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-        </main>
+
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">Nueva Contraseña (Opcional)</label>
+                    <input type="password" id="editPassword" class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="Dejar en blanco para mantener la actual">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">Actualizar Foto de Perfil</label>
+                    <div class="flex items-center space-x-4">
+                        <img id="editPhotoPreview" src="https://placehold.co/100x100/2A2A2E/F0F0F5?text=User" alt="Preview" class="w-14 h-14 rounded-full object-cover border border-smoke-500">
+                        <input type="file" id="editPhotoInput" accept="image/*" onchange="previewImage(this, 'editPhotoPreview')" class="text-xs text-smoke-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-smoke-700 file:text-smoke-100">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-lg bg-smoke-800 text-smoke-300 text-sm hover:bg-smoke-700">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-smoke-600 hover:bg-smoke-500 text-white text-sm font-medium shadow-smoke-glow">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL DE LÓGICA E INTERACTIVIDAD -->
+    <!-- ==================== MODAL CAMBIO DE LOGO UPLA ==================== -->
+    <div id="logoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="smoke-card w-full max-w-md p-6 rounded-2xl modal-fade-in">
+            <div class="flex justify-between items-center mb-4 border-b border-smoke-600/50 pb-2">
+                <h3 class="text-base font-bold text-smoke-100">Personalizar Logo UPLA</h3>
+                <button onclick="closeLogoEditModal()" class="text-smoke-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-smoke-300 mb-4">Ingrese la URL de la imagen del logo oficial de la universidad o cargue un archivo.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">URL de la Imagen</label>
+                    <input type="url" id="logoUrlInput" class="smoke-input w-full px-3 py-2 rounded-lg text-sm" placeholder="https://ejemplo.com/upla-logo.png">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-smoke-300 mb-1">O Cargar desde archivo local</label>
+                    <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoFileUpload(this)" class="text-xs text-smoke-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-smoke-700 file:text-smoke-100">
+                </div>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button onclick="saveLogoUrl()" class="px-4 py-2 bg-smoke-600 hover:bg-smoke-500 text-white rounded-lg text-xs font-medium">Guardar Logo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        let currentRole = 'estudiante';
+        
+        // Claves para LocalStorage
+        const STORAGE_KEY_USER = 'upla_portfolio_user';
+        const STORAGE_KEY_SESSION = 'upla_portfolio_session';
+        const STORAGE_KEY_LOGO = 'upla_portfolio_logo';
+        const STORAGE_KEY_COURSES = 'upla_portfolio_courses_data';
 
-        // Función para actualizar dinámicamente el logo de la UPLA
-        function updateLogoUrl(url) {
-            if(!url) return;
-            const logos = document.querySelectorAll('.upla-logo-target');
-            logos.forEach(img => {
-                img.src = url;
-            });
-        }
+        // Logo Por Defecto de UPLA
+        const DEFAULT_UPLA_LOGO = "https://placehold.co/120x120/121214/F0F0F5?text=UPLA";
 
-        // Gestión de Selección de Rol en Autenticación
-        function setRole(role) {
-            currentRole = role;
-            document.getElementById('roleStudentBtn').classList.toggle('active', role === 'estudiante');
-            document.getElementById('roleTeacherBtn').classList.toggle('active', role === 'docente');
-        }
-
-        // Manejo del Login
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            iniciarSesion(username, currentRole);
-        }
-
-        // Ingreso Directo como Docente
-        function directTeacherLogin() {
-            setRole('docente');
-            iniciarSesion('docente.upla', 'docente');
-            mostrarSeccion('panel-docente', document.getElementById('btn-panel-docente'));
-            showToast('¡Bienvenido Docente! Acceso directo concedido.');
-        }
-
-        function iniciarSesion(username, role) {
-            document.getElementById('authWrapper').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'grid';
-
-            document.getElementById('displayUserName').textContent = username;
-            document.getElementById('displayUserRole').textContent = role === 'docente' ? 'Docente UPLA' : 'Estudiante';
-            document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
-
-            const tagRol = document.getElementById('rol-tag');
-            if (role === 'docente') {
-                tagRol.textContent = "Modo: Docente (Acceso Total)";
-                tagRol.style.backgroundColor = "rgba(168, 85, 247, 0.3)";
-                tagRol.style.color = "#a855f7";
-            } else {
-                tagRol.textContent = "Modo: Estudiante";
-                tagRol.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
-                tagRol.style.color = "#10b981";
+        // Estructura Académica Inicial (16 semanas / 4 Unidades por curso)
+        const DEFAULT_COURSES_DATA = {
+            course1: {
+                title: "Algoritmos y Estructura de Datos",
+                weeks: generateDefaultWeeks()
+            },
+            course2: {
+                title: "Desarrollo de Aplicaciones I",
+                weeks: generateDefaultWeeks()
             }
+        };
 
-            if (typeof confetti === 'function') {
-                confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+        function generateDefaultWeeks() {
+            const weeks = {};
+            for (let i = 1; i <= 16; i++) {
+                weeks[i] = {
+                    title: `Semana ${i}: Tema Académico y Prácticas`,
+                    files: []
+                };
             }
+            return weeks;
         }
 
-        function logout() {
-            document.getElementById('appContainer').style.display = 'none';
-            document.getElementById('authWrapper').style.display = 'flex';
-        }
+        // Estado Global runtime
+        let currentUser = null;
+        let activeCourse = 'course1';
+        let coursesData = {};
 
-        // Cambiar entre secciones del panel
-        function mostrarSeccion(idSeccion, elementBtn) {
-            const secciones = document.querySelectorAll('.seccion-content');
-            secciones.forEach(sec => sec.classList.add('hidden'));
-
-            const seccionMostrar = document.getElementById(idSeccion);
-            if (seccionMostrar) {
-                seccionMostrar.classList.remove('hidden');
-            }
-
-            if (elementBtn) {
-                const botones = document.querySelectorAll('.menu-item');
-                botones.forEach(btn => btn.classList.remove('active'));
-                elementBtn.classList.add('active');
-            }
-        }
-
-        // Funciones del Panel Docente
-        function descargarArchivo(nombreArchivo) {
-            showToast("Descargando entregable: " + nombreArchivo);
-        }
-
-        // Notificaciones Toast
-        function showToast(mensaje) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast-item';
-            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${mensaje}</span>`;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.remove();
-            }, 3500);
-        }
-
-        // Descarga directa del código unificado
-        function downloadProjectCode() {
-            const code = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-            const blob = new Blob([code], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Plataforma_Academica_Espectral_UPLA.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // ANIMACIÓN DE LUENZO (CANVAS DE PARTICULAS Y EFECTO)
-        const canvas = document.getElementById('skullSmokeCanvas');
+        
+        const canvas = document.getElementById('smokeCanvas');
         const ctx = canvas.getContext('2d');
+
         let particles = [];
+        let skulls = [];
+        let mouse = { x: null, y: null, radius: 150 };
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            initCanvasParticles();
         }
+
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
 
         class Particle {
             constructor() {
-                this.reset();
-            }
-
-            reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.alpha = Math.random() * 0.5 + 0.1;
+                this.size = Math.random() * 40 + 20;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * -0.5 - 0.1; // Sube lentamente
+                this.opacity = Math.random() * 0.15 + 0.05;
             }
 
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                    this.reset();
+                // Reacción al puntero
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        this.x -= dx * 0.01;
+                        this.y -= dy * 0.01;
+                    }
+                }
+
+                // Reiniciar al salir
+                if (this.y < -50) {
+                    this.y = canvas.height + 50;
+                    this.x = Math.random() * canvas.width;
+                }
+                if (this.x < -50) this.x = canvas.width + 50;
+                if (this.x > canvas.width + 50) this.x = -50;
+            }
+
+            draw() {
+                ctx.save();
+                let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                gradient.addColorStop(0, `rgba(200, 200, 210, ${this.opacity})`);
+                gradient.addColorStop(0.8, `rgba(100, 100, 110, ${this.opacity * 0.3})`);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class SkullSilhouette {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.scale = Math.random() * 0.3 + 0.2;
+                this.speedY = -0.15;
+                this.opacity = Math.random() * 0.04 + 0.01; // Sutil
+            }
+
+            update() {
+                this.y += this.speedY;
+                if (this.y < -100) {
+                    this.y = canvas.height + 100;
+                    this.x = Math.random() * canvas.width;
                 }
             }
 
             draw() {
-                ctx.fillStyle = `rgba(139, 92, 246, ${this.alpha})`;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.scale, this.scale);
+                ctx.fillStyle = `rgba(240, 240, 245, ${this.opacity})`;
+                
+                // Dibujo simplificado de silueta de calavera vía Path
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.arc(0, 0, 30, Math.PI, 0, false);
+                ctx.rect(-20, 0, 40, 25);
                 ctx.fill();
+
+                // Cuencas Oculares
+                ctx.fillStyle = 'rgba(11, 11, 13, 0.9)';
+                ctx.beginPath();
+                ctx.arc(-10, 0, 7, 0, Math.PI * 2);
+                ctx.arc(10, 0, 7, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Nariz
+                ctx.beginPath();
+                ctx.moveTo(0, 8);
+                ctx.lineTo(-4, 15);
+                ctx.lineTo(4, 15);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
             }
         }
 
-        for (let i = 0; i < 60; i++) {
-            particles.push(new Particle());
+        function initCanvasParticles() {
+            particles = [];
+            skulls = [];
+            const particleCount = Math.floor((canvas.width * canvas.height) / 18000);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            for (let i = 0; i < 6; i++) {
+                skulls.push(new SkullSilhouette());
+            }
         }
 
         function animateCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Capa de humo
             particles.forEach(p => {
                 p.update();
                 p.draw();
             });
+
+            // Capa de siluetas de calaveras
+            skulls.forEach(s => {
+                s.update();
+                s.draw();
+            });
+
             requestAnimationFrame(animateCanvas);
         }
-        animateCanvas();
+
+
+        window.onload = function() {
+            resizeCanvas();
+            animateCanvas();
+            loadStoredLogo();
+            loadStoredCourses();
+            checkActiveSession();
+        };
+
+        function checkActiveSession() {
+            const sessionData = localStorage.getItem(STORAGE_KEY_SESSION);
+            if (sessionData) {
+                currentUser = JSON.parse(sessionData);
+                showDashboard();
+            } else {
+                showAuth();
+            }
+        }
+
+        function loadStoredLogo() {
+            const logo = localStorage.getItem(STORAGE_KEY_LOGO) || DEFAULT_UPLA_LOGO;
+            document.getElementById('uplaAuthLogo').src = logo;
+            document.getElementById('uplaDashLogo').src = logo;
+        }
+
+        function loadStoredCourses() {
+            const stored = localStorage.getItem(STORAGE_KEY_COURSES);
+            if (stored) {
+                try {
+                    coursesData = JSON.parse(stored);
+                } catch(e) {
+                    coursesData = DEFAULT_COURSES_DATA;
+                }
+            } else {
+                coursesData = DEFAULT_COURSES_DATA;
+                saveCoursesToStorage();
+            }
+        }
+
+        function saveCoursesToStorage() {
+            localStorage.setItem(STORAGE_KEY_COURSES, JSON.stringify(coursesData));
+        }
+
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('loginUsername').value.trim();
+            const passInput = document.getElementById('loginPassword').value.trim();
+
+            const storedUser = localStorage.getItem(STORAGE_KEY_USER);
+            if (storedUser) {
+                const userObj = JSON.parse(storedUser);
+                if ((userObj.code === userInput || userObj.firstName.toLowerCase().includes(userInput.toLowerCase())) && userObj.password === passInput) {
+                    currentUser = { ...userObj, role: 'Estudiante' };
+                    localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(currentUser));
+                    showDashboard();
+                    return;
+                }
+            }
+
+            // Fallback para primer ingreso si no hay usuario guardado previamente
+            if (userInput && passInput) {
+                currentUser = {
+                    firstName: userInput,
+                    lastName: "Estudiante",
+                    code: "U202300001",
+                    career: "Ingeniería de Sistemas e Informática",
+                    cycle: "Ciclo VII",
+                    photo: "https://placehold.co/100x100/2A2A2E/F0F0F5?text=Alumno",
+                    role: "Estudiante"
+                };
+                localStorage.setItem(STORAGE_KEY_USER, JSON.stringify({ ...currentUser, password: passInput }));
+                localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(currentUser));
+                showDashboard();
+            } else {
+                alert("Credenciales incorrectas o usuario no registrado.");
+            }
+        }
+
+        function loginAsTeacher() {
+            currentUser = {
+                firstName: "Docente / Visitante",
+                lastName: "UPLA",
+                code: "DOC-2026",
+                career: "Facultad de Ingeniería",
+                cycle: "Evaluador",
+                photo: "https://placehold.co/100x100/3A3A40/F0F0F5?text=Docente",
+                role: "Docente"
+            };
+            localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem(STORAGE_KEY_SESSION);
+            currentUser = null;
+            showAuth();
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.remove('hidden');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.add('hidden');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const firstName = document.getElementById('regFirstName').value.trim();
+            const lastName = document.getElementById('regLastName').value.trim();
+            const code = document.getElementById('regStudentCode').value.trim();
+            const cycle = document.getElementById('regAcademicCycle').value;
+            const career = document.getElementById('regCareer').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const previewImg = document.getElementById('regPhotoPreview').src;
+
+            const newUserData = {
+                firstName,
+                lastName,
+                code,
+                cycle,
+                career,
+                password,
+                photo: previewImg,
+                role: 'Estudiante'
+            };
+
+            localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(newUserData));
+            currentUser = newUserData;
+            localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(currentUser));
+            
+            closeRegisterModal();
+            showDashboard();
+        }
+
+
+        function openProfileModal() {
+            if (!currentUser || currentUser.role === 'Docente') {
+                alert("El perfil del visitante de solo lectura no se puede editar.");
+                return;
+            }
+
+            document.getElementById('editFirstName').value = currentUser.firstName || '';
+            document.getElementById('editLastName').value = currentUser.lastName || '';
+            document.getElementById('editCareer').value = currentUser.career || '';
+            document.getElementById('editAcademicCycle').value = currentUser.cycle || 'Ciclo VII';
+            document.getElementById('editPhotoPreview').src = currentUser.photo || 'https://placehold.co/100x100/2A2A2E/F0F0F5?text=User';
+
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function handleUpdateProfile(e) {
+            e.preventDefault();
+            currentUser.firstName = document.getElementById('editFirstName').value.trim();
+            currentUser.lastName = document.getElementById('editLastName').value.trim();
+            currentUser.career = document.getElementById('editCareer').value.trim();
+            currentUser.cycle = document.getElementById('editAcademicCycle').value;
+            currentUser.photo = document.getElementById('editPhotoPreview').src;
+
+            const newPass = document.getElementById('editPassword').value;
+            if (newPass) {
+                currentUser.password = newPass;
+            }
+
+            localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+            localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(currentUser));
+
+            updateHeaderUserInfo();
+            closeProfileModal();
+        }
+
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+
+        function openLogoEditModal() {
+            document.getElementById('logoModal').classList.remove('hidden');
+        }
+
+        function closeLogoEditModal() {
+            document.getElementById('logoModal').classList.add('hidden');
+        }
+
+        function saveLogoUrl() {
+            const url = document.getElementById('logoUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem(STORAGE_KEY_LOGO, url);
+                loadStoredLogo();
+                closeLogoEditModal();
+            }
+        }
+
+        function handleLogoFileUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem(STORAGE_KEY_LOGO, e.target.result);
+                    loadStoredLogo();
+                    closeLogoEditModal();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+
+        function showAuth() {
+            document.getElementById('authView').classList.remove('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('authView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+
+            updateHeaderUserInfo();
+            renderCourseView();
+        }
+
+        function updateHeaderUserInfo() {
+            if (!currentUser) return;
+            document.getElementById('headerUserAvatar').src = currentUser.photo || 'https://placehold.co/80x80/2A2A2E/F0F0F5?text=User';
+            document.getElementById('headerUserName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+            document.getElementById('headerUserCode').textContent = `| ${currentUser.code}`;
+            
+            const badge = document.getElementById('headerUserRoleBadge');
+            badge.textContent = currentUser.role;
+            if (currentUser.role === 'Docente') {
+                badge.className = "text-[10px] px-1.5 py-0.2 rounded bg-amber-600 text-amber-100";
+                document.getElementById('teacherRoleNotice').classList.remove('hidden');
+            } else {
+                badge.className = "text-[10px] px-1.5 py-0.2 rounded bg-smoke-600 text-smoke-200";
+                document.getElementById('teacherRoleNotice').classList.add('hidden');
+            }
+        }
+
+        function switchCourse(courseKey) {
+            activeCourse = courseKey;
+            renderCourseView();
+        }
+
+        function renderCourseView() {
+            // Actualizar estilo de pestañas
+            const tab1 = document.getElementById('tabCourse1');
+            const tab2 = document.getElementById('tabCourse2');
+
+            if (activeCourse === 'course1') {
+                tab1.className = "px-5 py-2.5 rounded-xl text-sm font-medium transition-all bg-smoke-600 text-white shadow-smoke-glow border border-smoke-400/40";
+                tab2.className = "px-5 py-2.5 rounded-xl text-sm font-medium transition-all bg-smoke-800/80 text-smoke-300 hover:bg-smoke-700 border border-smoke-600/30";
+            } else {
+                tab2.className = "px-5 py-2.5 rounded-xl text-sm font-medium transition-all bg-smoke-600 text-white shadow-smoke-glow border border-smoke-400/40";
+                tab1.className = "px-5 py-2.5 rounded-xl text-sm font-medium transition-all bg-smoke-800/80 text-smoke-300 hover:bg-smoke-700 border border-smoke-600/30";
+            }
+
+            document.getElementById('currentCourseTitle').textContent = coursesData[activeCourse].title;
+
+            // Renderizar las 4 Unidades y sus 16 Semanas en total
+            const container = document.getElementById('courseUnitsContainer');
+            container.innerHTML = '';
+
+            const units = [
+                { name: "Unidad I: Fundamentos y Conceptos Clave", weeks: [1, 2, 3, 4] },
+                { name: "Unidad II: Estructuras Avanzadas y Algoritmos", weeks: [5, 6, 7, 8] },
+                { name: "Unidad III: Desarrollo, Prácticas y Modelado", weeks: [9, 10, 11, 12] },
+                { name: "Unidad IV: Evaluación Final y Proyecto Integrador", weeks: [13, 14, 15, 16] }
+            ];
+
+            const isTeacher = currentUser && currentUser.role === 'Docente';
+
+            units.forEach((unit, idx) => {
+                const unitElement = document.createElement('div');
+                unitElement.className = "smoke-card p-6 rounded-2xl border border-smoke-600/40 space-y-4";
+                
+                let weeksHtml = '';
+                unit.weeks.forEach(weekNum => {
+                    const weekData = coursesData[activeCourse].weeks[weekNum];
+                    
+                    // Lista de archivos
+                    let filesHtml = '';
+                    if (weekData.files.length === 0) {
+                        filesHtml = `<p class="text-xs text-smoke-400 italic my-2">No hay archivos entregados para esta semana.</p>`;
+                    } else {
+                        filesHtml = `<div class="space-y-2 my-3">`;
+                        weekData.files.forEach((file, fileIdx) => {
+                            const iconClass = getFileIcon(file.name);
+                            filesHtml += `
+                                <div class="flex items-center justify-between p-2 rounded-lg bg-smoke-800/90 border border-smoke-600/30 text-xs">
+                                    <div class="flex items-center space-x-2 overflow-hidden pr-2">
+                                        <i class="${iconClass} text-sm text-silver-accent"></i>
+                                        <span class="truncate text-smoke-200" title="${file.name}">${file.name}</span>
+                                        <span class="text-[10px] text-smoke-400">(${file.size})</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 flex-shrink-0">
+                                        <a href="${file.data}" download="${file.name}" class="p-1 px-2 rounded bg-smoke-700 hover:bg-smoke-600 text-smoke-100 transition-colors" title="Descargar archivo">
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                        ${!isTeacher ? `
+                                            <button onclick="deleteFile('${activeCourse}', ${weekNum}, ${fileIdx})" class="p-1 px-2 rounded bg-red-950/40 hover:bg-red-900/60 text-red-300 transition-colors" title="Eliminar archivo">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        filesHtml += `</div>`;
+                    }
+
+                    weeksHtml += `
+                        <div class="p-4 rounded-xl bg-smoke-800/50 border border-smoke-600/30 flex flex-col justify-between space-y-3">
+                            <div>
+                                <!-- Titulo Editable -->
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span class="text-[10px] uppercase font-semibold text-silver-accent bg-smoke-700/60 px-2 py-0.5 rounded">Semana ${weekNum}</span>
+                                    ${!isTeacher ? `<button onclick="editWeekTitle('${activeCourse}', ${weekNum})" class="text-xs text-smoke-400 hover:text-white" title="Editar Título"><i class="fa-solid fa-pen"></i></button>` : ''}
+                                </div>
+                                <h4 id="weekTitle_${weekNum}" class="font-semibold text-sm text-smoke-100 line-clamp-2">${escapeHtml(weekData.title)}</h4>
+                            </div>
+
+                            <!-- Lista de archivos -->
+                            <div>
+                                ${filesHtml}
+                            </div>
+
+                            <!-- Area Drag & Drop / File Input -->
+                            ${!isTeacher ? `
+                                <div class="drop-zone border-2 border-dashed border-smoke-600/60 rounded-lg p-3 text-center transition-all cursor-pointer hover:border-smoke-400"
+                                     ondragover="handleDragOver(event)" 
+                                     ondragleave="handleDragLeave(event)" 
+                                     ondrop="handleFileDrop(event, '${activeCourse}', ${weekNum})"
+                                     onclick="triggerFileInput('${activeCourse}', ${weekNum})">
+                                    <i class="fa-solid fa-cloud-arrow-up text-lg text-smoke-400 mb-1"></i>
+                                    <p class="text-[11px] text-smoke-300">Arrastre archivos o <span class="text-silver-accent underline">examine</span></p>
+                                    <p class="text-[9px] text-smoke-400 mt-0.5">.zip, .pdf, .docx, .pptx, .png, .jpg</p>
+                                    <input type="file" id="fileInput_${weekNum}" multiple class="hidden" onchange="handleFileSelect(event, '${activeCourse}', ${weekNum})">
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+                unitElement.innerHTML = `
+                    <div class="flex items-center space-x-3 border-b border-smoke-600/40 pb-3">
+                        <div class="w-3 h-3 rounded-full bg-smoke-400 shadow-smoke-glow"></div>
+                        <h3 class="text-base font-bold text-smoke-100">${unit.name}</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        ${weeksHtml}
+                    </div>
+                `;
+
+                container.appendChild(unitElement);
+            });
+        }
+
+
+        function triggerFileInput(courseKey, weekNum) {
+            const input = document.getElementById(`fileInput_${weekNum}`);
+            if (input) input.click();
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleFileDrop(e, courseKey, weekNum) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('drag-over');
+
+            if (currentUser && currentUser.role === 'Docente') return;
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processUploadedFiles(files, courseKey, weekNum);
+            }
+        }
+
+        function handleFileSelect(e, courseKey, weekNum) {
+            if (currentUser && currentUser.role === 'Docente') return;
+            const files = e.target.files;
+            if (files.length > 0) {
+                processUploadedFiles(files, courseKey, weekNum);
+            }
+        }
+
+        function processUploadedFiles(files, courseKey, weekNum) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileObj = {
+                        name: file.name,
+                        size: formatBytes(file.size),
+                        type: file.type,
+                        data: e.target.result, // Base64
+                        date: new Date().toLocaleDateString()
+                    };
+
+                    coursesData[courseKey].weeks[weekNum].files.push(fileObj);
+                    saveCoursesToStorage();
+                    renderCourseView();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function deleteFile(courseKey, weekNum, fileIdx) {
+            if (currentUser && currentUser.role === 'Docente') return;
+            
+            if (confirm("¿Está seguro de eliminar esta tarea cargada?")) {
+                coursesData[courseKey].weeks[weekNum].files.splice(fileIdx, 1);
+                saveCoursesToStorage();
+                renderCourseView();
+            }
+        }
+
+        function editWeekTitle(courseKey, weekNum) {
+            if (currentUser && currentUser.role === 'Docente') return;
+
+            const currentTitle = coursesData[courseKey].weeks[weekNum].title;
+            const newTitle = prompt("Ingrese el nuevo tema o título para la semana:", currentTitle);
+            
+            if (newTitle !== null && newTitle.trim() !== "") {
+                coursesData[courseKey].weeks[weekNum].title = newTitle.trim();
+                saveCoursesToStorage();
+                renderCourseView();
+            }
+        }
+
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            switch (ext) {
+                case 'pdf': return 'fa-solid fa-file-pdf text-red-400';
+                case 'zip':
+                case 'rar': return 'fa-solid fa-file-zipper text-amber-400';
+                case 'doc':
+                case 'docx': return 'fa-solid fa-file-word text-blue-400';
+                case 'ppt':
+                case 'pptx': return 'fa-solid fa-file-powerpoint text-orange-400';
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'webp': return 'fa-solid fa-file-image text-emerald-400';
+                default: return 'fa-solid fa-file-lines text-smoke-300';
+            }
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
     </script>
 </body>
 </html>

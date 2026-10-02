@@ -219,7 +219,33 @@
                     </div>
 
                     <!-- Botón Cerrar Sesión -->
-                    <button onclick="handleLogout()" class="p-2 sm:px-3 sm:py-2 rounded-lg bg-smoke-800 hover:bg-red-950/40 text-smoke-300 hover:text-red-400 border border-smoke-600/40 hover:border-red-800/50 transition-all text-xs flex items-center space-x-2" title="Cerrar Sesión">
+                    <button onclick="handleLogout(<!-- BOTONES DE RESPALDO / BACKUP -->
+<div class="flex items-center gap-2 mr-4">
+  <!-- Botón Exportar -->
+  <button 
+    onclick="exportarBackup()" 
+    title="Descargar copia de seguridad con todas tus tareas"
+    class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs px-3 py-1.5 rounded border border-neutral-600 transition shadow">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+    </svg>
+    Exportar Datos
+  </button>
+
+  <!-- Botón Importar -->
+  <button 
+    onclick="document.getElementById('importFileInput').click()" 
+    title="Cargar copia de seguridad desde un archivo JSON"
+    class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs px-3 py-1.5 rounded border border-neutral-600 transition shadow">
+    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+    </svg>
+    Importar Datos
+  </button>
+
+  <!-- Input oculto para seleccionar el archivo JSON -->
+  <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importarBackup(event)" />
+</div>)" class="p-2 sm:px-3 sm:py-2 rounded-lg bg-smoke-800 hover:bg-red-950/40 text-smoke-300 hover:text-red-400 border border-smoke-600/40 hover:border-red-800/50 transition-all text-xs flex items-center space-x-2" title="Cerrar Sesión">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span class="hidden sm:inline">Cerrar Sesión</span>
                     </button>
@@ -1114,6 +1140,86 @@
         function escapeHtml(str) {
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
+        // ==========================================
+// FUNCIÓN PARA EXPORTAR DATOS (BACKUP JSON)
+// ==========================================
+function exportarBackup() {
+  try {
+    // 1. Extraer todos los datos almacenados en localStorage
+    const backupData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      backupData[key] = localStorage.getItem(key);
+    }
+
+    // 2. Comprobar si hay datos para exportar
+    if (Object.keys(backupData).length === 0) {
+      alert("⚠️ No hay datos ni tareas guardadas para exportar.");
+      return;
+    }
+
+    // 3. Convertir los datos a un String JSON estructurado
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+    
+    // 4. Crear un elemento de descarga temporal
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    
+    // Nombre del archivo con la fecha actual
+    const fecha = new Date().toISOString().slice(0,10);
+    downloadAnchor.setAttribute("download", `Portafolio_UPLA_Backup_${fecha}.json`);
+    
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+
+    alert("✅ Copia de seguridad exportada con éxito.");
+  } catch (error) {
+    console.error("Error al exportar:", error);
+    alert("❌ Ocurrió un error al intentar exportar los datos.");
+  }
+}
+
+// ==========================================
+// FUNCIÓN PARA IMPORTAR DATOS (RESTAURAR JSON)
+// ==========================================
+function importarBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+
+      if (typeof importedData !== 'object' || importedData === null) {
+        throw new Error("El archivo no contiene un formato de copia de seguridad válido.");
+      }
+
+      // Confirmar antes de sobrescribir
+      const confirmacion = confirm(
+        "⚠️ Se van a restaurar todas las tareas, datos de perfil y cursos.\n\n¿Deseas continuar?"
+      );
+
+      if (confirmacion) {
+        // Limpiar el localStorage actual y cargar los nuevos datos
+        localStorage.clear();
+        Object.keys(importedData).forEach(key => {
+          localStorage.setItem(key, importedData[key]);
+        });
+
+        alert("🎉 ¡Datos e información restaurados con éxito! La página se recargará ahora.");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error al importar:", error);
+      alert("❌ El archivo seleccionado no es un respaldo JSON válido.");
+    }
+  };
+
+  reader.readAsText(file);
+}
     </script>
 </body>
 </html>

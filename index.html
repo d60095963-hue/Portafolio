@@ -3,25 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma Académica UPLA - Portafolio Espectral</title>
-  <!-- Google Fonts & FontAwesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Plataforma Académica UPLA - Portafolio Espectral & Didáctico</title>
+  
+  <!-- Tipografía Google Fonts y FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Canvas Confetti -->
+  
+  <!-- Canvas Confetti para efectos didácticos -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     :root {
-      --bg-dark: #040406;
-      --glass-bg: rgba(10, 10, 16, 0.85);
-      --glass-border: rgba(139, 92, 246, 0.25);
+      --bg-dark: #030305;
+      --glass-bg: rgba(12, 10, 20, 0.88);
+      --glass-border: rgba(139, 92, 246, 0.3);
       --upla-blue: #007bc7;
       --purple-aura: #8b5cf6;
       --cyan-aura: #06b6d4;
-      --text-main: #f1f5f9;
+      --green-accent: #10b981;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --radius-lg: 18px;
-      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
       --radius-sm: 8px;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -35,68 +38,83 @@
 
     body {
       background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 70%),
-        radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.12), transparent 60%),
-        linear-gradient(to bottom, rgba(4, 4, 6, 0.82), rgba(4, 4, 6, 0.94)),
-        url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1920&auto=format&fit=crop');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Animación de Humo/Niebla */
-    .smoke-overlay {
+    /* CANVAS INTERACTIVO: HUMO DE CALAVERAS Y PARTICULAS */
+    #skullSmokeCanvas {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
-      z-index: -1;
-      background: radial-gradient(circle at 30% 40%, rgba(139, 92, 246, 0.1), transparent 50%),
-                  radial-gradient(circle at 70% 70%, rgba(0, 123, 199, 0.1), transparent 50%);
-      animation: pulseAura 8s infinite alternate ease-in-out;
+      z-index: 0;
     }
 
-    @keyframes pulseAura {
-      0% { opacity: 0.5; transform: scale(1); }
-      100% { opacity: 0.9; transform: scale(1.05); }
+    /* Aura de Neón Mística de Fondo */
+    .spectral-aura {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(6, 182, 212, 0.08) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+      animation: floatAura 12s infinite alternate ease-in-out;
     }
 
-    /* LOGO OFICIAL UPLA CON RUTA */
+    .aura-1 { top: -100px; left: -100px; }
+    .aura-2 { bottom: -150px; right: -100px; animation-delay: -6s; }
+
+    @keyframes floatAura {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(80px, 50px) scale(1.15); }
+    }
+
+    /* LOGO Y CONTENEDOR */
     .upla-official-logo {
-      width: 90px;
-      height: 90px;
+      width: 85px;
+      height: 85px;
       object-fit: contain;
-      filter: drop-shadow(0 0 12px rgba(0, 123, 199, 0.6));
+      filter: drop-shadow(0 0 15px rgba(0, 123, 199, 0.7));
+      transition: var(--transition);
     }
 
-    /* BOTÓN DESCARGAR CÓDIGO HTML */
+    .upla-official-logo:hover {
+      transform: scale(1.08) rotate(-3deg);
+    }
+
     .btn-download-html {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
       border: none;
-      padding: 8px 14px;
+      padding: 9px 16px;
       border-radius: var(--radius-sm);
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+      gap: 8px;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.4);
       transition: var(--transition);
       text-decoration: none;
     }
 
     .btn-download-html:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 22px rgba(16, 185, 129, 0.7);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
     }
 
-    /* AUTH CARD & LAYOUT */
+    /* PANTALLA DE AUTENTICACIÓN */
     .auth-wrapper {
+      position: relative;
+      z-index: 10;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -106,38 +124,41 @@
 
     .auth-card {
       background: var(--glass-bg);
-      backdrop-filter: blur(25px);
+      backdrop-filter: blur(30px);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 35px 40px;
+      padding: 40px;
       width: 100%;
-      max-width: 500px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(139, 92, 246, 0.2);
+      max-width: 520px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(139, 92, 246, 0.25);
       text-align: center;
       position: relative;
     }
 
     .auth-title {
-      font-size: 1.5rem;
+      font-size: 1.7rem;
       font-weight: 800;
-      margin-top: 10px;
-      color: #fff;
+      margin-top: 12px;
+      background: linear-gradient(135deg, #fff, var(--purple-aura));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .auth-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .role-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 22px;
       background: rgba(0, 0, 0, 0.5);
-      padding: 5px;
+      padding: 6px;
       border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .role-btn {
@@ -146,51 +167,57 @@
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.85rem;
       cursor: pointer;
       transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     .role-btn.active {
-      background: var(--upla-blue);
+      background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
       color: white;
-      box-shadow: 0 0 15px rgba(0, 123, 199, 0.5);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       text-align: left;
     }
 
     .form-group label {
       display: block;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 6px;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .form-control {
       width: 100%;
-      padding: 11px 14px;
-      background: rgba(0, 0, 0, 0.6);
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.65);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
       color: var(--text-main);
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       outline: none;
       transition: var(--transition);
     }
 
     .form-control:focus {
-      border-color: var(--purple-aura);
-      box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+      border-color: var(--cyan-aura);
+      box-shadow: 0 0 18px rgba(6, 182, 212, 0.4);
     }
 
     .avatar-preview-box {
-      width: 70px;
-      height: 70px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       border: 2px solid var(--purple-aura);
       margin: 0 auto 15px auto;
@@ -199,6 +226,7 @@
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,0.6);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
     }
 
     .avatar-preview-box img {
@@ -209,22 +237,26 @@
 
     .btn-primary-action {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
       border: none;
       border-radius: var(--radius-md);
       color: white;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.95rem;
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: 0 5px 20px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 5px 25px rgba(139, 92, 246, 0.4);
       margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
     .btn-primary-action:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
     }
 
     .auth-toggle-link {
@@ -234,18 +266,20 @@
       text-decoration: underline;
     }
 
-    /* MAIN APP LAYOUT */
+    /* PANEL PRINCIPAL DE LA APLICACIÓN */
     .app-container {
+      position: relative;
+      z-index: 10;
       display: none;
       min-height: 100vh;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 290px 1fr;
     }
 
     .sidebar {
       background: var(--glass-bg);
-      backdrop-filter: blur(25px);
+      backdrop-filter: blur(30px);
       border-right: 1px solid var(--glass-border);
-      padding: 25px 15px;
+      padding: 25px 16px;
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -258,70 +292,71 @@
     .sidebar-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       margin-bottom: 25px;
-      padding-bottom: 15px;
+      padding-bottom: 18px;
       border-bottom: 1px solid var(--glass-border);
     }
 
     .sidebar-logo {
-      width: 45px;
-      height: 45px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
     }
 
     .sidebar-title {
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: white;
+      letter-spacing: 0.5px;
     }
 
     .menu-section {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 800;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin: 18px 0 8px 8px;
+      margin: 20px 0 10px 8px;
     }
 
     .menu-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
+      gap: 12px;
+      padding: 11px 14px;
       color: var(--text-muted);
       border-radius: var(--radius-md);
       cursor: pointer;
       transition: var(--transition);
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       margin-bottom: 4px;
     }
 
     .menu-item:hover, .menu-item.active {
       color: #fff;
-      background: rgba(139, 92, 246, 0.2);
-      border-left: 3px solid var(--purple-aura);
+      background: rgba(139, 92, 246, 0.22);
+      border-left: 4px solid var(--purple-aura);
     }
 
-    .tree-unit { margin-left: 10px; font-size: 0.82rem; }
-    .tree-week { margin-left: 22px; font-size: 0.8rem !important; }
+    .tree-unit { margin-left: 12px; font-size: 0.84rem; }
+    .tree-week { margin-left: 24px; font-size: 0.82rem !important; }
 
     .user-profile-widget {
       margin-top: auto;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.6);
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.65);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .avatar-circle {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
       display: flex;
@@ -329,9 +364,10 @@
       justify-content: center;
       font-weight: 800;
       color: white;
-      font-size: 0.9rem;
+      font-size: 1rem;
       overflow: hidden;
-      border: 1px solid var(--purple-aura);
+      border: 2px solid var(--purple-aura);
+      flex-shrink: 0;
     }
 
     .avatar-circle img {
@@ -341,7 +377,7 @@
     }
 
     .main-content {
-      padding: 30px 40px;
+      padding: 35px 45px;
       overflow-y: auto;
       max-height: 100vh;
     }
@@ -353,54 +389,95 @@
       margin-bottom: 30px;
     }
 
-    .class-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      padding: 20px 25px;
-      margin-bottom: 25px;
-      backdrop-filter: blur(20px);
+    /* DASHBOARD Y TARJETAS DIDÁCTICAS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
     }
 
-    .upload-box {
+    .stat-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: rgba(139, 92, 246, 0.2);
+      color: var(--purple-aura);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .class-card, .upload-box, .interactive-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 30px;
+      padding: 28px;
       margin-bottom: 30px;
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(25px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
     }
 
     .drop-area {
-      border: 2px dashed rgba(139, 92, 246, 0.4);
+      border: 2px dashed rgba(139, 92, 246, 0.45);
       border-radius: var(--radius-md);
-      padding: 35px;
+      padding: 40px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.45);
       cursor: pointer;
       transition: var(--transition);
     }
 
     .drop-area:hover {
       border-color: var(--cyan-aura);
-      background: rgba(6, 182, 212, 0.1);
+      background: rgba(6, 182, 212, 0.12);
+      transform: scale(1.01);
     }
 
     .files-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
       gap: 20px;
     }
 
     .file-card {
-      background: var(--glass-bg);
+      background: rgba(15, 15, 26, 0.85);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
-      padding: 18px;
-      backdrop-filter: blur(15px);
+      padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: var(--transition);
+    }
+
+    .file-card:hover {
+      border-color: var(--cyan-aura);
+      transform: translateY(-3px);
     }
 
     .btn-file-action {
@@ -408,33 +485,86 @@
       border-radius: var(--radius-sm);
       border: none;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      transition: var(--transition);
     }
 
     .btn-dl { background: rgba(0, 123, 199, 0.25); color: #38bdf8; border: 1px solid #0284c7; }
+    .btn-dl:hover { background: rgba(0, 123, 199, 0.5); }
+    
     .btn-del { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #dc2626; }
+    .btn-del:hover { background: rgba(239, 68, 68, 0.4); }
+
+    /* EDITOR DIDÁCTICO Y PREVISUALIZADOR DE CÓDIGO */
+    .code-editor-box {
+      background: #09090e;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      margin-top: 15px;
+    }
+
+    .code-input {
+      width: 100%;
+      height: 120px;
+      background: transparent;
+      border: none;
+      color: #38bdf8;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      outline: none;
+      resize: vertical;
+    }
+
+    /* CALCULADORA DE NOTAS UPLA */
+    .grade-calc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
 
     .toast-box {
-      position: fixed; bottom: 25px; right: 25px; z-index: 1000; display: flex; flex-direction: column; gap: 10px;
+      position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
     }
+    
     .toast-item {
-      background: #0f172a; border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: var(--radius-md);
-      display: flex; align-items: center; gap: 10px; border-left: 4px solid var(--purple-aura); color: #fff;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--glass-border);
+      padding: 14px 22px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 5px solid var(--purple-aura);
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      animation: slideIn 0.3s forwards;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <div class="smoke-overlay"></div>
+  <!-- CANVAS DE PARTICULAS Y HUMO DE CALAVERAS -->
+  <canvas id="skullSmokeCanvas"></canvas>
+  <div class="spectral-aura aura-1"></div>
+  <div class="spectral-aura aura-2"></div>
+
   <div class="toast-box" id="toastContainer"></div>
 
-  <!-- AUTHENTICATION -->
+  <!-- SECCIÓN DE AUTENTICACIÓN -->
   <div class="auth-wrapper" id="authWrapper">
     <div class="auth-card">
       <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
@@ -444,8 +574,8 @@
       </div>
 
       <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop" class="upla-official-logo" alt="Logo UPLA">
-      <h2 class="auth-title">UPLA PORTAL</h2>
-      <p class="auth-subtitle">Universidad Peruana Los Andes</p>
+      <h2 class="auth-title">UPLA PORTAL DUAL</h2>
+      <p class="auth-subtitle">Universidad Peruana Los Andes • Entorno Espectral & Didáctico</p>
 
       <div class="role-selector">
         <button class="role-btn active" id="roleStudentBtn" onclick="setRole('estudiante')">
@@ -456,7 +586,7 @@
         </button>
       </div>
 
-      <!-- LOGIN -->
+      <!-- FORMULARIO DE LOGIN -->
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
           <label><i class="fa-solid fa-id-card"></i> Código UPLA / Usuario</label>
@@ -466,19 +596,22 @@
           <label><i class="fa-solid fa-lock"></i> Contraseña</label>
           <input type="password" class="form-control" value="123456" required>
         </div>
-        <button type="submit" class="btn-primary-action">Iniciar Sesión</button>
-        <p style="margin-top:15px; font-size:0.85rem; color:var(--text-muted);">
-          ¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode('register')">Regístrate</span>
+        <button type="submit" class="btn-primary-action">
+          <span>Ingresar a la Plataforma</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <p style="margin-top:18px; font-size:0.85rem; color:var(--text-muted);">
+          ¿Nuevo estudiante? <span class="auth-toggle-link" onclick="toggleAuthMode('register')">Registra tu Perfil</span>
         </p>
       </form>
 
-      <!-- REGISTER -->
+      <!-- FORMULARIO DE REGISTRO -->
       <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
         <div class="avatar-preview-box" id="regAvatarPreview">
-          <i class="fa-solid fa-user-astronaut" style="font-size:2rem; color:var(--purple-aura);"></i>
+          <i class="fa-solid fa-skull" style="font-size:2rem; color:var(--purple-aura);"></i>
         </div>
         <div class="form-group">
-          <label><i class="fa-solid fa-image"></i> Foto de Perfil</label>
+          <label><i class="fa-solid fa-camera"></i> Foto de Perfil</label>
           <input type="file" id="regPhotoInput" class="form-control" accept="image/*" onchange="previewRegisterPhoto(event)">
         </div>
         <div class="form-group">
@@ -504,45 +637,55 @@
           <label><i class="fa-solid fa-graduation-cap"></i> Carrera Profesional</label>
           <input type="text" id="regCareer" class="form-control" value="Ingeniería de Sistemas e Informática" required>
         </div>
-        <button type="submit" class="btn-primary-action">Crear Cuenta</button>
-        <p style="margin-top:15px; font-size:0.85rem; color:var(--text-muted);">
-          ¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode('login')">Inicia Sesión</span>
+        <button type="submit" class="btn-primary-action">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Completar Registro</span>
+        </button>
+        <p style="margin-top:18px; font-size:0.85rem; color:var(--text-muted);">
+          ¿Ya estás registrado? <span class="auth-toggle-link" onclick="toggleAuthMode('login')">Inicia Sesión</span>
         </p>
       </form>
     </div>
   </div>
 
-  <!-- MAIN APP -->
+  <!-- APLICACIÓN PRINCIPAL -->
   <div class="app-container" id="appContainer">
+    <!-- BARRA LATERAL -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" class="sidebar-logo" alt="Logo UPLA">
         <div>
-          <div class="sidebar-title">UPLA PORTAFOLIO</div>
-          <div style="font-size: 0.65rem; color: var(--text-muted);">Sistemas e Informática</div>
+          <div class="sidebar-title">UPLA PORTAL</div>
+          <div style="font-size: 0.68rem; color: var(--cyan-aura); font-weight:700;">PORTAFOLIO DIGITAL</div>
         </div>
       </div>
 
-      <div class="menu-section">Ajustes</div>
+      <div class="menu-section">Navegación</div>
+      <a class="menu-item active" id="navDashboard" onclick="showDashboardView()">
+        <i class="fa-solid fa-chart-pie"></i> Panel & Métricas
+      </a>
       <a class="menu-item" onclick="showProfileView()">
         <i class="fa-solid fa-user-gear"></i> Mi Perfil
       </a>
+      <a class="menu-item" onclick="showGradeCalcView()">
+        <i class="fa-solid fa-calculator"></i> Promedio UPLA
+      </a>
 
-      <div class="menu-section">Cursos</div>
+      <div class="menu-section">Cursos & Semanas</div>
       <div class="menu-item" onclick="toggleFolder('c1_units')">
-        <i class="fa-solid fa-code"></i> Algoritmos y Estructuras
+        <i class="fa-solid fa-laptop-code"></i> Algoritmos & Estructuras
       </div>
       <div id="c1_units">
         <script>
           for(let u=1; u<=4; u++) {
             document.write(`
               <div class="menu-item tree-unit" onclick="toggleFolder('c1_u${u}_weeks')">
-                <i class="fa-regular fa-folder"></i> Unidad ${u}
+                <i class="fa-regular fa-folder-open"></i> Unidad ${u}
               </div>
               <div id="c1_u${u}_weeks" style="display:${u===1?'block':'none'};">
                 ${[1,2,3,4].map(w => `
                   <div class="menu-item tree-week" id="nav_c1_u${u}_w${w}" onclick="openWeek('Algoritmos y Estructuras de Datos', ${u},${w})">
-                    <i class="fa-solid fa-file-code"></i> Semana ${w}
+                    <i class="fa-solid fa-code-branch"></i> Semana ${w}
                   </div>
                 `).join('')}
               </div>
@@ -558,50 +701,101 @@
           <div style="font-size:0.7rem; color:var(--text-muted);" id="userDisplayRole">V Ciclo - Sistemas</div>
         </div>
         <button onclick="logout()" style="background:none; border:none; color:#ef4444; cursor:pointer;" title="Cerrar Sesión">
-          <i class="fa-solid fa-power-off"></i>
+          <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
     </aside>
 
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
       <div class="top-bar-branding">
         <div>
-          <h1 id="courseHeaderTitle">Algoritmos y Estructuras de Datos</h1>
-          <p id="weekHeaderSubtitle" style="color: var(--text-muted); font-size: 0.9rem;">Unidad 1 - Semana 1</p>
+          <h1 id="mainTitle">Panel Didáctico & Académico</h1>
+          <p id="mainSubtitle" style="color: var(--text-muted); font-size: 0.9rem;">Seguimiento en tiempo real de tus actividades UPLA</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
           <button class="btn-download-html" onclick="downloadProjectCode()">
             <i class="fa-solid fa-download"></i> Descargar HTML
           </button>
-          <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" style="width: 35px; height: 35px; object-fit: contain;">
+          <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" style="width: 38px; height: 38px; object-fit: contain;">
         </div>
       </div>
 
-      <div id="viewWeek">
+      <!-- VISTA 1: DASHBOARD Y MÉTRICAS -->
+      <div id="viewDashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-folder-check"></i></div>
+            <div>
+              <div class="stat-value" id="statFilesCount">0</div>
+              <div class="stat-label">Entregas Subidas</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="color:var(--cyan-aura); background:rgba(6,182,212,0.2);"><i class="fa-solid fa-calendar-check"></i></div>
+            <div>
+              <div class="stat-value">16 / 16</div>
+              <div class="stat-label">Semanas Académicas</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="color:var(--green-accent); background:rgba(16,185,129,0.2);"><i class="fa-solid fa-award"></i></div>
+            <div>
+              <div class="stat-value" id="statAverage">16.8</div>
+              <div class="stat-label">Promedio Estimado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interactive-card">
+          <h3><i class="fa-solid fa-terminal" style="color: var(--purple-aura);"></i> Entorno Didáctico: Probador de Código</h3>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Escribe y ejecuta pruebas rápidas de algoritmo en vivo:</p>
+          
+          <div class="code-editor-box">
+            <textarea id="interactiveCode" class="code-input" spellcheck="false">// Código Didáctico de Ejemplo UPLA
+function evaluarAlgoritmo(n) {
+  let suma = 0;
+  for(let i=1; i<=n; i++) suma += i;
+  return `La suma de los primeros ${n} números es: ${suma}`;
+}
+console.log(evaluarAlgoritmo(10));</textarea>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+            <button class="btn-primary-action" style="width:auto; padding:10px 20px;" onclick="runInteractiveCode()">
+              <i class="fa-solid fa-play"></i> Ejecutar Código
+            </button>
+            <div id="codeConsoleOutput" style="font-family:'Fira Code'; font-size:0.85rem; color:var(--cyan-aura);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 2: SEMANA Y ENTREGAS -->
+      <div id="viewWeek" style="display: none;">
         <div class="class-card">
-          <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Tema de la Semana:</label>
-          <input type="text" id="classNameInput" class="form-control" placeholder="Ej. Estructuras Avanzadas y Grafos" onchange="saveClassName()">
+          <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:700;">TEMA DE LA CLASE SEMANAL:</label>
+          <input type="text" id="classNameInput" class="form-control" placeholder="Ej. Estructuras de Datos, Grafos y Arboles" onchange="saveClassName()">
         </div>
 
         <div class="upload-box">
-          <h3 style="margin-bottom: 15px; font-size: 1.05rem;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--purple-aura);"></i> Subir Archivos</h3>
+          <h3 style="margin-bottom: 15px; font-size: 1.1rem;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--purple-aura);"></i> Subir Entregas y Trabajos</h3>
           <div class="drop-area" onclick="document.getElementById('fileInput').click()">
-            <i class="fa-solid fa-file-circle-plus" style="font-size: 2.2rem; color: var(--purple-aura); margin-bottom: 10px;"></i>
-            <h4>Selecciona tus archivos o tareas</h4>
-            <p style="color: var(--text-muted); font-size: 0.8rem;">Imágenes, documentos, código (.java, .cpp) y comprimidos (.zip)</p>
+            <i class="fa-solid fa-file-circle-plus" style="font-size: 2.8rem; color: var(--purple-aura); margin-bottom: 12px;"></i>
+            <h4>Haz clic o arrastra tus archivos aquí</h4>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin-top:4px;">Soporta archivos de código (.cpp, .java, .py), PDF, imágenes y ZIP</p>
             <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFileUpload(event)">
           </div>
         </div>
 
-        <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-folder-open"></i> Entregas Subidas</h3>
+        <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-folder-open"></i> Archivos Subidos en esta Semana</h3>
         <div class="files-grid" id="filesGrid"></div>
       </div>
 
+      <!-- VISTA 3: MI PERFIL -->
       <div id="viewProfile" style="display: none;">
-        <div class="class-card" style="max-width: 550px;">
-          <h2><i class="fa-solid fa-user-gear"></i> Mi Perfil</h2>
-          <form onsubmit="saveProfileChanges(event)">
-            <div style="text-align:center; margin:15px 0;">
+        <div class="class-card" style="max-width: 580px;">
+          <h2><i class="fa-solid fa-user-gear"></i> Configuración de Perfil UPLA</h2>
+          <form onsubmit="saveProfileChanges(event)" style="margin-top:20px;">
+            <div style="text-align:center; margin-bottom:20px;">
               <div class="avatar-preview-box" id="editAvatarPreview"></div>
               <input type="file" id="editPhotoInput" class="form-control" accept="image/*" onchange="previewEditPhoto(event)">
             </div>
@@ -628,14 +822,121 @@
               <label>Carrera Profesional</label>
               <input type="text" id="profileCareer" class="form-control" required>
             </div>
-            <button type="submit" class="btn-primary-action"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
+            <button type="submit" class="btn-primary-action"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios de Perfil</button>
           </form>
+        </div>
+      </div>
+
+      <!-- VISTA 4: CALCULADORA DE NOTAS UPLA -->
+      <div id="viewGradeCalc" style="display: none;">
+        <div class="class-card" style="max-width: 600px;">
+          <h2><i class="fa-solid fa-calculator"></i> Calculadora Ponderada UPLA</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Calcula tu promedio acumulado evaluando P1, P2 y Trabajo Práctico:</p>
+          
+          <div class="grade-calc-grid">
+            <div class="form-group">
+              <label>Parcial 1 (30%)</label>
+              <input type="number" id="calcP1" class="form-control" min="0" max="20" value="16">
+            </div>
+            <div class="form-group">
+              <label>Parcial 2 (30%)</label>
+              <input type="number" id="calcP2" class="form-control" min="0" max="20" value="17">
+            </div>
+            <div class="form-group">
+              <label>Prácticas (40%)</label>
+              <input type="number" id="calcPrac" class="form-control" min="0" max="20" value="18">
+            </div>
+          </div>
+          
+          <button class="btn-primary-action" onclick="calculateUplaGrade()">
+            <i class="fa-solid fa-square-root-variable"></i> Calcular Promedio
+          </button>
+          
+          <div id="gradeResultBox" style="margin-top:20px; text-align:center; display:none;">
+            <div style="font-size:0.9rem; color:var(--text-muted);">Tu Promedio Final Estimado es:</div>
+            <div style="font-size:2.5rem; font-weight:800; color:var(--cyan-aura);" id="finalGradeVal">00.0</div>
+          </div>
         </div>
       </div>
     </main>
   </div>
 
   <script>
+    /* -------------------------------------------------------------
+       Efectos Visuales: Humo Espectral y Calaveras Flotantes
+    ------------------------------------------------------------- */
+    const canvas = document.getElementById('skullSmokeCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class SmokeParticle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + Math.random() * 100;
+        this.size = Math.random() * 40 + 20;
+        this.speedY = Math.random() * 1 + 0.3;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.4 + 0.1;
+        this.isSkull = Math.random() < 0.15; // 15% de probabilidad de ser calavera
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        this.opacity -= 0.001;
+        if (this.y < -50 || this.opacity <= 0) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        if (this.isSkull) {
+          ctx.font = `${this.size * 0.8}px Arial`;
+          ctx.fillStyle = '#8b5cf6';
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = '#8b5cf6';
+          ctx.fillText('💀', this.x, this.y);
+        } else {
+          let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+          gradient.addColorStop(0, 'rgba(139, 92, 246, 0.25)');
+          gradient.addColorStop(0.5, 'rgba(6, 182, 212, 0.1)');
+          gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 45; i++) {
+      particles.push(new SmokeParticle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* -------------------------------------------------------------
+       Lógica Principal de la Plataforma
+    ------------------------------------------------------------- */
     let currentRole = 'estudiante';
     let currentCourse = 'Algoritmos y Estructuras de Datos';
     let currentUnit = 1;
@@ -690,8 +991,8 @@
       e.preventDefault();
       document.getElementById('authWrapper').style.display = 'none';
       document.getElementById('appContainer').style.display = 'grid';
-      showToast('Sesión iniciada correctamente');
-      openWeek(currentCourse, currentUnit, currentWeek);
+      showToast('Sesión iniciada en el Portafolio UPLA');
+      showDashboardView();
     }
 
     function handleRegister(e) {
@@ -703,9 +1004,9 @@
       updateUserUI();
       document.getElementById('authWrapper').style.display = 'none';
       document.getElementById('appContainer').style.display = 'grid';
-      showToast('Registro exitoso en UPLA Portal');
-      confetti({ particleCount: 60, spread: 60 });
-      openWeek(currentCourse, currentUnit, currentWeek);
+      showToast('Cuenta creada con éxito');
+      confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
+      showDashboardView();
     }
 
     function logout() {
@@ -718,23 +1019,55 @@
       if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
 
+    function hideAllViews() {
+      document.getElementById('viewDashboard').style.display = 'none';
+      document.getElementById('viewWeek').style.display = 'none';
+      document.getElementById('viewProfile').style.display = 'none';
+      document.getElementById('viewGradeCalc').style.display = 'none';
+    }
+
+    function showDashboardView() {
+      hideAllViews();
+      document.getElementById('viewDashboard').style.display = 'block';
+      document.getElementById('mainTitle').innerText = 'Panel Didáctico & Académico';
+      document.getElementById('mainSubtitle').innerText = 'Seguimiento de entregas y pruebas de código';
+      updateStats();
+    }
+
+    function showProfileView() {
+      hideAllViews();
+      document.getElementById('viewProfile').style.display = 'block';
+      document.getElementById('mainTitle').innerText = 'Mi Perfil Estudiantil';
+      document.getElementById('mainSubtitle').innerText = 'Gestiona tus datos personales y carrera';
+      document.getElementById('profileName').value = currentUser.name;
+      document.getElementById('profileCycle').value = currentUser.cycle;
+      document.getElementById('profileCareer').value = currentUser.career;
+    }
+
+    function showGradeCalcView() {
+      hideAllViews();
+      document.getElementById('viewGradeCalc').style.display = 'block';
+      document.getElementById('mainTitle').innerText = 'Calculadora UPLA';
+      document.getElementById('mainSubtitle').innerText = 'Estimación de promedios con pesos oficial UPLA';
+    }
+
     function getKey() { return `${currentCourse}_u${currentUnit}_w${currentWeek}`; }
 
     function openWeek(course, unit, week) {
       currentCourse = course; currentUnit = unit; currentWeek = week;
+      hideAllViews();
       document.getElementById('viewWeek').style.display = 'block';
-      document.getElementById('viewProfile').style.display = 'none';
-      document.getElementById('courseHeaderTitle').innerText = course;
-      document.getElementById('weekHeaderSubtitle').innerText = `Unidad ${unit} - Semana ${week}`;
+      document.getElementById('mainTitle').innerText = course;
+      document.getElementById('mainSubtitle').innerText = `Unidad ${unit} • Semana ${week}`;
 
       const key = getKey();
-      document.getElementById('classNameInput').value = classTopics[key] || `Clase Semana ${week}`;
+      document.getElementById('classNameInput').value = classTopics[key] || `Tema Académico - Semana ${week}`;
       renderFiles();
     }
 
     function saveClassName() {
       classTopics[getKey()] = document.getElementById('classNameInput').value;
-      showToast('Tema guardado');
+      showToast('Tema guardado correctamente');
     }
 
     function handleFileUpload(e) {
@@ -752,7 +1085,9 @@
       });
 
       renderFiles();
-      showToast('Archivos subidos con éxito');
+      updateStats();
+      showToast('Archivos cargados con éxito');
+      confetti({ particleCount: 30, spread: 50 });
     }
 
     function renderFiles() {
@@ -761,7 +1096,7 @@
       const list = storedFiles[getKey()] || [];
 
       if(!list.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Sin entregas en esta semana.</div>`;
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:0.9rem;">No hay archivos o entregas subidas para esta semana.</div>`;
         return;
       }
 
@@ -770,13 +1105,13 @@
         card.className = 'file-card';
         card.innerHTML = `
           <div>
-            <div style="font-size: 1.5rem; color: var(--purple-aura);"><i class="fa-solid fa-file-code"></i></div>
-            <div style="font-weight:700; margin-top:5px;">${f.name}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">${f.size}</div>
+            <div style="font-size: 1.8rem; color: var(--purple-aura);"><i class="fa-solid fa-file-code"></i></div>
+            <div style="font-weight:700; margin-top:8px; font-size:0.92rem;">${f.name}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${f.size}</div>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:15px;">
             <a href="${f.url}" download="${f.name}" class="btn-file-action btn-dl"><i class="fa-solid fa-download"></i> Descargar</a>
-            <button onclick="deleteFile(${f.id})" class="btn-file-action btn-del"><i class="fa-solid fa-trash"></i> Borrar</button>
+            <button onclick="deleteFile(${f.id})" class="btn-file-action btn-del"><i class="fa-solid fa-trash"></i> Eliminar</button>
           </div>
         `;
         grid.appendChild(card);
@@ -786,15 +1121,8 @@
     function deleteFile(id) {
       storedFiles[getKey()] = storedFiles[getKey()].filter(f => f.id !== id);
       renderFiles();
+      updateStats();
       showToast('Archivo eliminado');
-    }
-
-    function showProfileView() {
-      document.getElementById('viewWeek').style.display = 'none';
-      document.getElementById('viewProfile').style.display = 'block';
-      document.getElementById('profileName').value = currentUser.name;
-      document.getElementById('profileCycle').value = currentUser.cycle;
-      document.getElementById('profileCareer').value = currentUser.career;
     }
 
     function saveProfileChanges(e) {
@@ -803,18 +1131,60 @@
       currentUser.cycle = document.getElementById('profileCycle').value;
       currentUser.career = document.getElementById('profileCareer').value;
       updateUserUI();
-      showToast('Perfil actualizado');
+      showToast('Perfil actualizado correctamente');
     }
 
     function updateUserUI() {
       document.getElementById('userDisplayName').innerText = currentUser.name;
       document.getElementById('userDisplayRole').innerText = `${currentUser.cycle} - ${currentUser.career}`;
       const avatarEl = document.getElementById('userAvatar');
+      const editPreview = document.getElementById('editAvatarPreview');
+
       if(currentUser.photo) {
         avatarEl.innerHTML = `<img src="${currentUser.photo}">`;
+        if(editPreview) editPreview.innerHTML = `<img src="${currentUser.photo}">`;
       } else {
         avatarEl.innerText = currentUser.name.charAt(0).toUpperCase();
+        if(editPreview) editPreview.innerHTML = `<i class="fa-solid fa-skull" style="font-size:2rem; color:var(--purple-aura);"></i>`;
       }
+    }
+
+    function updateStats() {
+      let total = 0;
+      Object.keys(storedFiles).forEach(k => {
+        total += storedFiles[k].length;
+      });
+      document.getElementById('statFilesCount').innerText = total;
+    }
+
+    function runInteractiveCode() {
+      const code = document.getElementById('interactiveCode').value;
+      const outputEl = document.getElementById('codeConsoleOutput');
+      try {
+        let logs = [];
+        const originalLog = console.log;
+        console.log = function(...args) {
+          logs.push(args.join(' '));
+          originalLog.apply(console, args);
+        };
+        eval(code);
+        console.log = originalLog;
+        outputEl.innerText = logs.join(' | ') || 'Código ejecutado sin salida en consola.';
+        showToast('Código ejecutado');
+      } catch (err) {
+        outputEl.innerText = 'Error: ' + err.message;
+      }
+    }
+
+    function calculateUplaGrade() {
+      const p1 = parseFloat(document.getElementById('calcP1').value) || 0;
+      const p2 = parseFloat(document.getElementById('calcP2').value) || 0;
+      const prac = parseFloat(document.getElementById('calcPrac').value) || 0;
+
+      const finalGrade = (p1 * 0.3) + (p2 * 0.3) + (prac * 0.4);
+      document.getElementById('finalGradeVal').innerText = finalGrade.toFixed(1);
+      document.getElementById('gradeResultBox').style.display = 'block';
+      showToast('Promedio Ponderado Calculado');
     }
 
     function downloadProjectCode() {
@@ -830,9 +1200,9 @@
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = 'toast-item';
-      toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--cyan-aura);"></i> <span>${msg}</span>`;
       container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      setTimeout(() => toast.remove(), 3200);
     }
   </script>
 </body>

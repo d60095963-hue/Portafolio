@@ -1,1222 +1,911 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma Académica UPLA - Portafolio Espectral & Didáctico</title>
-  
-  <!-- Tipografía Google Fonts y FontAwesome Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Canvas Confetti para efectos didácticos -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-  <style>
-    :root {
-      --bg-dark: #030305;
-      --glass-bg: rgba(12, 10, 20, 0.88);
-      --glass-border: rgba(139, 92, 246, 0.3);
-      --upla-blue: #007bc7;
-      --purple-aura: #8b5cf6;
-      --cyan-aura: #06b6d4;
-      --green-accent: #10b981;
-      --amber-accent: #f59e0b;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --radius-sm: 8px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* CANVAS INTERACTIVO: HUMO DE CALAVERAS Y PARTICULAS */
-    #skullSmokeCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Aura de Neón Mística de Fondo */
-    .spectral-aura {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(6, 182, 212, 0.08) 50%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      filter: blur(80px);
-      animation: floatAura 12s infinite alternate ease-in-out;
-    }
-
-    .aura-1 { top: -100px; left: -100px; }
-    .aura-2 { bottom: -150px; right: -100px; animation-delay: -6s; }
-
-    @keyframes floatAura {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(80px, 50px) scale(1.15); }
-    }
-
-    /* LOGO Y CONTENEDOR */
-    .upla-official-logo {
-      width: 85px;
-      height: 85px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 15px rgba(0, 123, 199, 0.7));
-      transition: var(--transition);
-    }
-
-    .upla-official-logo:hover {
-      transform: scale(1.08) rotate(-3deg);
-    }
-
-    .btn-download-html {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      border: none;
-      padding: 9px 16px;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 0 18px rgba(16, 185, 129, 0.4);
-      transition: var(--transition);
-      text-decoration: none;
-    }
-
-    .btn-download-html:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
-    }
-
-    /* PANTALLA DE AUTENTICACIÓN */
-    .auth-wrapper {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .auth-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(30px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      padding: 40px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(139, 92, 246, 0.25);
-      text-align: center;
-      position: relative;
-    }
-
-    .auth-title {
-      font-size: 1.7rem;
-      font-weight: 800;
-      margin-top: 12px;
-      background: linear-gradient(135deg, #fff, var(--purple-aura));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .auth-subtitle {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .role-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 22px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 6px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .role-btn {
-      padding: 10px;
-      border-radius: var(--radius-sm);
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .role-btn.active {
-      background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
-      color: white;
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-      text-align: left;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.65);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      color: var(--text-main);
-      font-size: 0.92rem;
-      outline: none;
-      transition: var(--transition);
-    }
-
-    .form-control:focus {
-      border-color: var(--cyan-aura);
-      box-shadow: 0 0 18px rgba(6, 182, 212, 0.4);
-    }
-
-    .btn-primary-action {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
-      border: none;
-      border-radius: var(--radius-md);
-      color: white;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: 0 5px 25px rgba(139, 92, 246, 0.4);
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .btn-primary-action:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
-    }
-
-    .btn-direct-teacher {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      border: none;
-      border-radius: var(--radius-md);
-      color: white;
-      font-weight: 800;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
-      margin-top: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-direct-teacher:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
-    }
-
-    /* PANEL PRINCIPAL DE LA APLICACIÓN */
-    .app-container {
-      position: relative;
-      z-index: 10;
-      display: none;
-      min-height: 100vh;
-      grid-template-columns: 310px 1fr;
-    }
-
-    .sidebar {
-      background: var(--glass-bg);
-      backdrop-filter: blur(30px);
-      border-right: 1px solid var(--glass-border);
-      padding: 25px 16px;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      overflow-y: auto;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 25px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--glass-border);
-    }
-
-    .sidebar-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-    }
-
-    .sidebar-title {
-      font-weight: 800;
-      font-size: 1.05rem;
-      color: white;
-      letter-spacing: 0.5px;
-    }
-
-    .menu-section {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin: 20px 0 10px 8px;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 14px;
-      color: var(--text-muted);
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 600;
-      font-size: 0.88rem;
-      margin-bottom: 4px;
-    }
-
-    .menu-item:hover, .menu-item.active {
-      color: #fff;
-      background: rgba(139, 92, 246, 0.22);
-      border-left: 4px solid var(--purple-aura);
-    }
-
-    .tree-unit { margin-left: 12px; font-size: 0.84rem; }
-    .tree-week { margin-left: 24px; font-size: 0.82rem !important; }
-
-    .user-profile-widget {
-      margin-top: auto;
-      padding: 14px;
-      background: rgba(0, 0, 0, 0.65);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .avatar-circle {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: white;
-      font-size: 1rem;
-      overflow: hidden;
-      border: 2px solid var(--purple-aura);
-      flex-shrink: 0;
-    }
-
-    .main-content {
-      padding: 35px 45px;
-      overflow-y: auto;
-      max-height: 100vh;
-    }
-
-    .top-bar-branding {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    /* DASHBOARD Y TARJETAS DIDÁCTICAS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 18px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      padding: 18px 22px;
-      backdrop-filter: blur(20px);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .stat-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-sm);
-      background: rgba(139, 92, 246, 0.2);
-      color: var(--purple-aura);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-    }
-
-    .stat-value {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .stat-label {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .class-card, .upload-box, .interactive-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      margin-bottom: 30px;
-      backdrop-filter: blur(25px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    }
-
-    .drop-area {
-      border: 2px dashed rgba(139, 92, 246, 0.45);
-      border-radius: var(--radius-md);
-      padding: 40px;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.45);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .drop-area:hover {
-      border-color: var(--cyan-aura);
-      background: rgba(6, 182, 212, 0.12);
-      transform: scale(1.01);
-    }
-
-    .files-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 20px;
-    }
-
-    .file-card {
-      background: rgba(15, 15, 26, 0.85);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: var(--transition);
-    }
-
-    .file-card:hover {
-      border-color: var(--cyan-aura);
-      transform: translateY(-3px);
-    }
-
-    .btn-file-action {
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      border: none;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: var(--transition);
-    }
-
-    .btn-dl { background: rgba(0, 123, 199, 0.25); color: #38bdf8; border: 1px solid #0284c7; }
-    .btn-dl:hover { background: rgba(0, 123, 199, 0.5); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Académica Espectral UPLA</title>
     
-    .btn-del { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #dc2626; }
-    .btn-del:hover { background: rgba(239, 68, 68, 0.4); }
-
-    /* EDITOR DIDÁCTICO Y PREVISUALIZADOR DE CÓDIGO */
-    .code-editor-box {
-      background: #09090e;
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      font-family: 'Fira Code', monospace;
-      margin-top: 15px;
-    }
-
-    .code-input {
-      width: 100%;
-      height: 120px;
-      background: transparent;
-      border: none;
-      color: #38bdf8;
-      font-family: 'Fira Code', monospace;
-      font-size: 0.88rem;
-      outline: none;
-      resize: vertical;
-    }
-
-    /* TABLA DE EVALUACIÓN Y REVISIÓN PARA EL DOCENTE */
-    .teacher-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    .teacher-table th, .teacher-table td {
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid var(--glass-border);
-      font-size: 0.88rem;
-    }
-
-    .teacher-table th {
-      background: rgba(139, 92, 246, 0.15);
-      color: var(--purple-aura);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .teacher-table tr:hover {
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .badge-status {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #d97706; }
-    .badge-graded { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #059669; }
-
-    .toast-box {
-      position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
-    }
+    <!-- Tipografía Google Fonts y FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    .toast-item {
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid var(--glass-border);
-      padding: 14px 22px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-left: 5px solid var(--purple-aura);
-      color: #fff;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-      animation: slideIn 0.3s forwards;
-    }
+    <!-- Canvas Confetti para efectos didácticos -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-  </style>
+    <style>
+        :root {
+            --bg-dark: #030305;
+            --bg-card: #1e293b;
+            --glass-bg: rgba(12, 10, 20, 0.88);
+            --glass-border: rgba(139, 92, 246, 0.3);
+            --upla-blue: #007bc7;
+            --purple-aura: #8b5cf6;
+            --cyan-aura: #06b6d4;
+            --green-accent: #10b981;
+            --amber-accent: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* CANVAS INTERACTIVO: PARTICULAS Y EFECTO ESPECTRAL */
+        #skullSmokeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Aura de Neón Mística de Fondo */
+        .spectral-aura {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(6, 182, 212, 0.08) 50%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(80px);
+            animation: floatAura 12s infinite alternate ease-in-out;
+        }
+
+        .aura-1 { top: -100px; left: -100px; }
+        .aura-2 { bottom: -150px; right: -100px; animation-delay: -6s; }
+
+        @keyframes floatAura {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 50px) scale(1.15); }
+        }
+
+        /* LOGO Y CONTENEDOR */
+        .upla-official-logo {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(0, 123, 199, 0.7));
+            transition: var(--transition);
+        }
+
+        .upla-official-logo:hover {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        .btn-download-html {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 18px rgba(16, 185, 129, 0.4);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-download-html:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+        }
+
+        /* PANTALLA DE AUTENTICACIÓN */
+        .auth-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(139, 92, 246, 0.25);
+            text-align: center;
+            position: relative;
+        }
+
+        .auth-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin-top: 12px;
+            background: linear-gradient(135deg, #fff, var(--purple-aura));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .role-btn {
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .role-btn.active {
+            background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 0.92rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--cyan-aura);
+            box-shadow: 0 0 18px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-primary-action {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 25px rgba(139, 92, 246, 0.4);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-direct-teacher {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 800;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-direct-teacher:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
+        }
+
+        /* PANEL PRINCIPAL DE LA APLICACIÓN */
+        .app-container {
+            position: relative;
+            z-index: 10;
+            display: none;
+            min-height: 100vh;
+            grid-template-columns: 280px 1fr;
+        }
+
+        .sidebar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--glass-border);
+            padding: 25px 16px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 25px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .sidebar-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .sidebar-title {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-section {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 10px 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            color: var(--text-muted);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.88rem;
+            margin-bottom: 4px;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            color: #fff;
+            background: rgba(139, 92, 246, 0.22);
+            border-left: 4px solid var(--purple-aura);
+        }
+
+        .user-profile-widget {
+            margin-top: auto;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--upla-blue), var(--purple-aura));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 0.9rem;
+            overflow: hidden;
+            border: 2px solid var(--purple-aura);
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            padding: 35px 45px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .top-bar-branding {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 15px;
+        }
+
+        /* ESTRUCTURA DE CURSOS Y UNIDADES */
+        .units-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-top: 15px;
+        }
+
+        .unit-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+        }
+
+        .unit-box h4 {
+            color: var(--purple-aura);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .weeks-list {
+            list-style: none;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .weeks-list li {
+            padding: 6px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* TARJETAS Y CONTENEDORES GENERALES */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+            color: var(--cyan-aura);
+        }
+
+        /* TABLAS DE REVISIÓN Y DOCENCIA */
+        .teacher-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .teacher-table th, .teacher-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.88rem;
+        }
+
+        .teacher-table th {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--purple-aura);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .teacher-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .btn-action {
+            background-color: var(--purple-aura);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .btn-action:hover {
+            background-color: var(--cyan-aura);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-graded { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #059669; }
+
+        .hidden { display: none !important; }
+
+        .toast-box {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 12px;
+        }
+        
+        .toast-item {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--glass-border);
+            padding: 14px 22px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 5px solid var(--purple-aura);
+            color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- CANVAS DE PARTICULAS Y HUMO DE CALAVERAS -->
-  <canvas id="skullSmokeCanvas"></canvas>
-  <div class="spectral-aura aura-1"></div>
-  <div class="spectral-aura aura-2"></div>
+    <!-- CANVAS DE PARTICULAS Y HUMO ESPECTRAL -->
+    <canvas id="skullSmokeCanvas"></canvas>
+    <div class="spectral-aura aura-1"></div>
+    <div class="spectral-aura aura-2"></div>
 
-  <div class="toast-box" id="toastContainer"></div>
+    <div class="toast-box" id="toastContainer"></div>
 
-  <!-- SECCIÓN DE AUTENTICACIÓN -->
-  <div class="auth-wrapper" id="authWrapper">
-    <div class="auth-card">
-      <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-        <button class="btn-download-html" onclick="downloadProjectCode()">
-          <i class="fa-solid fa-download"></i> Descargar HTML
-        </button>
-      </div>
+    <!-- SECCIÓN DE AUTENTICACIÓN -->
+    <div class="auth-wrapper" id="authWrapper">
+        <div class="auth-card">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <button class="btn-download-html" onclick="downloadProjectCode()">
+                    <i class="fa-solid fa-download"></i> Descargar HTML
+                </button>
+            </div>
 
-      <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop" class="upla-official-logo" alt="Logo UPLA">
-      <h2 class="auth-title">UPLA PORTAL DUAL</h2>
-      <p class="auth-subtitle">Universidad Peruana Los Andes • Entorno Espectral & Didáctico</p>
+            <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=200&auto=format&fit=crop" class="upla-official-logo" alt="Logo UPLA">
+            <h2 class="auth-title">✦ Espectral Edu UPLA</h2>
+            <p class="auth-subtitle">Universidad Peruana Los Andes • Entorno Académico DUAL</p>
 
-      <div class="role-selector">
-        <button class="role-btn active" id="roleStudentBtn" onclick="setRole('estudiante')">
-          <i class="fa-solid fa-user-graduate"></i> Estudiante
-        </button>
-        <button class="role-btn" id="roleTeacherBtn" onclick="setRole('maestro')">
-          <i class="fa-solid fa-chalkboard-user"></i> Docente
-        </button>
-      </div>
+            <div class="role-selector">
+                <button class="role-btn active" id="roleStudentBtn" onclick="setRole('estudiante')">
+                    <i class="fa-solid fa-user-graduate"></i> Estudiante
+                </button>
+                <button class="role-btn" id="roleTeacherBtn" onclick="setRole('docente')">
+                    <i class="fa-solid fa-chalkboard-user"></i> Docente
+                </button>
+            </div>
 
-      <!-- FORMULARIO DE LOGIN -->
-      <form id="loginForm" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label><i class="fa-solid fa-id-card"></i> Código UPLA / Usuario</label>
-          <input type="text" id="loginUsername" class="form-control" placeholder="Ej. u20231045 o docente.upla" value="u20231045" required>
+            <!-- FORMULARIO DE LOGIN -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-id-card"></i> Código UPLA / Usuario</label>
+                    <input type="text" id="loginUsername" class="form-control" placeholder="Ej. u20231045 o docente.upla" value="u20231045" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <input type="password" class="form-control" value="123456" required>
+                </div>
+                <button type="submit" class="btn-primary-action">
+                    <span>Ingresar a la Plataforma</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                
+                <!-- BOTÓN DE INGRESO DIRECTO DOCENTE -->
+                <button type="button" class="btn-direct-teacher" onclick="directTeacherLogin()">
+                    <i class="fa-solid fa-user-shield"></i> ⚡ Ingreso Directo Docente
+                </button>
+            </form>
         </div>
-        <div class="form-group">
-          <label><i class="fa-solid fa-lock"></i> Contraseña</label>
-          <input type="password" class="form-control" value="123456" required>
-        </div>
-        <button type="submit" class="btn-primary-action">
-          <span>Ingresar a la Plataforma</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
-        
-        <!-- BOTÓN DE INGRESO DIRECTO DOCENTE -->
-        <button type="button" class="btn-direct-teacher" onclick="directTeacherLogin()">
-          <i class="fa-solid fa-user-shield"></i> Ingreso Directo como Docente
-        </button>
-      </form>
     </div>
-  </div>
 
-  <!-- APLICACIÓN PRINCIPAL -->
-  <div class="app-container" id="appContainer">
-    <!-- BARRA LATERAL -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" class="sidebar-logo" alt="Logo UPLA">
-        <div>
-          <div class="sidebar-title">UPLA PORTAL</div>
-          <div style="font-size: 0.68rem; color: var(--cyan-aura); font-weight:700;">PORTAFOLIO DIGITAL</div>
-        </div>
-      </div>
-
-      <div class="menu-section">Navegación</div>
-      <a class="menu-item active" id="navDashboard" onclick="showDashboardView()">
-        <i class="fa-solid fa-chart-pie"></i> Panel & Métricas
-      </a>
-      
-      <!-- MENÚ DE REVISIÓN SOLO VISIBLE PARA EL DOCENTE -->
-      <a class="menu-item" id="navTeacherReview" style="display:none; color:var(--amber-accent);" onclick="showTeacherReviewView()">
-        <i class="fa-solid fa-list-check"></i> Revisión de Tareas (Docente)
-      </a>
-
-      <a class="menu-item" onclick="showGradeCalcView()">
-        <i class="fa-solid fa-calculator"></i> Promedio UPLA
-      </a>
-
-      <div class="menu-section">CURSO 1: ALGORITMOS</div>
-      <div class="menu-item" onclick="toggleFolder('c1_units')">
-        <i class="fa-solid fa-laptop-code"></i> Algoritmos & Estructuras
-      </div>
-      <div id="c1_units">
-        <script>
-          for(let u=1; u<=4; u++) {
-            document.write(`
-              <div class="menu-item tree-unit" onclick="toggleFolder('c1_u${u}_weeks')">
-                <i class="fa-regular fa-folder-open"></i> Unidad ${u}
-              </div>
-              <div id="c1_u${u}_weeks" style="display:${u===1?'block':'none'};">
-                ${[1,2,3,4].map(w => `
-                  <div class="menu-item tree-week" id="nav_c1_u${u}_w${w}" onclick="openWeek('Algoritmos y Estructuras de Datos', ${u},${w})">
-                    <i class="fa-solid fa-code-branch"></i> Semana ${w}
-                  </div>
-                `).join('')}
-              </div>
-            `);
-          }
-        </script>
-      </div>
-
-      <div class="menu-section">CURSO 2: APLICACIONES I</div>
-      <div class="menu-item" onclick="toggleFolder('c2_units')">
-        <i class="fa-solid fa-mobile-screen-button"></i> Desarrollo de Aplicaciones I
-      </div>
-      <div id="c2_units">
-        <script>
-          for(let u=1; u<=4; u++) {
-            document.write(`
-              <div class="menu-item tree-unit" onclick="toggleFolder('c2_u${u}_weeks')">
-                <i class="fa-regular fa-folder-open"></i> Unidad ${u}
-              </div>
-              <div id="c2_u${u}_weeks" style="display:none;">
-                ${[1,2,3,4].map(w => `
-                  <div class="menu-item tree-week" onclick="openWeek('Desarrollo de Aplicaciones I', ${u},${w})">
-                    <i class="fa-solid fa-layer-group"></i> Semana ${w}
-                  </div>
-                `).join('')}
-              </div>
-            `);
-          }
-        </script>
-      </div>
-
-      <div class="user-profile-widget">
-        <div class="avatar-circle" id="userAvatar">U</div>
-        <div style="flex:1; overflow:hidden;">
-          <div style="font-weight:700; font-size:0.85rem;" id="userDisplayName">Usuario UPLA</div>
-          <div style="font-size:0.7rem; color:var(--text-muted);" id="userDisplayRole">Rol: Estudiante</div>
-        </div>
-        <button onclick="logout()" style="background:none; border:none; color:#ef4444; cursor:pointer;" title="Cerrar Sesión">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
-      </div>
-    </aside>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="main-content">
-      <div class="top-bar-branding">
-        <div>
-          <h1 id="mainTitle">Panel Didáctico & Académico</h1>
-          <p id="mainSubtitle" style="color: var(--text-muted); font-size: 0.9rem;">Seguimiento en tiempo real de tus actividades UPLA</p>
-        </div>
-        <div style="display: flex; align-items: center; gap: 14px;">
-          <button class="btn-download-html" onclick="downloadProjectCode()">
-            <i class="fa-solid fa-download"></i> Descargar HTML
-          </button>
-          <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" style="width: 38px; height: 38px; object-fit: contain;">
-        </div>
-      </div>
-
-      <!-- VISTA 1: DASHBOARD Y MÉTRICAS -->
-      <div id="viewDashboard">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-folder-check"></i></div>
-            <div>
-              <div class="stat-value" id="statFilesCount">0</div>
-              <div class="stat-label">Entregas Subidas</div>
+    <!-- APLICACIÓN PRINCIPAL -->
+    <div class="app-container" id="appContainer">
+        <!-- BARRA LATERAL -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=100&auto=format&fit=crop" class="sidebar-logo" alt="Logo UPLA">
+                <div>
+                    <div class="sidebar-title">✦ Espectral Edu</div>
+                    <span style="font-size:0.7rem; color:var(--text-muted)">UPLA Digital</span>
+                </div>
             </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="color:var(--cyan-aura); background:rgba(6,182,212,0.2);"><i class="fa-solid fa-book-open"></i></div>
-            <div>
-              <div class="stat-value">2 Cursos</div>
-              <div class="stat-label">Algoritmos & Aplicaciones I</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="color:var(--green-accent); background:rgba(16,185,129,0.2);"><i class="fa-solid fa-award"></i></div>
-            <div>
-              <div class="stat-value" id="statAverage">17.2</div>
-              <div class="stat-label">Promedio Estimado</div>
-            </div>
-          </div>
-        </div>
 
-        <div class="interactive-card">
-          <h3><i class="fa-solid fa-terminal" style="color: var(--purple-aura);"></i> Entorno Didáctico: Console Code Runner</h3>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Escribe y prueba lógica de algoritmos o componentes para Desarrollo de Aplicaciones I:</p>
-          
-          <div class="code-editor-box">
-            <textarea id="interactiveCode" class="code-input" spellcheck="false">// Demo Didáctico - Desarrollo de Aplicaciones I (UPLA)
-function renderAppInfo(appName, version) {
-  return `[APP READY] ${appName} v${version} iniciada en servidor local.`;
-}
-console.log(renderAppInfo('Sistema Portafolio UPLA', '2.0.0'));</textarea>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-            <button class="btn-primary-action" style="width:auto; padding:10px 20px;" onclick="runInteractiveCode()">
-              <i class="fa-solid fa-play"></i> Ejecutar Código
+            <button class="btn-direct-teacher" style="margin-bottom:15px;" onclick="directTeacherLogin()">
+                ⚡ Modo Docente Directo
             </button>
-            <div id="codeConsoleOutput" style="font-family:'Fira Code'; font-size:0.85rem; color:var(--cyan-aura);"></div>
-          </div>
-        </div>
-      </div>
 
-      <!-- VISTA 2: SEMANA Y ENTREGAS -->
-      <div id="viewWeek" style="display: none;">
-        <div class="class-card">
-          <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px; font-weight:700;">TEMA DE LA CLASE SEMANAL:</label>
-          <input type="text" id="classNameInput" class="form-control" placeholder="Ej. Arquitectura Clean & Patrón MVC en Aplicaciones" onchange="saveClassName()">
-        </div>
+            <div class="menu-section">Cursos</div>
+            <button class="menu-item active" onclick="mostrarSeccion('curso-dev', this)">
+                <i class="fa-solid fa-code"></i> Desarrollo de Apps I
+            </button>
 
-        <div class="upload-box">
-          <h3 style="margin-bottom: 15px; font-size: 1.1rem;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--purple-aura);"></i> Subir Entregas y Trabajos</h3>
-          <div class="drop-area" onclick="document.getElementById('fileInput').click()">
-            <i class="fa-solid fa-file-circle-plus" style="font-size: 2.8rem; color: var(--purple-aura); margin-bottom: 12px;"></i>
-            <h4>Haz clic o arrastra tus archivos aquí</h4>
-            <p style="color: var(--text-muted); font-size: 0.82rem; margin-top:4px;">Soporta archivos de código (.cpp, .java, .js, .py), PDF, imágenes y repositorios ZIP</p>
-            <input type="file" id="fileInput" multiple style="display:none;" onchange="handleFileUpload(event)">
-          </div>
-        </div>
+            <div class="menu-section">Gestión Académica</div>
+            <button class="menu-item" id="btn-panel-docente" onclick="mostrarSeccion('panel-docente', this)">
+                <i class="fa-solid fa-list-check"></i> Revisión de Tareas
+            </button>
+            <button class="menu-item" onclick="mostrarSeccion('portafolio', this)">
+                <i class="fa-solid fa-folder-open"></i> Portafolio Evidencias
+            </button>
 
-        <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-folder-open"></i> Archivos Subidos en esta Semana</h3>
-        <div class="files-grid" id="filesGrid"></div>
-      </div>
-
-      <!-- VISTA 3: PANORAMA DEL DOCENTE PARA REVISAR TAREAS -->
-      <div id="viewTeacherReview" style="display: none;">
-        <div class="class-card">
-          <h2><i class="fa-solid fa-chalkboard-user" style="color:var(--amber-accent);"></i> Panel de Evaluación Docente UPLA</h2>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Visualización directa e insubstituible de todos los trabajos entregados por los alumnos:</p>
-          
-          <table class="teacher-table">
-            <thead>
-              <tr>
-                <th>Curso</th>
-                <th>Semana</th>
-                <th>Archivo</th>
-                <th>Estudiante</th>
-                <th>Estado</th>
-                <th>Nota</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="teacherTasksTableBody">
-              <!-- Carga Dinámica de Tareas subidas -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- VISTA 4: CALCULADORA DE NOTAS UPLA -->
-      <div id="viewGradeCalc" style="display: none;">
-        <div class="class-card" style="max-width: 600px;">
-          <h2><i class="fa-solid fa-calculator"></i> Calculadora Ponderada UPLA</h2>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Calcula tu promedio acumulado evaluando P1, P2 y Trabajo Práctico:</p>
-          
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:15px;">
-            <div class="form-group">
-              <label>Parcial 1 (30%)</label>
-              <input type="number" id="calcP1" class="form-control" min="0" max="20" value="16">
+            <div class="user-profile-widget">
+                <div class="avatar-circle" id="userAvatar">U</div>
+                <div>
+                    <div id="displayUserName" style="font-weight:700; font-size:0.85rem; color:#fff">Usuario</div>
+                    <div id="displayUserRole" style="font-size:0.75rem; color:var(--cyan-aura)">Estudiante</div>
+                </div>
+                <button onclick="logout()" style="margin-left:auto; background:transparent; border:none; color:var(--text-muted); cursor:pointer;" title="Cerrar Sesión">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
             </div>
-            <div class="form-group">
-              <label>Parcial 2 (30%)</label>
-              <input type="number" id="calcP2" class="form-control" min="0" max="20" value="17">
+        </aside>
+
+        <!-- ÁREA PRINCIPAL -->
+        <main class="main-content">
+            <div class="top-bar-branding">
+                <div>
+                    <h1 id="titulo-pagina" style="font-size: 1.6rem;">Desarrollo de Aplicaciones I</h1>
+                    <p style="font-size:0.85rem; color:var(--text-muted);">Plataforma Académica Espectral & Didáctica</p>
+                </div>
+                <span id="rol-tag" class="badge-status badge-graded">Modo: Estudiante</span>
             </div>
-            <div class="form-group">
-              <label>Prácticas (40%)</label>
-              <input type="number" id="calcPrac" class="form-control" min="0" max="20" value="18">
+
+            <!-- SECCIÓN 1: Estructura del Curso (4 Unidades y 16 Semanas) -->
+            <div id="curso-dev" class="seccion-content">
+                <div class="card">
+                    <h2><i class="fa-solid fa-cubes"></i> Estructura del Curso: Desarrollo de Aplicaciones I</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Plan detallado de 16 semanas distribuido en 4 Unidades Formativas.
+                    </p>
+
+                    <div class="units-container">
+                        <!-- Unidad 1 -->
+                        <div class="unit-box">
+                            <h4>Unidad 1: Fundamentos</h4>
+                            <ul class="weeks-list">
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 1: Arquitectura Web</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 2: Entornos de Dev</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 3: HTML5 y Semántica</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 4: CSS Avanzado</li>
+                            </ul>
+                        </div>
+
+                        <!-- Unidad 2 -->
+                        <div class="unit-box">
+                            <h4>Unidad 2: Lógica & JS</h4>
+                            <ul class="weeks-list">
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 5: Sintaxis JS</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 6: Manipulación DOM</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 7: Eventos y Asincronía</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 8: Evaluaciones U2</li>
+                            </ul>
+                        </div>
+
+                        <!-- Unidad 3 -->
+                        <div class="unit-box">
+                            <h4>Unidad 3: Frameworks</h4>
+                            <ul class="weeks-list">
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 9: Componentes</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 10: Estado de la App</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 11: Rutas e Integración</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 12: Consumo de APIs</li>
+                            </ul>
+                        </div>
+
+                        <!-- Unidad 4 -->
+                        <div class="unit-box">
+                            <h4>Unidad 4: Despliegue</h4>
+                            <ul class="weeks-list">
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 13: Pruebas Unitarias</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 14: Optimización</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 15: CI/CD y Hosting</li>
+                                <li><i class="fa-solid fa-angle-right"></i> Semana 16: Proyecto Final</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          
-          <button class="btn-primary-action" onclick="calculateUplaGrade()">
-            <i class="fa-solid fa-square-root-variable"></i> Calcular Promedio
-          </button>
-          
-          <div id="gradeResultBox" style="margin-top:20px; text-align:center; display:none;">
-            <div style="font-size:0.9rem; color:var(--text-muted);">Tu Promedio Final Estimado es:</div>
-            <div style="font-size:2.5rem; font-weight:800; color:var(--cyan-aura);" id="finalGradeVal">00.0</div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
 
-  <script>
-    /* -------------------------------------------------------------
-       Efectos Visuales: Humo Espectral y Calaveras Flotantes
-    ------------------------------------------------------------- */
-    const canvas = document.getElementById('skullSmokeCanvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
+            <!-- SECCIÓN 2: Panel de Revisión de Tareas para el Docente -->
+            <div id="panel-docente" class="seccion-content hidden">
+                <div class="card">
+                    <h2><i class="fa-solid fa-clipboard-check"></i> Panel de Revisión de Tareas</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 15px;">
+                        Sección exclusiva docente para revisión, descarga y calificación de entregables.
+                    </p>
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+                    <table class="teacher-table">
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Tarea Subida</th>
+                                <th>Archivo</th>
+                                <th>Nota (0-20)</th>
+                                <th>Retroalimentación</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-tareas">
+                            <tr>
+                                <td>Carlos Mendoza</td>
+                                <td>Semana 4: Maquetación CSS</td>
+                                <td><button class="btn-action" onclick="descargarArchivo('Tarea_Mendoza.pdf')"><i class="fa-solid fa-download"></i> Descargar</button></td>
+                                <td><input type="number" min="0" max="20" class="form-control" placeholder="Nota" style="width: 80px;"></td>
+                                <td><input type="text" class="form-control" placeholder="Comentarios..."></td>
+                                <td><button class="btn-action" onclick="guardarCalificacion(this)"><i class="fa-solid fa-floppy-disk"></i> Guardar</button></td>
+                            </tr>
+                            <tr>
+                                <td>Ana Gómez</td>
+                                <td>Semana 7: Consumo API</td>
+                                <td><button class="btn-action" onclick="descargarArchivo('Proyecto_Gomez.zip')"><i class="fa-solid fa-download"></i> Descargar</button></td>
+                                <td><input type="number" min="0" max="20" class="form-control" placeholder="Nota" style="width: 80px;"></td>
+                                <td><input type="text" class="form-control" placeholder="Comentarios..."></td>
+                                <td><button class="btn-action" onclick="guardarCalificacion(this)"><i class="fa-solid fa-floppy-disk"></i> Guardar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-    class SmokeParticle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 100;
-        this.size = Math.random() * 40 + 20;
-        this.speedY = Math.random() * 1 + 0.3;
-        this.speedX = (Math.random() - 0.5) * 0.5;
-        this.opacity = Math.random() * 0.4 + 0.1;
-        this.isSkull = Math.random() < 0.15;
-      }
-      update() {
-        this.y -= this.speedY;
-        this.x += this.speedX;
-        this.opacity -= 0.001;
-        if (this.y < -50 || this.opacity <= 0) this.reset();
-      }
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.opacity;
-        if (this.isSkull) {
-          ctx.font = `${this.size * 0.8}px Arial`;
-          ctx.fillStyle = '#8b5cf6';
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = '#8b5cf6';
-          ctx.fillText('💀', this.x, this.y);
-        } else {
-          let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-          gradient.addColorStop(0, 'rgba(139, 92, 246, 0.25)');
-          gradient.addColorStop(0.5, 'rgba(6, 182, 212, 0.1)');
-          gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
+            <!-- SECCIÓN 3: Portafolio de Evidencias e Historial -->
+            <div id="portafolio" class="seccion-content hidden">
+                <div class="card">
+                    <h2><i class="fa-solid fa-box-archive"></i> Portafolio de Evidencias e Historial</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Registro consolidado de actividades y evidencias presentadas.
+                    </p>
+                    <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                        <p style="margin-bottom:10px;"><i class="fa-solid fa-circle-check" style="color:var(--green-accent)"></i> <strong>Tarea 1:</strong> Arquitectura del Proyecto - <span class="badge-status badge-graded">Entregado</span></p>
+                        <p style="margin-bottom:10px;"><i class="fa-solid fa-circle-check" style="color:var(--green-accent)"></i> <strong>Tarea 2:</strong> Prototipado UX/UI - <span class="badge-status badge-graded">Entregado</span></p>
+                        <p><i class="fa-solid fa-clock" style="color:var(--amber-accent)"></i> <strong>Tarea 3:</strong> Módulos del Sistema - <span style="color:var(--amber-accent)">Pendiente de revisión</span></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL DE LÓGICA E INTERACTIVIDAD -->
+    <script>
+        let currentRole = 'estudiante';
+
+        // Gestión de Selección de Rol en Autenticación
+        function setRole(role) {
+            currentRole = role;
+            document.getElementById('roleStudentBtn').classList.toggle('active', role === 'estudiante');
+            document.getElementById('roleTeacherBtn').classList.toggle('active', role === 'docente');
         }
-        ctx.restore();
-      }
-    }
 
-    for (let i = 0; i < 45; i++) particles.push(new SmokeParticle());
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => { p.update(); p.draw(); });
-      requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-
-    /* -------------------------------------------------------------
-       Lógica de Aplicación
-    ------------------------------------------------------------- */
-    let currentRole = 'estudiante';
-    let currentCourse = 'Algoritmos y Estructuras de Datos';
-    let currentUnit = 1;
-    let currentWeek = 1;
-
-    let currentUser = {
-      name: 'Estudiante UPLA',
-      role: 'estudiante'
-    };
-
-    // Almacenamiento inicial con datos de demostración
-    let storedFiles = {
-      'Algoritmos y Estructuras de Datos_u1_w1': [
-        { id: 101, name: 'Tarea1_Algoritmos_UPLA.cpp', size: '14.2 KB', student: 'u20231045', grade: '18', status: 'Calificado', url: '#' }
-      ],
-      'Desarrollo de Aplicaciones I_u1_w1': [
-        { id: 102, name: 'Proyecto_App_Movil_Semana1.zip', size: '1.4 MB', student: 'u20231045', grade: 'Sin Calificar', status: 'Pendiente', url: '#' }
-      ]
-    };
-
-    let classTopics = {};
-
-    function setRole(role) {
-      currentRole = role;
-      document.getElementById('roleStudentBtn').classList.toggle('active', role === 'estudiante');
-      document.getElementById('roleTeacherBtn').classList.toggle('active', role === 'maestro');
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const userVal = document.getElementById('loginUsername').value;
-      if (currentRole === 'maestro' || userVal.toLowerCase().includes('docente')) {
-        currentUser.name = 'Docente UPLA';
-        currentUser.role = 'maestro';
-      } else {
-        currentUser.name = userVal || 'Estudiante UPLA';
-        currentUser.role = 'estudiante';
-      }
-      initSession();
-    }
-
-    function directTeacherLogin() {
-      currentRole = 'maestro';
-      currentUser.name = 'Ing. Catedrático UPLA';
-      currentUser.role = 'maestro';
-      initSession();
-    }
-
-    function initSession() {
-      document.getElementById('authWrapper').style.display = 'none';
-      document.getElementById('appContainer').style.display = 'grid';
-      
-      // Mostrar u ocultar herramientas del docente
-      const teacherBtn = document.getElementById('navTeacherReview');
-      if (currentUser.role === 'maestro') {
-        teacherBtn.style.display = 'flex';
-        showToast('Bienvenido Docente UPLA. Acceso concedido.');
-      } else {
-        teacherBtn.style.display = 'none';
-        showToast('Sesión iniciada correctamente.');
-      }
-      
-      updateUserUI();
-      showDashboardView();
-    }
-
-    function logout() {
-      document.getElementById('appContainer').style.display = 'none';
-      document.getElementById('authWrapper').style.display = 'flex';
-    }
-
-    function toggleFolder(id) {
-      const el = document.getElementById(id);
-      if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function hideAllViews() {
-      document.getElementById('viewDashboard').style.display = 'none';
-      document.getElementById('viewWeek').style.display = 'none';
-      document.getElementById('viewTeacherReview').style.display = 'none';
-      document.getElementById('viewGradeCalc').style.display = 'none';
-    }
-
-    function showDashboardView() {
-      hideAllViews();
-      document.getElementById('viewDashboard').style.display = 'block';
-      document.getElementById('mainTitle').innerText = 'Panel Didáctico & Académico';
-      document.getElementById('mainSubtitle').innerText = 'Gestión interactiva de tus cursos UPLA';
-      updateStats();
-    }
-
-    function showTeacherReviewView() {
-      hideAllViews();
-      document.getElementById('viewTeacherReview').style.display = 'block';
-      document.getElementById('mainTitle').innerText = 'Revisión y Calificación de Tareas';
-      document.getElementById('mainSubtitle').innerText = 'Vista de Catedrático para monitorear entregas de los alumnos';
-      renderTeacherTable();
-    }
-
-    function showGradeCalcView() {
-      hideAllViews();
-      document.getElementById('viewGradeCalc').style.display = 'block';
-      document.getElementById('mainTitle').innerText = 'Calculadora UPLA';
-      document.getElementById('mainSubtitle').innerText = 'Estimación de promedios ponderados';
-    }
-
-    function getKey() { return `${currentCourse}_u${currentUnit}_w${currentWeek}`; }
-
-    function openWeek(course, unit, week) {
-      currentCourse = course; currentUnit = unit; currentWeek = week;
-      hideAllViews();
-      document.getElementById('viewWeek').style.display = 'block';
-      document.getElementById('mainTitle').innerText = course;
-      document.getElementById('mainSubtitle').innerText = `Unidad ${unit} • Semana ${week}`;
-
-      const key = getKey();
-      document.getElementById('classNameInput').value = classTopics[key] || `Tema Académico - Semana ${week}`;
-      renderFiles();
-    }
-
-    function saveClassName() {
-      classTopics[getKey()] = document.getElementById('classNameInput').value;
-      showToast('Tema guardado correctamente');
-    }
-
-    function handleFileUpload(e) {
-      const files = Array.from(e.target.files);
-      const key = getKey();
-      if(!storedFiles[key]) storedFiles[key] = [];
-
-      files.forEach(f => {
-        storedFiles[key].push({
-          id: Date.now() + Math.random(),
-          name: f.name,
-          size: (f.size / 1024).toFixed(1) + ' KB',
-          student: currentUser.name,
-          grade: 'Sin Calificar',
-          status: 'Pendiente',
-          url: URL.createObjectURL(f)
-        });
-      });
-
-      renderFiles();
-      updateStats();
-      showToast('Archivos subidos exitosamente');
-      confetti({ particleCount: 35, spread: 60 });
-    }
-
-    function renderFiles() {
-      const grid = document.getElementById('filesGrid');
-      grid.innerHTML = '';
-      const list = storedFiles[getKey()] || [];
-
-      if(!list.length) {
-        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:0.9rem;">No hay archivos entregados para esta semana.</div>`;
-        return;
-      }
-
-      list.forEach(f => {
-        const card = document.createElement('div');
-        card.className = 'file-card';
-        card.innerHTML = `
-          <div>
-            <div style="font-size: 1.8rem; color: var(--purple-aura);"><i class="fa-solid fa-file-code"></i></div>
-            <div style="font-weight:700; margin-top:8px; font-size:0.92rem;">${f.name}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Tamaño: ${f.size}</div>
-            <div style="font-size:0.78rem; color:var(--cyan-aura); margin-top:4px;">Nota: <strong>${f.grade}</strong></div>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:15px;">
-            <a href="${f.url}" download="${f.name}" class="btn-file-action btn-dl"><i class="fa-solid fa-download"></i> Descargar</a>
-            <button onclick="deleteFile(${f.id})" class="btn-file-action btn-del"><i class="fa-solid fa-trash"></i> Eliminar</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function deleteFile(id) {
-      storedFiles[getKey()] = storedFiles[getKey()].filter(f => f.id !== id);
-      renderFiles();
-      updateStats();
-      showToast('Archivo eliminado');
-    }
-
-    function renderTeacherTable() {
-      const tbody = document.getElementById('teacherTasksTableBody');
-      tbody.innerHTML = '';
-
-      let hasTasks = false;
-      Object.keys(storedFiles).forEach(key => {
-        const parts = key.split('_');
-        const course = parts[0];
-        const week = parts[2];
-
-        storedFiles[key].forEach(f => {
-          hasTasks = true;
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><strong>${course}</strong></td>
-            <td>${week.toUpperCase()}</td>
-            <td><i class="fa-solid fa-file-lines" style="color:var(--purple-aura);"></i> ${f.name}</td>
-            <td>${f.student}</td>
-            <td>
-              <span class="badge-status ${f.status === 'Calificado' ? 'badge-graded' : 'badge-pending'}">
-                ${f.status}
-              </span>
-            </td>
-            <td><strong>${f.grade}</strong></td>
-            <td>
-              <button onclick="gradeTask('${key}', ${f.id})" class="btn-file-action btn-dl" style="padding:4px 10px; font-size:0.75rem;">
-                <i class="fa-solid fa-pen-to-square"></i> Calificar
-              </button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      });
-
-      if(!hasTasks) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No hay entregas pendientes en ningún curso.</td></tr>`;
-      }
-    }
-
-    function gradeTask(key, id) {
-      const task = storedFiles[key].find(f => f.id === id);
-      if(task) {
-        const score = prompt(`Asignar nota (0 - 20) para ${task.name}:`, task.grade === 'Sin Calificar' ? '18' : task.grade);
-        if(score !== null) {
-          task.grade = score;
-          task.status = 'Calificado';
-          renderTeacherTable();
-          showToast('Calificación registrada con éxito');
-          confetti({ particleCount: 25, spread: 50 });
+        // Manejo del Login
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            iniciarSesion(username, currentRole);
         }
-      }
-    }
 
-    function updateUserUI() {
-      document.getElementById('userDisplayName').innerText = currentUser.name;
-      document.getElementById('userDisplayRole').innerText = `Rol: ${currentUser.role === 'maestro' ? 'Docente Catedrático' : 'Estudiante UPLA'}`;
-      document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
-    }
+        // Ingreso Directo como Docente
+        function directTeacherLogin() {
+            setRole('docente');
+            iniciarSesion('docente.upla', 'docente');
+            mostrarSeccion('panel-docente', document.getElementById('btn-panel-docente'));
+            showToast('¡Bienvenido Docente! Acceso directo concedido.');
+        }
 
-    function updateStats() {
-      let total = 0;
-      Object.keys(storedFiles).forEach(k => { total += storedFiles[k].length; });
-      document.getElementById('statFilesCount').innerText = total;
-    }
+        function iniciarSesion(username, role) {
+            document.getElementById('authWrapper').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'grid';
 
-    function runInteractiveCode() {
-      const code = document.getElementById('interactiveCode').value;
-      const outputEl = document.getElementById('codeConsoleOutput');
-      try {
-        let logs = [];
-        const originalLog = console.log;
-        console.log = function(...args) {
-          logs.push(args.join(' '));
-          originalLog.apply(console, args);
-        };
-        eval(code);
-        console.log = originalLog;
-        outputEl.innerText = logs.join(' | ') || 'Código ejecutado sin errores.';
-        showToast('Consola ejecutada');
-      } catch (err) {
-        outputEl.innerText = 'Error: ' + err.message;
-      }
-    }
+            document.getElementById('displayUserName').textContent = username;
+            document.getElementById('displayUserRole').textContent = role === 'docente' ? 'Docente UPLA' : 'Estudiante';
+            document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
 
-    function calculateUplaGrade() {
-      const p1 = parseFloat(document.getElementById('calcP1').value) || 0;
-      const p2 = parseFloat(document.getElementById('calcP2').value) || 0;
-      const prac = parseFloat(document.getElementById('calcPrac').value) || 0;
+            const tagRol = document.getElementById('rol-tag');
+            if (role === 'docente') {
+                tagRol.textContent = "Modo: Docente (Acceso Total)";
+                tagRol.style.backgroundColor = "rgba(168, 85, 247, 0.3)";
+                tagRol.style.color = "#a855f7";
+            } else {
+                tagRol.textContent = "Modo: Estudiante";
+                tagRol.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
+                tagRol.style.color = "#10b981";
+            }
 
-      const finalGrade = (p1 * 0.3) + (p2 * 0.3) + (prac * 0.4);
-      document.getElementById('finalGradeVal').innerText = finalGrade.toFixed(1);
-      document.getElementById('gradeResultBox').style.display = 'block';
-      showToast('Promedio Ponderado Calculado');
-    }
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+            }
+        }
 
-    function downloadProjectCode() {
-      const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'index.html';
-      a.click();
-    }
+        function logout() {
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('authWrapper').style.display = 'flex';
+        }
 
-    function showToast(msg) {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = 'toast-item';
-      toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--cyan-aura);"></i> <span>${msg}</span>`;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3200);
-    }
-  </script>
+        // Cambiar entre secciones del panel
+        function mostrarSeccion(idSeccion, elementBtn) {
+            const secciones = document.querySelectorAll('.seccion-content');
+            secciones.forEach(sec => sec.classList.add('hidden'));
+
+            const seccionMostrar = document.getElementById(idSeccion);
+            if (seccionMostrar) {
+                seccionMostrar.classList.remove('hidden');
+            }
+
+            if (elementBtn) {
+                const botones = document.querySelectorAll('.menu-item');
+                botones.forEach(btn => btn.classList.remove('active'));
+                elementBtn.classList.add('active');
+            }
+        }
+
+        // Funciones del Panel Docente
+        function descargarArchivo(nombreArchivo) {
+            showToast("Descargando entregable: " + nombreArchivo);
+        }
+
+        function guardarCalificacion(btn) {
+            const fila = btn.closest('tr');
+            const nota = fila.querySelector('input[type="number"]').value;
+            const retro = fila.querySelector('input[type="text"]').value;
+
+            if (nota === "") {
+                alert("Por favor ingrese una calificación antes de guardar.");
+                return;
+            }
+
+            showToast(`Calificación guardada: Nota [${nota}]`);
+        }
+
+        // Notificaciones Toast
+        function showToast(mensaje) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-item';
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${mensaje}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3500);
+        }
+
+        // Descarga directa del código unificado
+        function downloadProjectCode() {
+            const code = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Plataforma_Academica_Espectral_UPLA.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ANIMACIÓN DE LUENZO (CANVAS DE PARTICULAS Y EFECTO)
+        const canvas = document.getElementById('skullSmokeCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(139, 92, 246, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+    </script>
 </body>
 </html>

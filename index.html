@@ -3,42 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio Académico | UPLA</title>
-    <!-- Supabase JS Client desde CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>UPLA - Plataforma Académica | Smoke & Skull Edition</title>
     
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDKs (Optional Cloud Backup) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        window.firebaseEnabled = false;
+        try {
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                window.db = getFirestore(app);
+                window.auth = getAuth(app);
+                window.firebaseEnabled = true;
+                console.log("Firebase integration initialized successfully.");
+            }
+        } catch(e) {
+            console.warn("Firebase not configured or failed to load. Operating in offline/local storage mode.");
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        smokeBg: '#09090b',
+                        smokeCard: '#151518',
+                        smokeCardHover: '#1e1e24',
+                        smokeBorder: '#2a2a35',
+                        smokeText: '#f0f0f5',
+                        smokeMuted: '#9494a0',
+                        silverGlow: '#e0e0ee',
+                        accentDark: '#22222a'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Cinzel', 'serif'],
+                        tech: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* ==================== ESTILOS CSS ==================== */
-        :root {
-            --bg-main: #0B0B0D;
-            --card-bg: #2A2A2E;
-            --card-border: #3A3A40;
-            --text-main: #F0F0F5;
-            --text-muted: #D1D1D6;
-            --silver-glow: #8A8A93;
-            --silver-bright: #E5E5EA;
-            --danger: #902A2A;
-            --danger-hover: #B83A3A;
-            --accent: #4A4A52;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: #09090b;
+            color: #f0f0f5;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* Canvas de Fondo (Animación de Humo) */
-        #smokeCanvas {
+        #smoke-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -48,996 +77,1182 @@
             pointer-events: none;
         }
 
-        .hidden {
-            display: none !important;
+        .glow-border {
+            box-shadow: 0 0 15px rgba(224, 224, 238, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ==================== AUTENTICACIÓN ==================== */
-        .auth-container {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+        .glow-border:hover {
+            box-shadow: 0 0 25px rgba(224, 224, 238, 0.25), 0 0 10px rgba(160, 160, 190, 0.2);
+            border-color: rgba(224, 224, 238, 0.4);
         }
 
-        .auth-card {
-            background: rgba(42, 42, 46, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 30px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(229, 229, 234, 0.1);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .auth-card:hover {
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 25px rgba(229, 229, 234, 0.2);
-        }
-
-        .branding {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .branding img {
-            max-width: 160px;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-        }
-
-        .auth-card h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--silver-bright);
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            background: #121214;
-            border: 1px solid var(--card-border);
-            border-radius: 6px;
-            color: var(--text-main);
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            border-color: var(--silver-bright);
-            box-shadow: 0 0 8px rgba(229, 229, 234, 0.3);
-        }
-
-        .avatar-preview {
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .avatar-preview img {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--silver-bright);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
+        .silver-btn {
+            background: linear-gradient(135deg, #2a2a35 0%, #181820 100%);
+            border: 1px solid rgba(224, 224, 238, 0.2);
+            color: #f0f0f5;
             transition: all 0.3s ease;
         }
 
-        .btn-primary {
-            background: #3A3A40;
-            color: var(--silver-bright);
-            border: 1px solid var(--silver-glow);
+        .silver-btn:hover {
+            background: linear-gradient(135deg, #3a3a48 0%, #22222d 100%);
+            box-shadow: 0 0 15px rgba(224, 224, 238, 0.3);
+            border-color: rgba(224, 224, 238, 0.6);
+            transform: translateY(-1px);
         }
 
-        .btn-primary:hover {
-            background: #4A4A52;
-            box-shadow: 0 0 12px rgba(240, 240, 245, 0.4);
+        .skull-glow {
+            text-shadow: 0 0 12px rgba(240, 240, 255, 0.6);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px dashed var(--card-border);
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        .btn-secondary:hover {
-            color: var(--silver-bright);
-            border-color: var(--silver-bright);
-            box-shadow: 0 0 10px rgba(240, 240, 245, 0.2);
+        ::-webkit-scrollbar-track {
+            background: #09090b;
         }
-
-        .btn-danger {
-            background: var(--danger);
-            color: #FFF;
-        }
-
-        .btn-danger:hover {
-            background: var(--danger-hover);
-        }
-
-        .btn-sm {
-            width: auto;
-            padding: 6px 12px;
-            font-size: 0.85rem;
-        }
-
-        .divider {
-            text-align: center;
-            margin: 15px 0;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .toggle-auth {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .toggle-auth a {
-            color: var(--silver-bright);
-            text-decoration: none;
-        }
-
-        /* ==================== DASHBOARD ==================== */
-        .dashboard-container {
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-        }
-
-        .main-header {
-            background: rgba(18, 18, 20, 0.9);
-            border-bottom: 1px solid var(--card-border);
-            padding: 15px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(8px);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-
-        .header-branding img {
-            max-width: 120px;
-        }
-
-        .header-user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
-
-        .header-user-profile:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .header-user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--silver-bright);
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .user-code {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .teacher-banner {
-            background: #5A3A00;
-            color: #FFD700;
-            padding: 4px 12px;
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a35;
             border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a58;
         }
 
-        /* Cuerpo Académico */
-        .academic-body {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
+        .glass-panel {
+            background: rgba(21, 21, 24, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        .main-title {
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 2rem;
-            color: var(--silver-bright);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
-
-        .course-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            justify-content: center;
-        }
-
-        .tab-btn {
-            padding: 12px 24px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active, .tab-btn:hover {
-            background: #3A3A40;
-            color: var(--silver-bright);
-            border-color: var(--silver-bright);
-            box-shadow: 0 0 12px rgba(240, 240, 245, 0.25);
-        }
-
-        /* Unidades y Semanas */
-        .unit-block {
-            background: rgba(42, 42, 46, 0.6);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            margin-bottom: 30px;
-            padding: 20px;
-        }
-
-        .unit-title {
-            font-size: 1.4rem;
-            color: var(--silver-bright);
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 8px;
-        }
-
-        .weeks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .week-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .week-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--silver-glow);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(240, 240, 245, 0.2);
-        }
-
-        .week-header h4 {
-            font-size: 1rem;
-            color: var(--silver-bright);
-            margin-bottom: 8px;
-        }
-
-        .week-topic-input {
-            width: 100%;
-            background: #121214;
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
-            padding: 6px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-        }
-
-        .week-topic-input:read-only {
-            background: transparent;
-            border-color: transparent;
-        }
-
-        .file-dropzone {
-            border: 1px dashed var(--card-border);
-            padding: 10px;
-            text-align: center;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .file-item {
-            background: #121214;
-            padding: 8px 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.8rem;
-        }
-
-        .file-info {
+        .custom-accordion-content {
+            max-height: 0;
             overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            max-width: 140px;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
         }
 
-        .file-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-        .file-actions button, .file-actions a {
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            border-radius: 4px;
-            text-decoration: none;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* Modales */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--silver-glow);
-            padding: 25px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 450px;
-            position: relative;
-            box-shadow: 0 0 25px rgba(250, 250, 250, 0.15);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-
-        @media (max-width: 768px) {
-            .main-header {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            .course-tabs {
-                flex-direction: column;
-            }
+        .custom-accordion-content.open {
+            max-height: 3000px;
+            transition: max-height 0.5s ease-in-out;
         }
     </style>
 </head>
-<body>
+<body class="relative min-h-screen text-smokeText">
 
-    <!-- Canvas de Humo e Interacción -->
-    <canvas id="smokeCanvas"></canvas>
+    <!-- Interactive Canvas Background -->
+    <canvas id="smoke-canvas"></canvas>
 
-    <!-- ==================== VISTA 1: LOGIN & REGISTRO ==================== -->
-    <div id="authContainer" class="auth-container">
-        <!-- Tarjeta de Login -->
-        <div id="loginCard" class="auth-card">
-            <div class="branding">
-                <img id="uplaLogoAuth" src="https://via.placeholder.com/150x50?text=UPLA+Logo" alt="Logo UPLA">
+    <!-- Global Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- AUTH SECTION (Login & Register Screens) -->
+    <div id="auth-screen" class="relative z-10 min-h-screen flex items-center justify-center p-4">
+        
+        <!-- LOGIN CARD -->
+        <div id="login-card" class="w-full max-w-md glass-panel p-8 rounded-2xl glow-border border border-smokeBorder text-center transition-all duration-300">
+            <!-- UPLA Header Branding -->
+            <div class="mb-6 flex flex-col items-center">
+                <div class="relative group cursor-pointer mb-3">
+                    <img id="login-logo-img" src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=200&q=80" alt="Logo UPLA" class="w-24 h-24 object-cover rounded-full border-2 border-smokeMuted/40 p-1 group-hover:border-silverGlow transition-all shadow-lg">
+                    <button onclick="promptEditLogo()" class="absolute bottom-0 right-0 bg-smokeCard hover:bg-smokeCardHover text-xs px-2 py-1 rounded-full border border-smokeBorder text-smokeMuted hover:text-white transition">
+                        <i class="fa-solid fa-pen text-[10px]"></i>
+                    </button>
+                </div>
+                <h1 class="font-title text-2xl font-bold tracking-wider text-white skull-glow">UPLA ACADÉMICO</h1>
+                <p class="text-xs text-smokeMuted tracking-widest mt-1 font-tech uppercase">Universidad Peruana Los Andes</p>
+                <div class="inline-flex items-center gap-2 mt-2 px-3 py-1 rounded-full bg-smokeCard border border-smokeBorder text-[11px] text-smokeMuted">
+                    <i class="fa-solid fa-skull text-silverGlow animate-pulse"></i> Smoke & Skull Platform
+                </div>
             </div>
-            <h2>Iniciar Sesión</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">Correo o Usuario</label>
-                    <input type="email" id="loginEmail" placeholder="estudiante@upla.edu.pe" required>
+
+            <!-- Login Form -->
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Correo o Usuario</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-smokeMuted text-sm"></i>
+                        <input type="text" id="login-username" required placeholder="ej. upla_estudiante" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-silverGlow transition">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="loginPassword">Contraseña</label>
-                    <input type="password" id="loginPassword" required>
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Contraseña</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-smokeMuted text-sm"></i>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-silverGlow transition">
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+
+                <button type="submit" class="w-full silver-btn py-2.5 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 mt-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                </button>
             </form>
 
-            <div class="divider">ó</div>
+            <div class="my-5 flex items-center gap-3">
+                <div class="h-px bg-smokeBorder flex-1"></div>
+                <span class="text-[11px] uppercase text-smokeMuted tracking-wider">O Opciones Directas</span>
+                <div class="h-px bg-smokeBorder flex-1"></div>
+            </div>
 
-            <button id="btnTeacherAccess" class="btn btn-secondary">
-                👁️ Acceso Profesor / Invitado (Solo Lectura)
+            <!-- Teacher / Guest Direct Access Button -->
+            <button onclick="loginAsTeacher()" class="w-full bg-smokeCard hover:bg-smokeCardHover text-smokeText border border-smokeBorder hover:border-silverGlow/50 py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 mb-3">
+                <i class="fa-solid fa-user-shield text-amber-400"></i> Acceso Profesor / Invitado (Solo Lectura)
             </button>
 
-            <p class="toggle-auth">
-                ¿No tienes cuenta? <a href="#" id="linkToRegister">Registrar Cuenta</a>
+            <!-- Toggle Register -->
+            <p class="text-xs text-smokeMuted">
+                ¿Aún no tienes cuenta? 
+                <button onclick="showRegisterCard()" class="text-white hover:underline font-semibold ml-1">Registrar Cuenta</button>
             </p>
         </div>
 
-        <!-- Tarjeta de Registro -->
-        <div id="registerCard" class="auth-card hidden">
-            <h2>Registro de Estudiante</h2>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="regNames">Nombres y Apellidos</label>
-                    <input type="text" id="regNames" required>
+        <!-- REGISTER CARD (Hidden by default) -->
+        <div id="register-card" class="hidden w-full max-w-lg glass-panel p-8 rounded-2xl glow-border border border-smokeBorder text-center transition-all duration-300">
+            <div class="mb-5 flex flex-col items-center">
+                <h2 class="font-title text-xl font-bold tracking-wider text-white">Registro de Estudiante</h2>
+                <p class="text-xs text-smokeMuted">Ingresa tus datos para habilitar tu portafolio académico UPLA</p>
+            </div>
+
+            <form id="register-form" onsubmit="handleRegister(event)" class="space-y-3 text-left">
+                <!-- Avatar Upload Preview -->
+                <div class="flex flex-col items-center mb-2">
+                    <div class="relative w-20 h-20 mb-2">
+                        <img id="register-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Preview Avatar" class="w-20 h-20 rounded-full object-cover border-2 border-silverGlow/40">
+                        <label for="register-avatar-file" class="absolute bottom-0 right-0 bg-smokeBg hover:bg-smokeCard p-1.5 rounded-full border border-smokeBorder text-xs text-silverGlow cursor-pointer shadow">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                        <input type="file" id="register-avatar-file" accept="image/*" onchange="previewRegisterAvatar(event)" class="hidden">
+                    </div>
+                    <span class="text-[11px] text-smokeMuted">Sube tu foto de perfil</span>
                 </div>
-                <div class="form-group">
-                    <label for="regCode">Código Universitario</label>
-                    <input type="text" id="regCode" required>
-                </div>
-                <div class="form-group">
-                    <label for="regCareer">Carrera Universitaria</label>
-                    <input type="text" id="regCareer" placeholder="Ingeniería de Sistemas e Informática" required>
-                </div>
-                <div class="form-group">
-                    <label for="regCycle">Ciclo Académico</label>
-                    <select id="regCycle" required>
-                        <option value="">Seleccionar ciclo...</option>
-                        <option value="I">Ciclo I</option>
-                        <option value="II">Ciclo II</option>
-                        <option value="III">Ciclo III</option>
-                        <option value="IV">Ciclo IV</option>
-                        <option value="V">Ciclo V</option>
-                        <option value="VI">Ciclo VI</option>
-                        <option value="VII">Ciclo VII</option>
-                        <option value="VIII">Ciclo VIII</option>
-                        <option value="IX">Ciclo IX</option>
-                        <option value="X">Ciclo X</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="regPhoto">Foto de Perfil</label>
-                    <input type="file" id="regPhoto" accept="image/*">
-                    <div class="avatar-preview">
-                        <img id="regPhotoPreview" src="https://via.placeholder.com/80" alt="Previsualización">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Nombres y Apellidos</label>
+                        <input type="text" id="reg-name" required placeholder="Ej. Carlos Mendoza" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-silverGlow">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Código Universitario</label>
+                        <input type="text" id="reg-code" required placeholder="Ej. U201912345" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-silverGlow">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="regEmail">Correo Electrónico</label>
-                    <input type="email" id="regEmail" required>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Carrera Universitaria</label>
+                        <input type="text" id="reg-career" required placeholder="Ingeniería de Sistemas" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-silverGlow">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Ciclo Académico</label>
+                        <select id="reg-cycle" required class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-silverGlow">
+                            <option value="I">Ciclo I</option>
+                            <option value="II">Ciclo II</option>
+                            <option value="III">Ciclo III</option>
+                            <option value="IV">Ciclo IV</option>
+                            <option value="V" selected>Ciclo V</option>
+                            <option value="VI">Ciclo VI</option>
+                            <option value="VII">Ciclo VII</option>
+                            <option value="VIII">Ciclo VIII</option>
+                            <option value="IX">Ciclo IX</option>
+                            <option value="X">Ciclo X</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="regPassword">Contraseña</label>
-                    <input type="password" id="regPassword" required>
+
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Usuario / Email</label>
+                    <input type="text" id="reg-username" required placeholder="carlos.mendoza" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-silverGlow">
                 </div>
-                <button type="submit" class="btn btn-primary">Crear Cuenta</button>
+
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Contraseña</label>
+                    <input type="password" id="reg-password" required placeholder="••••••••" class="w-full bg-smokeBg/80 border border-smokeBorder rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-silverGlow">
+                </div>
+
+                <button type="submit" class="w-full silver-btn py-2.5 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 mt-4">
+                    <i class="fa-solid fa-user-plus"></i> Crear Cuenta e Iniciar Sesión
+                </button>
             </form>
-            <p class="toggle-auth">
-                ¿Ya tienes cuenta? <a href="#" id="linkToLogin">Volver al Login</a>
-            </p>
+
+            <div class="mt-4 text-center">
+                <button onclick="showLoginCard()" class="text-xs text-smokeMuted hover:text-white flex items-center justify-center gap-1 mx-auto">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a Iniciar Sesión
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- ==================== VISTA 2: DASHBOARD PRINCIPAL ==================== -->
-    <div id="dashboardContainer" class="dashboard-container hidden">
-        <!-- Header -->
-        <header class="main-header">
-            <div class="header-branding">
-                <img src="https://via.placeholder.com/120x40?text=UPLA" alt="UPLA Logo">
-            </div>
+    <!-- MAIN DASHBOARD SCREEN (Hidden before Auth) -->
+    <div id="dashboard-screen" class="hidden relative z-10 min-h-screen pb-16">
+        
+        <!-- HEADER NAVBAR -->
+        <header class="glass-panel sticky top-0 z-30 border-b border-smokeBorder shadow-lg px-4 lg:px-8 py-3">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- Left: Logo & Branding -->
+                <div class="flex items-center gap-3">
+                    <img id="nav-logo-img" src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=200&q=80" alt="Logo UPLA" class="w-10 h-10 rounded-full border border-silverGlow/30 object-cover">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-title font-bold text-sm lg:text-base text-white tracking-wider">UPLA ACADÉMICO</h1>
+                            <span id="role-badge" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                                ESTUDIANTE
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-smokeMuted hidden sm:block">Universidad Peruana Los Andes - Portafolio de Trabajos</p>
+                    </div>
+                </div>
 
-            <!-- Banner Modo Profesor -->
-            <div id="teacherBanner" class="teacher-banner hidden">
-                ⚠️ MODO PROFESOR / INVITADO (SOLO LECTURA)
-            </div>
+                <!-- Right: Profile Info & Logout -->
+                <div class="flex items-center gap-3 sm:gap-4 ml-auto">
+                    <!-- Profile Card Button -->
+                    <button id="profile-card-btn" onclick="openProfileModal()" class="flex items-center gap-3 bg-smokeCard hover:bg-smokeCardHover border border-smokeBorder hover:border-silverGlow/40 p-1.5 pr-3 rounded-xl transition group text-left">
+                        <img id="nav-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="User Avatar" class="w-9 h-9 rounded-lg object-cover border border-smokeBorder group-hover:border-silverGlow">
+                        <div class="hidden sm:block leading-tight">
+                            <p id="nav-user-name" class="text-xs font-semibold text-white group-hover:text-silverGlow transition">Cargando...</p>
+                            <p id="nav-user-code" class="text-[10px] text-smokeMuted">Cod: -----</p>
+                        </div>
+                        <i id="profile-edit-icon" class="fa-solid fa-pen-to-square text-xs text-smokeMuted group-hover:text-white ml-1"></i>
+                    </button>
 
-            <div class="header-user-profile" id="userProfileBtn">
-                <img id="headerAvatar" src="https://via.placeholder.com/40" alt="Avatar">
-                <div class="user-info">
-                    <span id="headerName" class="user-name">Cargando...</span>
-                    <span id="headerCode" class="user-code">Código: ---</span>
+                    <!-- Logout Button -->
+                    <button onclick="handleLogout()" title="Cerrar Sesión" class="bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/50 p-2.5 rounded-xl transition text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-power-off"></i>
+                        <span class="hidden md:inline font-medium">Salir</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="max-w-7xl mx-auto px-4 lg:px-8 pt-6">
+            
+            <!-- BANNER & STATUS -->
+            <div class="glass-panel p-6 rounded-2xl glow-border border border-smokeBorder mb-6 relative overflow-hidden">
+                <div class="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-silverGlow/5 to-transparent pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span id="user-career-badge" class="text-xs font-tech font-semibold text-silverGlow tracking-wider uppercase px-2.5 py-1 rounded-md bg-smokeBg/60 border border-smokeBorder">
+                            INGENIERÍA DE SISTEMAS | CICLO V
+                        </span>
+                        <h2 class="font-title text-2xl lg:text-3xl font-bold text-white mt-2">Gestión de Evidencias Académicas</h2>
+                        <p class="text-xs lg:text-sm text-smokeMuted mt-1">Organiza, visualiza y descarga tus trabajos universitarios divididos en 4 Unidades y 16 Semanas por curso.</p>
+                    </div>
+
+                    <!-- Academic Progress Tracker -->
+                    <div class="bg-smokeBg/80 p-4 rounded-xl border border-smokeBorder min-w-[220px]">
+                        <div class="flex justify-between items-center text-xs mb-1.5">
+                            <span class="text-smokeMuted font-medium">Progreso de Entregas</span>
+                            <span id="overall-progress-text" class="font-bold text-silverGlow">0%</span>
+                        </div>
+                        <div class="w-full bg-smokeCard h-2 rounded-full overflow-hidden border border-smokeBorder">
+                            <div id="overall-progress-bar" class="bg-gradient-to-r from-gray-500 to-silverGlow h-full w-0 transition-all duration-500"></div>
+                        </div>
+                        <p id="completed-weeks-count" class="text-[10px] text-smokeMuted mt-1 text-right">0 de 32 semanas con tareas</p>
+                    </div>
                 </div>
             </div>
 
-            <button id="btnLogout" class="btn btn-danger btn-sm">Cerrar Sesión</button>
-        </header>
+            <!-- COURSE SELECTION TABS -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                <!-- Tabs -->
+                <div class="flex bg-smokeCard/90 p-1.5 rounded-xl border border-smokeBorder w-full sm:w-auto">
+                    <button id="tab-course-1" onclick="switchCourse(1)" class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-smokeBg text-white border border-silverGlow/40 shadow">
+                        <i class="fa-solid fa-code text-silverGlow"></i> Algoritmos y Estructura de Datos
+                    </button>
+                    <button id="tab-course-2" onclick="switchCourse(2)" class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs lg:text-sm font-semibold text-smokeMuted hover:text-white transition-all duration-200 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-laptop-code"></i> Desarrollo de Aplicaciones I
+                    </button>
+                </div>
 
-        <!-- Contenido Académico -->
-        <main class="academic-body">
-            <h1 class="main-title">Portafolio Académico Personal</h1>
-
-            <!-- Pestañas de Cursos -->
-            <div class="course-tabs">
-                <button class="tab-btn active" data-course="algoritmos">
-                    Algoritmos y Estructura de Datos
-                </button>
-                <button class="tab-btn" data-course="desarrollo">
-                    Desarrollo de Aplicaciones I
-                </button>
+                <!-- Search Filter -->
+                <div class="relative w-full sm:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-smokeMuted text-xs"></i>
+                    <input type="text" id="week-search-input" onkeyup="filterWeeks()" placeholder="Buscar por semana o tema..." class="w-full bg-smokeCard/80 border border-smokeBorder rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-silverGlow transition">
+                </div>
             </div>
 
-            <!-- Contenedor de Unidades y Semanas -->
-            <div id="courseContent" class="course-content"></div>
+            <!-- UNITS & WEEKS CONTAINER -->
+            <div id="course-units-container" class="space-y-5">
+                <!-- Dynamically populated via JS for 4 Units & 16 Weeks -->
+            </div>
+
         </main>
     </div>
 
-    <!-- Modal de Edición de Perfil -->
-    <div id="profileModal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-modal" id="closeProfileModal">&times;</span>
-            <h2>Editar Perfil de Usuario</h2>
-            <form id="editProfileForm">
-                <div class="form-group">
-                    <label for="editNames">Nombres y Apellidos</label>
-                    <input type="text" id="editNames" required>
+    <!-- PROFILE EDIT MODAL -->
+    <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="w-full max-w-lg glass-panel p-6 rounded-2xl border border-smokeBorder glow-border relative animate-fade-in">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-smokeMuted hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="font-title text-xl font-bold text-white mb-1">Editar Perfil del Estudiante</h3>
+            <p class="text-xs text-smokeMuted mb-4">Actualiza tus datos académicos. Los cambios persistirán permanentemente.</p>
+
+            <form id="edit-profile-form" onsubmit="saveProfileChanges(event)" class="space-y-3">
+                <!-- Avatar Change -->
+                <div class="flex items-center gap-4 p-3 bg-smokeBg/60 rounded-xl border border-smokeBorder">
+                    <img id="edit-avatar-preview" src="" alt="Avatar" class="w-14 h-14 rounded-full object-cover border border-silverGlow">
+                    <div class="flex-1">
+                        <label class="block text-[11px] text-smokeMuted uppercase font-semibold mb-1">Foto de Perfil</label>
+                        <input type="file" id="edit-avatar-file" accept="image/*" onchange="previewEditAvatar(event)" class="text-xs text-smokeMuted file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-smokeCard file:text-silverGlow hover:file:bg-smokeCardHover cursor-pointer">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editCode">Código Universitario</label>
-                    <input type="text" id="editCode" required>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Nombres</label>
+                        <input type="text" id="edit-firstname" required class="w-full bg-smokeBg border border-smokeBorder rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-silverGlow">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Apellidos</label>
+                        <input type="text" id="edit-lastname" required class="w-full bg-smokeBg border border-smokeBorder rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-silverGlow">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editCareer">Carrera</label>
-                    <input type="text" id="editCareer" required>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Código Universitario</label>
+                        <input type="text" id="edit-code" required class="w-full bg-smokeBg border border-smokeBorder rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-silverGlow">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Ciclo Académico</label>
+                        <select id="edit-cycle" class="w-full bg-smokeBg border border-smokeBorder rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-silverGlow">
+                            <option value="I">Ciclo I</option>
+                            <option value="II">Ciclo II</option>
+                            <option value="III">Ciclo III</option>
+                            <option value="IV">Ciclo IV</option>
+                            <option value="V">Ciclo V</option>
+                            <option value="VI">Ciclo VI</option>
+                            <option value="VII">Ciclo VII</option>
+                            <option value="VIII">Ciclo VIII</option>
+                            <option value="IX">Ciclo IX</option>
+                            <option value="X">Ciclo X</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editCycle">Ciclo</label>
-                    <select id="editCycle" required>
-                        <option value="I">Ciclo I</option>
-                        <option value="II">Ciclo II</option>
-                        <option value="III">Ciclo III</option>
-                        <option value="IV">Ciclo IV</option>
-                        <option value="V">Ciclo V</option>
-                        <option value="VI">Ciclo VI</option>
-                        <option value="VII">Ciclo VII</option>
-                        <option value="VIII">Ciclo VIII</option>
-                        <option value="IX">Ciclo IX</option>
-                        <option value="X">Ciclo X</option>
-                    </select>
+
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Carrera Universitaria</label>
+                    <input type="text" id="edit-career" required class="w-full bg-smokeBg border border-smokeBorder rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-silverGlow">
                 </div>
-                <div class="form-group">
-                    <label for="editPhoto">Nueva Foto de Perfil (Opcional)</label>
-                    <input type="file" id="editPhoto" accept="image/*">
+
+                <div>
+                    <label class="block text-xs uppercase font-semibold text-smokeMuted mb-1">Nueva Contraseña (Opcional)</label>
+                    <input type="password" id="edit-password" placeholder="Dejar en blanco para mantener la actual" class="w-full bg-smokeBg border border-smokeBorder rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-silverGlow">
                 </div>
-                <div class="form-group">
-                    <label for="editPassword">Nueva Contraseña (Opcional)</label>
-                    <input type="password" id="editPassword" placeholder="Dejar en blanco si no desea cambiarla">
+
+                <div class="flex justify-end gap-2 pt-3 border-t border-smokeBorder">
+                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-smokeMuted hover:text-white bg-smokeBg border border-smokeBorder">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="silver-btn px-5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                    </button>
                 </div>
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </form>
         </div>
     </div>
 
-    <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
     <script>
-        // 1. CONFIGURACIÓN DE SUPABASE (Reemplazar con tus credenciales de Supabase)
-        const SUPABASE_URL = "https://TU_PROYECTO.supabase.co";
-        const SUPABASE_ANON_KEY = "TU_CLAVE_ANON_PUBLICA";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // 2. CANVAS DE ANIMACIÓN DE HUMO & SILUETAS
+        /* Interactive 2D Smoke and Skull Animation Canvas Engine */
         (function initSmokeCanvas() {
-            const canvas = document.getElementById("smokeCanvas");
-            const ctx = canvas.getContext("2d");
+            const canvas = document.getElementById('smoke-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
 
-            let width = (canvas.width = window.innerWidth);
-            let height = (canvas.height = window.innerHeight);
-
-            window.addEventListener("resize", () => {
+            window.addEventListener('resize', () => {
                 width = canvas.width = window.innerWidth;
                 height = canvas.height = window.innerHeight;
             });
 
-            const mouse = { x: width / 2, y: height / 2 };
-            window.addEventListener("mousemove", (e) => {
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
+            // Mouse tracking
+            const mouse = { x: width / 2, y: height / 2, targetX: width / 2, targetY: height / 2 };
+            window.addEventListener('mousemove', (e) => {
+                mouse.targetX = e.clientX;
+                mouse.targetY = e.clientY;
             });
 
+            // Smoke Particle Class
             class SmokeParticle {
-                constructor() { this.reset(); }
+                constructor() {
+                    this.reset();
+                }
+
                 reset() {
                     this.x = Math.random() * width;
                     this.y = height + Math.random() * 100;
-                    this.size = Math.random() * 40 + 20;
-                    this.speedY = Math.random() * 0.8 + 0.3;
-                    this.speedX = (Math.random() - 0.5) * 0.5;
-                    this.opacity = Math.random() * 0.3 + 0.05;
-                    this.isSkullForm = Math.random() < 0.15;
+                    this.vx = (Math.random() - 0.5) * 0.8;
+                    this.vy = -Math.random() * 1.2 - 0.4;
+                    this.size = Math.random() * 80 + 40;
+                    this.alpha = 0;
+                    this.maxAlpha = Math.random() * 0.15 + 0.05;
+                    this.life = 0;
+                    this.maxLife = Math.random() * 300 + 200;
                 }
+
                 update() {
-                    this.y -= this.speedY;
-                    this.x += this.speedX;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life++;
+
+                    // React slightly to mouse proximity
                     const dx = mouse.x - this.x;
                     const dy = mouse.y - this.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) { this.x -= (dx / dist) * 0.8; }
-                    if (this.y < -50 || this.opacity <= 0) { this.reset(); }
+                    if (dist < 180) {
+                        this.x -= (dx / dist) * 0.5;
+                        this.y -= (dy / dist) * 0.5;
+                    }
+
+                    // Fade in and fade out
+                    if (this.life < 50) {
+                        this.alpha = (this.life / 50) * this.maxAlpha;
+                    } else if (this.life > this.maxLife - 50) {
+                        this.alpha = ((this.maxLife - this.life) / 50) * this.maxAlpha;
+                    }
+
+                    if (this.life >= this.maxLife || this.y < -100) {
+                        this.reset();
+                    }
                 }
+
                 draw() {
                     ctx.save();
+                    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                    grad.addColorStop(0, `rgba(224, 224, 238, ${this.alpha})`);
+                    grad.addColorStop(0.5, `rgba(60, 60, 75, ${this.alpha * 0.6})`);
+                    grad.addColorStop(1, 'rgba(9, 9, 11, 0)');
+
+                    ctx.fillStyle = grad;
                     ctx.beginPath();
-                    let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-                    gradient.addColorStop(0, `rgba(240, 240, 245, ${this.opacity})`);
-                    gradient.addColorStop(0.5, `rgba(138, 138, 147, ${this.opacity * 0.5})`);
-                    gradient.addColorStop(1, "rgba(11, 11, 13, 0)");
-                    ctx.fillStyle = gradient;
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
-
-                    if (this.isSkullForm && this.opacity > 0.15) {
-                        ctx.fillStyle = `rgba(225, 225, 235, ${this.opacity * 0.8})`;
-                        ctx.beginPath();
-                        ctx.arc(this.x - this.size * 0.25, this.y - this.size * 0.1, this.size * 0.12, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.beginPath();
-                        ctx.arc(this.x + this.size * 0.25, this.y - this.size * 0.1, this.size * 0.12, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
                     ctx.restore();
                 }
             }
 
-            const particles = Array.from({ length: 65 }, () => new SmokeParticle());
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach((p) => { p.update(); p.draw(); });
-                requestAnimationFrame(animate);
-            }
-            animate();
-        })();
-
-        // 3. LÓGICA DE APLICACIÓN Y NAVEGACIÓN
-        let currentUser = null;
-        let isTeacherMode = false;
-        let currentCourse = "algoritmos";
-
-        document.addEventListener("DOMContentLoaded", () => {
-            setupEventListeners();
-            checkExistingSession();
-        });
-
-        function setupEventListeners() {
-            document.getElementById("linkToRegister").addEventListener("click", (e) => {
-                e.preventDefault();
-                document.getElementById("loginCard").classList.add("hidden");
-                document.getElementById("registerCard").classList.remove("hidden");
-            });
-
-            document.getElementById("linkToLogin").addEventListener("click", (e) => {
-                e.preventDefault();
-                document.getElementById("registerCard").classList.add("hidden");
-                document.getElementById("loginCard").classList.remove("hidden");
-            });
-
-            document.getElementById("regPhoto").addEventListener("change", (e) => {
-                const file = e.target.files[0];
-                if (file) { document.getElementById("regPhotoPreview").src = URL.createObjectURL(file); }
-            });
-
-            document.getElementById("loginForm").addEventListener("submit", handleLogin);
-            document.getElementById("registerForm").addEventListener("submit", handleRegister);
-            document.getElementById("btnTeacherAccess").addEventListener("click", enableTeacherMode);
-            document.getElementById("btnLogout").addEventListener("click", handleLogout);
-
-            document.getElementById("userProfileBtn").addEventListener("click", openProfileModal);
-            document.getElementById("closeProfileModal").addEventListener("click", () => {
-                document.getElementById("profileModal").classList.add("hidden");
-            });
-            document.getElementById("editProfileForm").addEventListener("submit", handleUpdateProfile);
-
-            document.querySelectorAll(".tab-btn").forEach((btn) => {
-                btn.addEventListener("click", (e) => {
-                    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-                    e.target.classList.add("active");
-                    currentCourse = e.target.dataset.course;
-                    renderAcademicStructure();
-                });
-            });
-        }
-
-        async function checkExistingSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) { fetchUserProfile(session.user.id); } 
-            else { showAuthView(); }
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById("loginEmail").value;
-            const password = document.getElementById("loginPassword").value;
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) { alert("Error: " + error.message); return; }
-            isTeacherMode = false;
-            fetchUserProfile(data.user.id);
-        }
-
-        async function handleRegister(e) {
-            e.preventDefault();
-            const email = document.getElementById("regEmail").value;
-            const password = document.getElementById("regPassword").value;
-            const names = document.getElementById("regNames").value;
-            const code = document.getElementById("regCode").value;
-            const career = document.getElementById("regCareer").value;
-            const cycle = document.getElementById("regCycle").value;
-            const photoFile = document.getElementById("regPhoto").files[0];
-
-            const { data, error } = await supabase.auth.signUp({ email, password });
-            if (error) { alert("Error en el registro: " + error.message); return; }
-
-            let photoUrl = "https://via.placeholder.com/100";
-            if (photoFile) { photoUrl = await uploadProfilePhoto(data.user.id, photoFile); }
-
-            await supabase.from("profiles").insert([{
-                id: data.user.id,
-                full_name: names,
-                student_code: code,
-                career: career,
-                cycle: cycle,
-                avatar_url: photoUrl
-            }]);
-
-            alert("Cuenta registrada.");
-            fetchUserProfile(data.user.id);
-        }
-
-        function enableTeacherMode() {
-            isTeacherMode = true;
-            currentUser = {
-                full_name: "Docente / Invitado",
-                student_code: "UPLA-DOCENTE",
-                avatar_url: "https://via.placeholder.com/80?text=Profesor"
-            };
-            showDashboardView();
-        }
-
-        async function handleLogout() {
-            if (!isTeacherMode) { await supabase.auth.signOut(); }
-            currentUser = null;
-            isTeacherMode = false;
-            showAuthView();
-        }
-
-        async function fetchUserProfile(userId) {
-            const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
-            currentUser = data;
-            showDashboardView();
-        }
-
-        function showAuthView() {
-            document.getElementById("authContainer").classList.remove("hidden");
-            document.getElementById("dashboardContainer").classList.add("hidden");
-        }
-
-        function showDashboardView() {
-            document.getElementById("authContainer").classList.add("hidden");
-            document.getElementById("dashboardContainer").classList.remove("hidden");
-
-            document.getElementById("headerAvatar").src = currentUser.avatar_url || "https://via.placeholder.com/40";
-            document.getElementById("headerName").textContent = currentUser.full_name;
-            document.getElementById("headerCode").textContent = `Cód: ${currentUser.student_code}`;
-
-            if (isTeacherMode) {
-                document.getElementById("teacherBanner").classList.remove("hidden");
-            } else {
-                document.getElementById("teacherBanner").classList.add("hidden");
-            }
-
-            renderAcademicStructure();
-        }
-
-        async function renderAcademicStructure() {
-            const container = document.getElementById("courseContent");
-            container.innerHTML = "";
-
-            const { data: dbWeeks } = await supabase.from("weeks")
-                .select("*, tasks(*)")
-                .eq("course_id", currentCourse);
-
-            const weekMap = {};
-            if (dbWeeks) { dbWeeks.forEach(w => weekMap[w.week_number] = w); }
-
-            const units = [
-                { name: "Unidad I", start: 1, end: 4 },
-                { name: "Unidad II", start: 5, end: 8 },
-                { name: "Unidad III", start: 9, end: 12 },
-                { name: "Unidad IV", start: 13, end: 16 }
-            ];
-
-            units.forEach(unit => {
-                const unitEl = document.createElement("div");
-                unitEl.className = "unit-block";
-                unitEl.innerHTML = `<h3 class="unit-title">${unit.name}</h3>`;
-
-                const grid = document.createElement("div");
-                grid.className = "weeks-grid";
-
-                for (let w = unit.start; w <= unit.end; w++) {
-                    const weekData = weekMap[w] || { title: `Semana ${w}`, tasks: [] };
-                    grid.appendChild(createWeekCard(w, weekData));
+            // Floating Skull Aura Class
+            class SkullAura {
+                constructor() {
+                    this.reset();
                 }
 
-                unitEl.appendChild(grid);
-                container.appendChild(unitEl);
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 24 + 18;
+                    this.alpha = 0;
+                    this.maxAlpha = Math.random() * 0.12 + 0.03;
+                    this.vy = -Math.random() * 0.4 - 0.1;
+                    this.life = 0;
+                    this.maxLife = Math.random() * 400 + 200;
+                }
+
+                update() {
+                    this.y += this.vy;
+                    this.life++;
+
+                    if (this.life < 60) {
+                        this.alpha = (this.life / 60) * this.maxAlpha;
+                    } else if (this.life > this.maxLife - 60) {
+                        this.alpha = ((this.maxLife - this.life) / 60) * this.maxAlpha;
+                    }
+
+                    if (this.life >= this.maxLife || this.y < -50) {
+                        this.reset();
+                    }
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.fillStyle = `rgba(240, 240, 255, ${this.alpha})`;
+                    
+                    // Drawing stylized skull outline
+                    const s = this.size;
+                    ctx.beginPath();
+                    // Cranium
+                    ctx.arc(0, -s * 0.2, s * 0.5, Math.PI * 0.8, Math.PI * 2.2);
+                    // Jaw
+                    ctx.lineTo(s * 0.25, s * 0.3);
+                    ctx.lineTo(-s * 0.25, s * 0.3);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Eye sockets (dark cutouts)
+                    ctx.fillStyle = `rgba(9, 9, 11, ${this.alpha * 1.5})`;
+                    ctx.beginPath();
+                    ctx.arc(-s * 0.18, -s * 0.15, s * 0.12, 0, Math.PI * 2);
+                    ctx.arc(s * 0.18, -s * 0.15, s * 0.12, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+            }
+
+            const smokeParticles = Array.from({ length: 45 }, () => new SmokeParticle());
+            const skullAuras = Array.from({ length: 12 }, () => new SkullAura());
+
+            function animate() {
+                // Ease mouse
+                mouse.x += (mouse.targetX - mouse.x) * 0.05;
+                mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+                ctx.clearRect(0, 0, width, height);
+
+                // Render smoke background layer
+                smokeParticles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+
+                // Render floating skull auras
+                skullAuras.forEach(s => {
+                    s.update();
+                    s.draw();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        })();
+    </script>
+
+    <script>
+        /* -------------------------------------------------------------
+           APPLICATION STATE & LOCAL STORAGE DATABASE
+        ------------------------------------------------------------- */
+        const DEFAULT_LOGO = "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=200&q=80";
+
+        // Initial default user state
+        let currentUser = {
+            name: "Carlos Mendoza Silva",
+            code: "U202110892",
+            career: "Ingeniería de Sistemas",
+            cycle: "V",
+            username: "upla_estudiante",
+            password: "123",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+            isTeacher: false
+        };
+
+        let currentCourseId = 1; // 1 = Algoritmos, 2 = Desarrollo
+        let uplaLogoUrl = DEFAULT_LOGO;
+
+        // Data Structure for Courses -> 4 Units -> 4 Weeks each (16 Weeks total per course)
+        let academicData = {
+            course1: {}, // Course 1: Algoritmos y Estructura de Datos
+            course2: {}  // Course 2: Desarrollo de Aplicaciones I
+        };
+
+        // Pre-initialize week structures if not stored
+        function initAcademicDataStructure() {
+            const defaultTopics = {
+                1: [
+                    "Introducción a los Algoritmos y Notación O-Grande",
+                    "Arreglos Unidimensionales y Multidimensionales",
+                    "Pilas (Stacks) y Colas (Queues) Estáticas",
+                    "Listas Enlazadas Simples y Dobles"
+                ],
+                2: [
+                    "Recursividad y Algoritmos de Búsqueda",
+                    "Métodos de Ordenamiento Eficientes (QuickSort, MergeSort)",
+                    "Árboles Binarios de Búsqueda (BST)",
+                    "Árboles Balanceados (AVL y B-Trees)"
+                ],
+                3: [
+                    "Grafos: Representación y Matriz de Adyacencia",
+                    "Recorridos en Grafos (BFS y DFS)",
+                    "Algoritmo de Dijkstra y Árbol de Expansión Mínima",
+                    "Tablas Hash y Funciones de Dispersión"
+                ],
+                4: [
+                    "Programación Dinámica y Algoritmos Voraces",
+                    "Estructuras de Datos Avanzadas",
+                    "Optimización de Memoria y Algoritmos Complejos",
+                    "Presentación del Proyecto Integrador"
+                ]
+            };
+
+            [1, 2].forEach(cNum => {
+                const courseKey = `course${cNum}`;
+                if (!academicData[courseKey]) academicData[courseKey] = {};
+
+                let weekCounter = 1;
+                for (let unit = 1; unit <= 4; unit++) {
+                    if (!academicData[courseKey][`unit_${unit}`]) {
+                        academicData[courseKey][`unit_${unit}`] = {};
+                    }
+                    for (let w = 1; w <= 4; w++) {
+                        const weekId = weekCounter;
+                        if (!academicData[courseKey][`unit_${unit}`][`week_${weekId}`]) {
+                            academicData[courseKey][`unit_${unit}`][`week_${weekId}`] = {
+                                title: `Semana ${weekId}: ${defaultTopics[unit][w - 1]}`,
+                                file: null // { name, size, type, date, dataUrl/link }
+                            };
+                        }
+                        weekCounter++;
+                    }
+                }
             });
         }
 
-        function createWeekCard(weekNum, weekData) {
-            const card = document.createElement("div");
-            card.className = "week-card";
+        /* -------------------------------------------------------------
+           LOAD / SAVE STORAGE PERSISTENCE
+        ------------------------------------------------------------- */
+        function loadStoredData() {
+            try {
+                // User
+                const savedUser = localStorage.getItem('upla_active_user');
+                if (savedUser) currentUser = JSON.parse(savedUser);
 
-            const isReadOnly = isTeacherMode ? "readonly" : "";
-            const task = weekData.tasks && weekData.tasks.length > 0 ? weekData.tasks[0] : null;
+                // Logo
+                const savedLogo = localStorage.getItem('upla_logo_url');
+                if (savedLogo) uplaLogoUrl = savedLogo;
 
-            let taskHtml = "";
-            if (task) {
-                taskHtml = `
-                    <div class="file-item">
-                        <span class="file-info" title="${task.file_name}">📄 ${task.file_name}</span>
-                        <div class="file-actions">
-                            <a href="${task.file_url}" target="_blank" download class="btn-primary">⬇</a>
-                            ${!isTeacherMode ? `<button class="btn-danger" onclick="deleteTask('${task.id}', '${task.storage_path}')">🗑</button>` : ''}
-                        </div>
-                    </div>
-                `;
-            } else if (!isTeacherMode) {
-                taskHtml = `
-                    <div class="file-dropzone">
-                        <input type="file" id="file_week_${weekNum}" onchange="uploadTask(${weekNum}, this)" style="display:none">
-                        <label for="file_week_${weekNum}" style="cursor:pointer">➕ Subir Tarea (.zip, .pdf, .docx...)</label>
-                    </div>
-                `;
-            } else {
-                taskHtml = `<p style="font-size:0.8rem; color:#888; margin-top:10px;">Sin tarea entregada</p>`;
+                // Academic data
+                const savedAcademic = localStorage.getItem('upla_academic_data');
+                if (savedAcademic) {
+                    academicData = JSON.parse(savedAcademic);
+                } else {
+                    initAcademicDataStructure();
+                }
+            } catch (e) {
+                console.warn("Storage load error, initializing fallback data:", e);
+                initAcademicDataStructure();
             }
 
-            card.innerHTML = `
-                <div class="week-header">
-                    <h4>Semana ${weekNum}</h4>
-                    <input type="text" class="week-topic-input" ${isReadOnly} 
-                           value="${weekData.title || ''}" 
-                           placeholder="Título del Tema..." 
-                           onchange="updateWeekTitle(${weekNum}, this.value)">
+            // Update static logo elements
+            document.getElementById('login-logo-img').src = uplaLogoUrl;
+            document.getElementById('nav-logo-img').src = uplaLogoUrl;
+        }
+
+        function saveDataToStorage() {
+            try {
+                localStorage.setItem('upla_active_user', JSON.stringify(currentUser));
+                localStorage.setItem('upla_logo_url', uplaLogoUrl);
+                localStorage.setItem('upla_academic_data', JSON.stringify(academicData));
+
+                // Backup to Firestore if enabled
+                if (window.firebaseEnabled && window.db && currentUser.code) {
+                    const docRef = doc(window.db, "artifacts", "upla-portfolio", "public", "data", "users", currentUser.code);
+                    setDoc(docRef, { user: currentUser, academicData: academicData }, { merge: true }).catch(err => {
+                        console.warn("Firebase sync notice:", err);
+                    });
+                }
+            } catch (e) {
+                console.error("Storage save failed (Quota exceeded or restricted):", e);
+                showToast("Atención: Espacio local limitado para archivos grandes.", "warning");
+            }
+        }
+
+        /* -------------------------------------------------------------
+           AUTHENTICATION LOGIC
+        ------------------------------------------------------------- */
+        function handleLogin(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('login-username').value.trim();
+            const passInput = document.getElementById('login-password').value.trim();
+
+            if (currentUser.username && userInput === currentUser.username && passInput !== currentUser.password) {
+                showToast("Contraseña incorrecta.", "error");
+                return;
+            }
+
+            currentUser.isTeacher = false;
+            if (userInput) currentUser.username = userInput;
+            saveDataToStorage();
+
+            showDashboard();
+            showToast(`Bienvenido estudiante ${currentUser.name}`, "success");
+        }
+
+        function loginAsTeacher() {
+            currentUser.isTeacher = true;
+            showDashboard();
+            showToast("Acceso como Profesor/Invitado (Modo Solo Lectura)", "info");
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const code = document.getElementById('reg-code').value.trim();
+            const career = document.getElementById('reg-career').value.trim();
+            const cycle = document.getElementById('reg-cycle').value;
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const avatarPreview = document.getElementById('register-avatar-preview').src;
+
+            currentUser = {
+                name: name,
+                code: code,
+                career: career,
+                cycle: cycle,
+                username: username,
+                password: password,
+                avatar: avatarPreview,
+                isTeacher: false
+            };
+
+            saveDataToStorage();
+            showDashboard();
+            showToast("Cuenta creada exitosamente", "success");
+        }
+
+        function handleLogout() {
+            document.getElementById('dashboard-screen').classList.add('hidden');
+            document.getElementById('auth-screen').classList.remove('hidden');
+            showToast("Sesión cerrada", "info");
+        }
+
+        function showRegisterCard() {
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('register-card').classList.remove('hidden');
+        }
+
+        function showLoginCard() {
+            document.getElementById('register-card').classList.add('hidden');
+            document.getElementById('login-card').classList.remove('hidden');
+        }
+
+        function previewRegisterAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('register-avatar-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function promptEditLogo() {
+            const newUrl = prompt("Ingresa la URL pública de la imagen para el logo de la Universidad (UPLA):", uplaLogoUrl);
+            if (newUrl && newUrl.trim() !== '') {
+                uplaLogoUrl = newUrl.trim();
+                document.getElementById('login-logo-img').src = uplaLogoUrl;
+                document.getElementById('nav-logo-img').src = uplaLogoUrl;
+                saveDataToStorage();
+                showToast("Logo de UPLA actualizado", "success");
+            }
+        }
+
+        /* -------------------------------------------------------------
+           DASHBOARD & INTERFACE RENDERING
+        ------------------------------------------------------------- */
+        function showDashboard() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+
+            updateHeaderUI();
+            renderCourseUnits();
+            updateProgressTracker();
+        }
+
+        function updateHeaderUI() {
+            const roleBadge = document.getElementById('role-badge');
+            const editIcon = document.getElementById('profile-edit-icon');
+
+            document.getElementById('nav-user-name').innerText = currentUser.isTeacher ? "Docente Evaluador" : currentUser.name;
+            document.getElementById('nav-user-code').innerText = currentUser.isTeacher ? "Modo Inspección" : `Cod: ${currentUser.code}`;
+            document.getElementById('nav-user-avatar').src = currentUser.isTeacher ? "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80" : currentUser.avatar;
+            document.getElementById('user-career-badge').innerText = currentUser.isTeacher ? "MODO PROFESOR / EVALUADOR" : `${currentUser.career.toUpperCase()} | CICLO ${currentUser.cycle}`;
+
+            if (currentUser.isTeacher) {
+                roleBadge.innerText = "SOLO LECTURA";
+                roleBadge.className = "px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-950 text-amber-300 border border-amber-800";
+                editIcon.classList.add('hidden');
+            } else {
+                roleBadge.innerText = "ESTUDIANTE";
+                roleBadge.className = "px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800";
+                editIcon.classList.remove('hidden');
+            }
+        }
+
+        function switchCourse(courseNum) {
+            currentCourseId = courseNum;
+            const tab1 = document.getElementById('tab-course-1');
+            const tab2 = document.getElementById('tab-course-2');
+
+            if (courseNum === 1) {
+                tab1.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-smokeBg text-white border border-silverGlow/40 shadow";
+                tab2.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs lg:text-sm font-semibold text-smokeMuted hover:text-white transition-all duration-200 flex items-center justify-center gap-2";
+            } else {
+                tab2.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 bg-smokeBg text-white border border-silverGlow/40 shadow";
+                tab1.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs lg:text-sm font-semibold text-smokeMuted hover:text-white transition-all duration-200 flex items-center justify-center gap-2";
+            }
+
+            renderCourseUnits();
+        }
+
+        // Render 4 Units and 16 Weeks
+        function renderCourseUnits() {
+            const container = document.getElementById('course-units-container');
+            container.innerHTML = '';
+
+            const courseKey = `course${currentCourseId}`;
+            const unitNames = [
+                "Unidad I: Fundamentos y Estructuras Básicas",
+                "Unidad II: Algoritmos Complejos y Árboles",
+                "Unidad III: Grafos, Redes y Dispersión",
+                "Unidad IV: Aplicaciones Avanzadas y Proyecto Final"
+            ];
+
+            let weekCounter = 1;
+
+            for (let u = 1; u <= 4; u++) {
+                const unitKey = `unit_${u}`;
+                const unitData = academicData[courseKey][unitKey] || {};
+
+                // Unit Accordion Card
+                const unitCard = document.createElement('div');
+                unitCard.className = "glass-panel rounded-2xl border border-smokeBorder overflow-hidden glow-border transition-all";
+
+                // Unit Header
+                unitCard.innerHTML = `
+                    <div onclick="toggleUnitAccordion('unit-content-${u}')" class="p-4 lg:p-5 flex items-center justify-between cursor-pointer bg-smokeCard/50 hover:bg-smokeCard/90 transition select-none">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-smokeBg border border-smokeBorder flex items-center justify-center text-silverGlow font-tech font-bold text-sm">
+                                U${u}
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-sm lg:text-base text-white">${unitNames[u - 1]}</h3>
+                                <p class="text-[11px] text-smokeMuted">Semanas ${weekCounter} a ${weekCounter + 3}</p>
+                            </div>
+                        </div>
+                        <i id="unit-icon-${u}" class="fa-solid fa-chevron-down text-smokeMuted text-xs transition-transform duration-300"></i>
+                    </div>
+
+                    <!-- Accordion Content -->
+                    <div id="unit-content-${u}" class="custom-accordion-content ${u === 1 ? 'open' : ''} px-4 lg:px-6 pb-6 pt-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2" id="unit-${u}-weeks-grid"></div>
+                    </div>
+                `;
+
+                container.appendChild(unitCard);
+
+                const weeksGrid = document.getElementById(`unit-${u}-weeks-grid`);
+
+                for (let w = 1; w <= 4; w++) {
+                    const weekId = weekCounter;
+                    const weekKey = `week_${weekId}`;
+                    const weekInfo = unitData[weekKey] || { title: `Semana ${weekId}`, file: null };
+
+                    weeksGrid.appendChild(createWeekCardHTML(u, weekId, weekInfo));
+                    weekCounter++;
+                }
+            }
+        }
+
+        function createWeekCardHTML(unitNum, weekId, weekInfo) {
+            const weekDiv = document.createElement('div');
+            weekDiv.id = `week-card-${weekId}`;
+            weekDiv.className = "bg-smokeBg/90 border border-smokeBorder hover:border-silverGlow/30 p-4 rounded-xl transition flex flex-col justify-between";
+
+            const isTeacher = currentUser.isTeacher;
+            const hasFile = weekInfo.file !== null;
+
+            // File Icon calculation
+            let fileIcon = "fa-file";
+            let fileColor = "text-smokeMuted";
+            if (hasFile) {
+                const ext = weekInfo.file.name.split('.').pop().toLowerCase();
+                if (['zip', 'rar', '7z'].includes(ext)) { fileIcon = "fa-file-zipper"; fileColor = "text-amber-400"; }
+                else if (['pdf'].includes(ext)) { fileIcon = "fa-file-pdf"; fileColor = "text-red-400"; }
+                else if (['doc', 'docx'].includes(ext)) { fileIcon = "fa-file-word"; fileColor = "text-blue-400"; }
+                else if (['ppt', 'pptx'].includes(ext)) { fileIcon = "fa-file-powerpoint"; fileColor = "text-orange-400"; }
+                else if (['jpg', 'png', 'jpeg', 'webp'].includes(ext)) { fileIcon = "fa-file-image"; fileColor = "text-emerald-400"; }
+            }
+
+            weekDiv.innerHTML = `
+                <div>
+                    <!-- Week Title Header -->
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <span class="text-[10px] font-tech font-bold uppercase tracking-wider text-silverGlow/80 bg-smokeCard px-2 py-0.5 rounded border border-smokeBorder">
+                            Semana ${weekId}
+                        </span>
+                        ${hasFile ? `<span class="text-[10px] text-emerald-400 font-semibold bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded"><i class="fa-solid fa-check"></i> Entregado</span>` : `<span class="text-[10px] text-smokeMuted bg-smokeCard px-2 py-0.5 rounded">Pendiente</span>`}
+                    </div>
+
+                    <!-- Editable Week Title -->
+                    <div class="mb-3">
+                        ${isTeacher ? `
+                            <h4 class="text-xs font-semibold text-white leading-snug">${escapeHtml(weekInfo.title)}</h4>
+                        ` : `
+                            <div class="relative group">
+                                <input type="text" value="${escapeHtml(weekInfo.title)}" onchange="updateWeekTitle(${unitNum}, ${weekId}, this.value)" 
+                                    class="w-full bg-transparent text-xs font-semibold text-white border-b border-transparent hover:border-smokeBorder focus:border-silverGlow focus:outline-none py-0.5 transition" placeholder="Asignar tema de la semana...">
+                            </div>
+                        `}
+                    </div>
                 </div>
-                <div class="week-body">
-                    ${taskHtml}
+
+                <!-- File Area -->
+                <div class="mt-2 pt-3 border-t border-smokeBorder/60">
+                    ${hasFile ? `
+                        <div class="bg-smokeCard p-2.5 rounded-lg border border-smokeBorder flex items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-2.5 overflow-hidden">
+                                <i class="fa-solid ${fileIcon} ${fileColor} text-lg"></i>
+                                <div class="truncate">
+                                    <p class="text-xs font-medium text-white truncate" title="${escapeHtml(weekInfo.file.name)}">${escapeHtml(weekInfo.file.name)}</p>
+                                    <p class="text-[10px] text-smokeMuted">${weekInfo.file.size || 'Enlace Nube'} • ${weekInfo.file.date || ''}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <a href="${weekInfo.file.url}" download="${weekInfo.file.name}" target="_blank" class="p-1.5 rounded-md hover:bg-smokeBg text-silverGlow text-xs transition" title="Descargar">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                ${!isTeacher ? `
+                                    <button onclick="deleteWeekFile(${unitNum}, ${weekId})" class="p-1.5 rounded-md hover:bg-red-950/60 text-red-400 text-xs transition" title="Eliminar">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    ` : `
+                        ${!isTeacher ? `
+                            <div class="space-y-2">
+                                <label class="flex items-center justify-center gap-2 w-full p-2 rounded-lg border border-dashed border-smokeBorder hover:border-silverGlow/50 bg-smokeCard/40 hover:bg-smokeCard cursor-pointer text-xs text-smokeMuted hover:text-white transition">
+                                    <i class="fa-solid fa-cloud-arrow-up text-silverGlow"></i>
+                                    <span>Subir Trabajo (.zip, .pdf, .docx)</span>
+                                    <input type="file" onchange="handleFileUpload(event, ${unitNum}, ${weekId})" class="hidden">
+                                </label>
+                                <button onclick="promptExternalLink(${unitNum}, ${weekId})" class="w-full text-[11px] text-smokeMuted hover:text-silverGlow flex items-center justify-center gap-1.5 py-1">
+                                    <i class="fa-solid fa-link text-[10px]"></i> Pegar enlace de Google Drive / GitHub
+                                </button>
+                            </div>
+                        ` : `
+                            <p class="text-[11px] text-smokeMuted italic text-center py-2">Sin evidencia entregada</p>
+                        `}
+                    `}
                 </div>
             `;
 
-            return card;
+            return weekDiv;
         }
 
-        async function uploadTask(weekNum, input) {
-            const file = input.files[0];
-            if (!file || isTeacherMode) return;
+        function toggleUnitAccordion(contentId) {
+            const content = document.getElementById(contentId);
+            const unitNumber = contentId.split('-').pop();
+            const icon = document.getElementById(`unit-icon-${unitNumber}`);
 
-            const fileExt = file.name.split('.').pop();
-            const filePath = `${currentUser.id}/${currentCourse}/sem_${weekNum}_${Date.now()}.${fileExt}`;
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
 
-            const { data: storageData, error: storageErr } = await supabase.storage
-                .from('academic_files')
-                .upload(filePath, file);
+        /* -------------------------------------------------------------
+           WEEK FILE & CONTENT ACTIONS
+        ------------------------------------------------------------- */
+        function updateWeekTitle(unitNum, weekId, newTitle) {
+            const courseKey = `course${currentCourseId}`;
+            academicData[courseKey][`unit_${unitNum}`][`week_${weekId}`].title = newTitle;
+            saveDataToStorage();
+            showToast(`Título de la Semana ${weekId} actualizado`, "success");
+        }
 
-            if (storageErr) { alert("Error al subir archivo: " + storageErr.message); return; }
+        function handleFileUpload(event, unitNum, weekId) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            const { data: { publicUrl } } = supabase.storage.from('academic_files').getPublicUrl(filePath);
-
-            let { data: weekObj } = await supabase.from('weeks')
-                .select('id')
-                .eq('course_id', currentCourse)
-                .eq('week_number', weekNum)
-                .single();
-
-            if (!weekObj) {
-                const { data: newWeek } = await supabase.from('weeks').insert([{
-                    course_id: currentCourse,
-                    week_number: weekNum,
-                    title: `Semana ${weekNum}`
-                }]).select().single();
-                weekObj = newWeek;
+            // Size limit check for local Base64 storage (approx 12MB limit)
+            if (file.size > 12 * 1024 * 1024) {
+                showToast("Para archivos >12MB se recomienda usar la opción de Enlace Google Drive.", "warning");
             }
 
-            await supabase.from('tasks').insert([{
-                week_id: weekObj.id,
-                file_name: file.name,
-                file_url: publicUrl,
-                storage_path: filePath,
-                file_size: file.size
-            }]);
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const courseKey = `course${currentCourseId}`;
+                const formattedSize = file.size < 1024 * 1024 ? 
+                    (file.size / 1024).toFixed(1) + ' KB' : 
+                    (file.size / (1024 * 1024)).toFixed(1) + ' MB';
 
-            renderAcademicStructure();
+                academicData[courseKey][`unit_${unitNum}`][`week_${weekId}`].file = {
+                    name: file.name,
+                    size: formattedSize,
+                    date: new Date().toLocaleDateString('es-PE'),
+                    url: e.target.result
+                };
+
+                saveDataToStorage();
+                renderCourseUnits();
+                updateProgressTracker();
+                showToast(`Trabajo cargado en la Semana ${weekId}`, "success");
+            };
+            reader.readAsDataURL(file);
         }
 
-        async function deleteTask(taskId, storagePath) {
-            if (isTeacherMode || !confirm("¿Eliminar este archivo?")) return;
-            await supabase.storage.from('academic_files').remove([storagePath]);
-            await supabase.from('tasks').delete().eq('id', taskId);
-            renderAcademicStructure();
+        function promptExternalLink(unitNum, weekId) {
+            const link = prompt("Ingresa la URL pública de tu tarea en Google Drive, GitHub o Dropbox:");
+            if (link && link.trim() !== "") {
+                const fileNamePrompt = prompt("Ingresa un nombre para la tarea:", `Trabajo_Semana_${weekId}`);
+                const courseKey = `course${currentCourseId}`;
+                
+                academicData[courseKey][`unit_${unitNum}`][`week_${weekId}`].file = {
+                    name: (fileNamePrompt || `Trabajo_Semana_${weekId}`) + ' (Link)',
+                    size: 'Nube',
+                    date: new Date().toLocaleDateString('es-PE'),
+                    url: link.trim()
+                };
+
+                saveDataToStorage();
+                renderCourseUnits();
+                updateProgressTracker();
+                showToast(`Enlace adjuntado en la Semana ${weekId}`, "success");
+            }
         }
 
-        async function updateWeekTitle(weekNum, newTitle) {
-            if (isTeacherMode) return;
-            await supabase.from('weeks').upsert({
-                course_id: currentCourse,
-                week_number: weekNum,
-                title: newTitle
-            }, { onConflict: 'course_id, week_number' });
+        function deleteWeekFile(unitNum, weekId) {
+            if (confirm(`¿Estás seguro de eliminar el trabajo de la Semana ${weekId}?`)) {
+                const courseKey = `course${currentCourseId}`;
+                academicData[courseKey][`unit_${unitNum}`][`week_${weekId}`].file = null;
+                saveDataToStorage();
+                renderCourseUnits();
+                updateProgressTracker();
+                showToast(`Archivo eliminado de la Semana ${weekId}`, "info");
+            }
         }
 
+        /* -------------------------------------------------------------
+           SEARCH & PROGRESS ENGINE
+        ------------------------------------------------------------- */
+        function filterWeeks() {
+            const query = document.getElementById('week-search-input').value.toLowerCase();
+            
+            for (let weekId = 1; weekId <= 16; weekId++) {
+                const weekCard = document.getElementById(`week-card-${weekId}`);
+                if (weekCard) {
+                    const text = weekCard.innerText.toLowerCase();
+                    if (text.includes(query)) {
+                        weekCard.style.display = "flex";
+                    } else {
+                        weekCard.style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function updateProgressTracker() {
+            let totalWeeks = 32; // 16 weeks * 2 courses
+            let completed = 0;
+
+            [1, 2].forEach(cNum => {
+                const cKey = `course${cNum}`;
+                for (let u = 1; u <= 4; u++) {
+                    for (let w = 1; w <= 16; w++) {
+                        const weekObj = academicData[cKey]?.[`unit_${u}`]?.[`week_${w}`];
+                        if (weekObj && weekObj.file) completed++;
+                    }
+                }
+            });
+
+            const percent = Math.round((completed / totalWeeks) * 100);
+            document.getElementById('overall-progress-text').innerText = `${percent}%`;
+            document.getElementById('overall-progress-bar').style.width = `${percent}%`;
+            document.getElementById('completed-weeks-count').innerText = `${completed} de ${totalWeeks} tareas cargadas`;
+        }
+
+        /* -------------------------------------------------------------
+           PROFILE EDIT MODAL ACTIONS
+        ------------------------------------------------------------- */
         function openProfileModal() {
-            if (isTeacherMode) return;
-            document.getElementById("editNames").value = currentUser.full_name;
-            document.getElementById("editCode").value = currentUser.student_code;
-            document.getElementById("editCareer").value = currentUser.career;
-            document.getElementById("editCycle").value = currentUser.cycle;
-            document.getElementById("profileModal").classList.remove("hidden");
+            if (currentUser.isTeacher) return;
+
+            document.getElementById('edit-firstname').value = currentUser.name.split(' ')[0] || '';
+            document.getElementById('edit-lastname').value = currentUser.name.split(' ').slice(1).join(' ') || '';
+            document.getElementById('edit-code').value = currentUser.code || '';
+            document.getElementById('edit-career').value = currentUser.career || '';
+            document.getElementById('edit-cycle').value = currentUser.cycle || 'V';
+            document.getElementById('edit-avatar-preview').src = currentUser.avatar;
+
+            document.getElementById('profile-modal').classList.remove('hidden');
         }
 
-        async function handleUpdateProfile(e) {
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function previewEditAvatar(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('edit-avatar-preview').src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileChanges(e) {
             e.preventDefault();
-            if (isTeacherMode) return;
+            const fn = document.getElementById('edit-firstname').value.trim();
+            const ln = document.getElementById('edit-lastname').value.trim();
+            const pass = document.getElementById('edit-password').value.trim();
 
-            const names = document.getElementById("editNames").value;
-            const code = document.getElementById("editCode").value;
-            const career = document.getElementById("editCareer").value;
-            const cycle = document.getElementById("editCycle").value;
-            const photoFile = document.getElementById("editPhoto").files[0];
+            currentUser.name = `${fn} ${ln}`;
+            currentUser.code = document.getElementById('edit-code').value.trim();
+            currentUser.career = document.getElementById('edit-career').value.trim();
+            currentUser.cycle = document.getElementById('edit-cycle').value;
+            currentUser.avatar = document.getElementById('edit-avatar-preview').src;
+            if (pass !== '') currentUser.password = pass;
 
-            let photoUrl = currentUser.avatar_url;
-            if (photoFile) { photoUrl = await uploadProfilePhoto(currentUser.id, photoFile); }
-
-            await supabase.from("profiles").update({
-                full_name: names,
-                student_code: code,
-                career: career,
-                cycle: cycle,
-                avatar_url: photoUrl
-            }).eq("id", currentUser.id);
-
-            document.getElementById("profileModal").classList.add("hidden");
-            fetchUserProfile(currentUser.id);
+            saveDataToStorage();
+            updateHeaderUI();
+            closeProfileModal();
+            showToast("Perfil actualizado correctamente", "success");
         }
 
-        async function uploadProfilePhoto(userId, file) {
-            const filePath = `avatars/${userId}_${Date.now()}`;
-            await supabase.storage.from('academic_files').upload(filePath, file);
-            const { data: { publicUrl } } = supabase.storage.from('academic_files').getPublicUrl(filePath);
-            return publicUrl;
+        /* -------------------------------------------------------------
+           TOAST NOTIFICATION ENGINE
+        ------------------------------------------------------------- */
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            let iconClass = "fa-circle-info text-blue-400";
+            if (type === "success") iconClass = "fa-circle-check text-emerald-400";
+            if (type === "warning") iconClass = "fa-triangle-exclamation text-amber-400";
+            if (type === "error") iconClass = "fa-circle-xmark text-red-400";
+
+            toast.className = "glass-panel border border-smokeBorder px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs text-white transform transition-all duration-300 translate-x-full";
+            toast.innerHTML = `
+                <i class="fa-solid ${iconClass} text-base"></i>
+                <span class="font-medium">${escapeHtml(message)}</span>
+            `;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        /* -------------------------------------------------------------
+           INIT ON LOAD
+        ------------------------------------------------------------- */
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStoredData();
+        });
     </script>
 </body>
 </html>

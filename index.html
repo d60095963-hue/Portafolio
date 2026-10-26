@@ -444,33 +444,33 @@
             </div>
 
             <div class="space-y-4 text-xs code-font">
+                <!-- Foto de Perfil -->
                 <div class="space-y-2 border-b border-[#0a3066] pb-3">
                     <label class="block text-sky-200 font-bold">Foto de Perfil (Danilson):</label>
-                    <div class="flex gap-2 items-center">
+                    <div class="flex flex-wrap gap-2 items-center">
                         <input type="file" id="file-profile-input" accept="image/*" class="hidden" onchange="handleFileUpload(event, 'profile')">
-                        <button type="button" onclick="document.getElementById('file-profile-input').click()" class="px-3 py-1.5 bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1.5">
+                        <button type="button" onclick="document.getElementById('file-profile-input').click()" class="px-3 py-2 bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1.5">
                             <i class="fas fa-upload"></i> Subir desde dispositivo
                         </button>
-                        <span id="file-profile-name" class="text-[10px] text-sky-400/60 truncate max-w-[180px]">Sin archivo</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-sky-400/60 block mb-1">O pega una URL de imagen:</span>
-                        <input type="text" id="input-profile-url" class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                        <button type="button" onclick="triggerDriveSelect('profile')" class="px-3 py-2 bg-yellow-500/20 text-[#ffd700] border border-[#ffd700]/50 rounded-lg hover:bg-[#ffd700] hover:text-black transition flex items-center gap-1.5">
+                            <i class="fab fa-google-drive"></i> Subir desde Drive
+                        </button>
+                        <span id="file-profile-name" class="text-[10px] text-sky-400/80 truncate w-full block mt-1">Archivo seleccionado: Ninguno</span>
                     </div>
                 </div>
 
+                <!-- Foto Universidad -->
                 <div class="space-y-2">
                     <label class="block text-sky-200 font-bold">Logo/Foto Universidad UPLA:</label>
-                    <div class="flex gap-2 items-center">
+                    <div class="flex flex-wrap gap-2 items-center">
                         <input type="file" id="file-uni-input" accept="image/*" class="hidden" onchange="handleFileUpload(event, 'uni')">
-                        <button type="button" onclick="document.getElementById('file-uni-input').click()" class="px-3 py-1.5 bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1.5">
+                        <button type="button" onclick="document.getElementById('file-uni-input').click()" class="px-3 py-2 bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1.5">
                             <i class="fas fa-upload"></i> Subir desde dispositivo
                         </button>
-                        <span id="file-uni-name" class="text-[10px] text-sky-400/60 truncate max-w-[180px]">Sin archivo</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-sky-400/60 block mb-1">O pega una URL directa:</span>
-                        <input type="text" id="input-uni-url" class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                        <button type="button" onclick="triggerDriveSelect('uni')" class="px-3 py-2 bg-yellow-500/20 text-[#ffd700] border border-[#ffd700]/50 rounded-lg hover:bg-[#ffd700] hover:text-black transition flex items-center gap-1.5">
+                            <i class="fab fa-google-drive"></i> Subir desde Drive
+                        </button>
+                        <span id="file-uni-name" class="text-[10px] text-sky-400/80 truncate w-full block mt-1">Archivo seleccionado: Ninguno</span>
                     </div>
                 </div>
             </div>
@@ -495,38 +495,42 @@
             <input type="hidden" id="work-course-id">
             <input type="hidden" id="work-week-num">
 
-            <div class="space-y-3 text-xs code-font">
+            <div class="space-y-4 text-xs code-font">
                 <div>
-                    <label class="block text-sky-200 mb-1">Nombre del Trabajo *</label>
-                    <input type="text" id="work-title-input" placeholder="Ej: Práctica Calificada N° 1 - Algoritmos" class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                    <label class="block text-sky-200 mb-1 font-bold">Tipo de Archivo</label>
+                    <select id="work-type-input" class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                        <option value="IMG">Imagen / PNG / JPG</option>
+                        <option value="PDF">PDF</option>
+                        <option value="DOCX">Word / DOCX</option>
+                        <option value="XLSX">Excel / XLSX</option>
+                        <option value="ZIP">ZIP / Rar</option>
+                        <option value="CODE">Código Source</option>
+                    </select>
                 </div>
 
-                <div>
-                    <label class="block text-sky-200 mb-1">Descripción / Detalles</label>
-                    <textarea id="work-desc-input" rows="2" placeholder="Resumen o especificaciones..." class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none"></textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sky-200 mb-1">Tipo de Archivo</label>
-                        <select id="work-type-input" class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
-                            <option value="PDF">PDF</option>
-                            <option value="DOCX">Word / DOCX</option>
-                            <option value="XLSX">Excel / XLSX</option>
-                            <option value="ZIP">ZIP / Rar</option>
-                            <option value="CODE">Código Source</option>
-                            <option value="IMG">Imagen / PNG</option>
-                        </select>
+                <div class="space-y-2 border border-[#0a3066] p-3 rounded-xl bg-[#020b18]/60">
+                    <label class="block text-sky-200 font-bold">Subir Archivo o Enlace de Google Drive *</label>
+                    
+                    <input type="file" id="work-file-input" class="hidden" onchange="handleWorkFileUpload(event)">
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="document.getElementById('work-file-input').click()" class="px-3 py-2 bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1.5">
+                            <i class="fas fa-upload"></i> Subir directo (Dispositivo)
+                        </button>
+                        <button type="button" onclick="selectWorkFromDrive()" class="px-3 py-2 bg-yellow-500/20 text-[#ffd700] border border-[#ffd700]/50 rounded-lg hover:bg-[#ffd700] hover:text-black transition flex items-center gap-1.5">
+                            <i class="fab fa-google-drive"></i> Seleccionar de Google Drive
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-sky-200 mb-1">Tamaño Estimado</label>
-                        <input type="text" id="work-size-input" placeholder="Ej: 1.5 MB" class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
-                    </div>
-                </div>
 
-                <div>
-                    <label class="block text-sky-200 mb-1">URL de Google Drive o Enlace Directo *</label>
-                    <input type="text" id="work-url-input" placeholder="https://drive.google.com/file/d/..." class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                    <div class="mt-2">
+                        <span class="text-[10px] text-sky-400/80 block mb-1">O pega un enlace directo de Google Drive:</span>
+                        <input type="text" id="work-url-input" oninput="extractNameFromUrl()" placeholder="https://drive.google.com/file/d/..." class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                    </div>
+
+                    <div class="pt-2 border-t border-[#0a3066]/50">
+                        <span class="text-[11px] text-sky-300 font-semibold block">Nombre automático asignado:</span>
+                        <p id="auto-detected-filename" class="text-xs font-bold text-[#ffd700] italic truncate">Esperando archivo o enlace...</p>
+                    </div>
                 </div>
             </div>
 
@@ -698,6 +702,10 @@ function evaluarProgresoSistemas() {
         let audioContext = null;
         let userExp = 350;
 
+        let currentUploadedWorkFile = null;
+        let currentUploadedPhotoProfile = null;
+        let currentUploadedPhotoUni = null;
+
         let coursesData = [
             {
                 id: "algoritmos",
@@ -792,12 +800,12 @@ function evaluarProgresoSistemas() {
             } else {
                 worksData = {
                     "algoritmos_1": [
-                        { id: 1, title: "Práctica 1: Complejidad Algorítmica", desc: "Análisis de Big-O y optimización", type: "PDF", size: "1.2 MB", url: "https://drive.google.com" },
-                        { id: 2, title: "Laboratorio 1: Estructuras Dinámicas", desc: "Listas enlazadas y pilas en C++", type: "CODE", size: "850 KB", url: "https://drive.google.com" }
+                        { id: 1, title: "Practica1_Analisis_BigO.pdf", type: "PDF", url: "https://drive.google.com" },
+                        { id: 2, title: "Lab1_Listas_Enlazadas.cpp", type: "CODE", url: "https://drive.google.com" }
                     ],
                     "taller_1": [
-                        { id: 3, title: "Laboratorio 1: Arquitectura Frontend Cyberpunk", desc: "Diseño e interfaces adaptativas Sonic Speed", type: "PDF", size: "2.4 MB", url: "https://drive.google.com" },
-                        { id: 4, title: "Avance Proyecto Final: Backend API", desc: "Integración con servicios Google Apps Script", type: "XLSX", size: "500 KB", url: "https://drive.google.com" }
+                        { id: 3, title: "Lab1_Frontend_Sonic_Cyberpunk.png", type: "IMG", url: "https://drive.google.com" },
+                        { id: 4, title: "Avance_Proyecto_Backend_API.xlsx", type: "XLSX", url: "https://drive.google.com" }
                     ]
                 };
                 saveWorksData();
@@ -1010,13 +1018,11 @@ function evaluarProgresoSistemas() {
                                                             </span>
                                                             <div>
                                                                 <p class="text-xs font-medium text-sky-100">${work.title}</p>
-                                                                ${work.desc ? `<p class="text-[10px] text-sky-400/70">${work.desc}</p>` : ''}
                                                             </div>
                                                         </div>
 
                                                         <div class="flex items-center space-x-2">
-                                                            ${work.size ? `<span class="text-[10px] code-font text-sky-400/50 mr-1">${work.size}</span>` : ''}
-                                                            <button onclick="previewDoc('${work.title.replace(/'/g, "\\'")}', '${work.desc ? work.desc.replace(/'/g, "\\'") : ''}', '${work.url}', '${work.size || ''}')" class="px-2.5 py-1 text-[11px] code-font bg-[#020b18] text-sky-200 border border-[#0a3066] rounded-lg hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1">
+                                                            <button onclick="previewDoc('${work.title.replace(/'/g, "\\'")}', '', '${work.url}', '')" class="px-2.5 py-1 text-[11px] code-font bg-[#020b18] text-sky-200 border border-[#0a3066] rounded-lg hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1">
                                                                 <i class="fas fa-eye"></i> Vista Previa
                                                             </button>
                                                             <a href="${work.url}" target="_blank" class="px-2.5 py-1 text-[11px] code-font bg-[#00d2ff]/10 text-[#00d2ff] border border-[#00d2ff]/30 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1">
@@ -1104,31 +1110,67 @@ function evaluarProgresoSistemas() {
         function openAddWorkModal(courseId, weekNum) {
             document.getElementById('work-course-id').value = courseId;
             document.getElementById('work-week-num').value = weekNum;
-            document.getElementById('work-title-input').value = '';
-            document.getElementById('work-desc-input').value = '';
-            document.getElementById('work-size-input').value = '';
             document.getElementById('work-url-input').value = '';
+            document.getElementById('work-file-input').value = '';
+            document.getElementById('auto-detected-filename').innerText = 'Esperando archivo o enlace...';
+            currentUploadedWorkFile = null;
             document.getElementById('add-work-modal').classList.remove('hidden');
+        }
+
+        function handleWorkFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            currentUploadedWorkFile = file;
+            document.getElementById('auto-detected-filename').innerText = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('work-url-input').value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function extractNameFromUrl() {
+            const urlInput = document.getElementById('work-url-input').value.trim();
+            if (urlInput) {
+                try {
+                    const urlParts = urlInput.split('/');
+                    let filename = urlParts[urlParts.length - 1] || 'Archivo_Drive_UPLA';
+                    if (filename.includes('?')) filename = filename.split('?')[0];
+                    document.getElementById('auto-detected-filename').innerText = filename || 'Evidencia_Drive_Subida';
+                } catch(e) {
+                    document.getElementById('auto-detected-filename').innerText = 'Evidencia_Drive_Subida';
+                }
+            } else {
+                document.getElementById('auto-detected-filename').innerText = 'Esperando archivo o enlace...';
+            }
+        }
+
+        function selectWorkFromDrive() {
+            const driveUrl = prompt("Pega el enlace compartido de Google Drive:");
+            if (driveUrl) {
+                document.getElementById('work-url-input').value = driveUrl.trim();
+                extractNameFromUrl();
+            }
         }
 
         function saveNewWork() {
             const courseId = document.getElementById('work-course-id').value;
             const weekNum = document.getElementById('work-week-num').value;
-            const title = document.getElementById('work-title-input').value.trim();
-            const desc = document.getElementById('work-desc-input').value.trim();
             const type = document.getElementById('work-type-input').value;
-            const size = document.getElementById('work-size-input').value.trim();
             const url = document.getElementById('work-url-input').value.trim();
+            let fileName = document.getElementById('auto-detected-filename').innerText;
 
-            if (!title || !url) {
-                alert('Ingresa el nombre del trabajo y la URL de Google Drive.');
+            if (!url || fileName === 'Esperando archivo o enlace...') {
+                alert('Sube un archivo directo o asigna un enlace válido de Google Drive.');
                 return;
             }
 
             const weekKey = `${courseId}_${weekNum}`;
             if (!worksData[weekKey]) worksData[weekKey] = [];
 
-            worksData[weekKey].push({ id: Date.now(), title, desc, type, size, url });
+            worksData[weekKey].push({ id: Date.now(), title: fileName, type, url });
             saveWorksData();
             addExp(25);
             renderCourses();
@@ -1174,15 +1216,26 @@ function evaluarProgresoSistemas() {
             if (!file) return;
 
             const nameSpan = document.getElementById(type === 'profile' ? 'file-profile-name' : 'file-uni-name');
-            if (nameSpan) nameSpan.innerText = file.name;
+            if (nameSpan) nameSpan.innerText = `Archivo seleccionado: ${file.name}`;
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Data = e.target.result;
-                if (type === 'profile') document.getElementById('input-profile-url').value = base64Data;
-                else if (type === 'uni') document.getElementById('input-uni-url').value = base64Data;
+                if (type === 'profile') currentUploadedPhotoProfile = base64Data;
+                else if (type === 'uni') currentUploadedPhotoUni = base64Data;
             };
             reader.readAsDataURL(file);
+        }
+
+        function triggerDriveSelect(type) {
+            const driveUrl = prompt("Ingresa el enlace directo de la imagen guardada en Google Drive:");
+            if (driveUrl) {
+                const nameSpan = document.getElementById(type === 'profile' ? 'file-profile-name' : 'file-uni-name');
+                if (nameSpan) nameSpan.innerText = `Desde Google Drive: ${driveUrl.substring(0, 30)}...`;
+
+                if (type === 'profile') currentUploadedPhotoProfile = driveUrl.trim();
+                else if (type === 'uni') currentUploadedPhotoUni = driveUrl.trim();
+            }
         }
 
         function loadPhotos() {
@@ -1191,20 +1244,19 @@ function evaluarProgresoSistemas() {
 
             document.getElementById('hero-profile-photo').src = profileUrl;
             document.getElementById('header-uni-logo').src = uniUrl;
-            document.getElementById('input-profile-url').value = profileUrl;
-            document.getElementById('input-uni-url').value = uniUrl;
         }
 
         function openPhotoModal() {
+            document.getElementById('file-profile-name').innerText = "Archivo seleccionado: Ninguno";
+            document.getElementById('file-uni-name').innerText = "Archivo seleccionado: Ninguno";
+            currentUploadedPhotoProfile = null;
+            currentUploadedPhotoUni = null;
             document.getElementById('photo-modal').classList.remove('hidden');
         }
 
         function savePhotos() {
-            const profileUrl = document.getElementById('input-profile-url').value.trim();
-            const uniUrl = document.getElementById('input-uni-url').value.trim();
-
-            if (profileUrl) localStorage.setItem('danilson_sonic_profile', profileUrl);
-            if (uniUrl) localStorage.setItem('danilson_sonic_uni', uniUrl);
+            if (currentUploadedPhotoProfile) localStorage.setItem('danilson_sonic_profile', currentUploadedPhotoProfile);
+            if (currentUploadedPhotoUni) localStorage.setItem('danilson_sonic_uni', currentUploadedPhotoUni);
 
             loadPhotos();
             closeModal('photo-modal');
@@ -1223,7 +1275,7 @@ function evaluarProgresoSistemas() {
             let embedUrl = '';
             if (url.includes('drive.google.com/file/d/')) {
                 embedUrl = url.replace('/view', '/preview');
-            } else if (url.includes('docs.google.com') || url.endsWith('.pdf')) {
+            } else if (url.includes('docs.google.com') || url.endsWith('.pdf') || url.startsWith('data:image')) {
                 embedUrl = url;
             }
 

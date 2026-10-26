@@ -540,7 +540,7 @@
                 
                 <div id="doc-fallback" class="p-6 text-center space-y-3 hidden">
                     <i class="fas fa-file-download text-6xl text-[#ffd700] animate-bounce"></i>
-                    <p class="text-xs code-font text-sky-100 max-w-md">Este archivo se descargará a tu dispositivo o lo puedes abrir en tu lector prefirido.</p>
+                    <p class="text-xs code-font text-sky-100 max-w-md">Este archivo se descargará a tu dispositivo o lo puedes abrir en tu lector preferido.</p>
                 </div>
 
                 <div id="doc-image-preview" class="w-full h-full hidden flex items-center justify-center p-2">
@@ -649,7 +649,7 @@ function evaluarProgresoSistemas() {
         </div>
     </div>
 
-    <!-- SCRIPT -->
+    <!-- SCRIPT LOGIC -->
     <script>
         const DEFAULT_PROFILE = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80";
         const DEFAULT_UNI = "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=120&q=80";
@@ -664,13 +664,17 @@ function evaluarProgresoSistemas() {
         let currentUploadedPhotoUni = null;
         let dbInstance = null;
 
+        // INICIALIZACIÓN DE INDEXEDDB CON ALMACENAMIENTO DE TRABAJOS E IMÁGENES
         function initIndexedDB() {
             return new Promise((resolve, reject) => {
-                const request = indexedDB.open("SonicCyberpunkDB", 1);
+                const request = indexedDB.open("SonicCyberpunkDB", 2);
                 request.onupgradeneeded = function(e) {
                     const db = e.target.result;
                     if (!db.objectStoreNames.contains("photos")) {
                         db.createObjectStore("photos");
+                    }
+                    if (!db.objectStoreNames.contains("works")) {
+                        db.createObjectStore("works");
                     }
                 };
                 request.onsuccess = function(e) {
@@ -680,6 +684,45 @@ function evaluarProgresoSistemas() {
                 request.onerror = function(e) {
                     reject(e);
                 };
+            });
+        }
+
+        function saveWorksToDB(data) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    try {
+                        localStorage.setItem('danilson_sonic_works_data', JSON.stringify(data));
+                        resolve();
+                    } catch(e) { reject(e); }
+                    return;
+                }
+                const tx = dbInstance.transaction("works", "readwrite");
+                const store = tx.objectStore("works");
+                const request = store.put(data, "all_works");
+                request.onsuccess = () => resolve();
+                request.onerror = (e) => reject(e);
+            });
+        }
+
+        function getWorksFromDB() {
+            return new Promise((resolve) => {
+                if (!dbInstance) {
+                    const local = localStorage.getItem('danilson_sonic_works_data');
+                    resolve(local ? JSON.parse(local) : null);
+                    return;
+                }
+                const tx = dbInstance.transaction("works", "readonly");
+                const store = tx.objectStore("works");
+                const request = store.get("all_works");
+                request.onsuccess = function(e) {
+                    if (e.target.result) {
+                        resolve(e.target.result);
+                    } else {
+                        const local = localStorage.getItem('danilson_sonic_works_data');
+                        resolve(local ? JSON.parse(local) : null);
+                    }
+                };
+                request.onerror = () => resolve(null);
             });
         }
 
@@ -805,13 +848,13 @@ function evaluarProgresoSistemas() {
             } catch(e) {}
         }
 
-        function loadStoredData() {
+        async function loadStoredData() {
             const savedTitles = localStorage.getItem('danilson_sonic_week_titles');
             if (savedTitles) weekTitles = JSON.parse(savedTitles);
 
-            const savedWorks = localStorage.getItem('danilson_sonic_works_data');
+            const savedWorks = await getWorksFromDB();
             if (savedWorks) {
-                worksData = JSON.parse(savedWorks);
+                worksData = savedWorks;
             } else {
                 worksData = {
                     "algoritmos_1": [
@@ -823,12 +866,14 @@ function evaluarProgresoSistemas() {
                         { id: 4, title: "Avance_Proyecto_Backend_API.xlsx", type: "XLSX", url: "https://drive.google.com" }
                     ]
                 };
-                saveWorksData();
+                await saveWorksData();
             }
 
             const storedExp = localStorage.getItem('danilson_sonic_exp');
             if (storedExp) userExp = parseInt(storedExp);
             updateExpDisplay();
+            renderCourses();
+            updateTotalWorksCounter();
         }
 
         function updateExpDisplay() {
@@ -863,11 +908,11 @@ function evaluarProgresoSistemas() {
             playSonicRingSound();
         }
 
-        function saveWorksData() {
+        async function saveWorksData() {
             try {
-                localStorage.setItem('danilson_sonic_works_data', JSON.stringify(worksData));
+                await saveWorksToDB(worksData);
             } catch (e) {
-                alert("¡Almacenamiento lleno! Te recomendamos usar enlaces de Google Drive para archivos muy pesados.");
+                alert("Ocurrió un error al guardar en la base de datos local.");
             }
             updateTotalWorksCounter();
         }
@@ -1165,7 +1210,7 @@ function evaluarProgresoSistemas() {
             }
         }
 
-        function saveNewWork() {
+        async function saveNewWork() {
             const courseId = document.getElementById('work-course-id').value;
             const weekNum = document.getElementById('work-week-num').value;
             const type = document.getElementById('work-type-input').value;
@@ -1178,7 +1223,7 @@ function evaluarProgresoSistemas() {
                 let processed = 0;
                 currentSelectedFiles.forEach((file) => {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = async function(e) {
                         worksData[weekKey].push({
                             id: Date.now() + Math.random(),
                             title: file.name,
@@ -1187,7 +1232,7 @@ function evaluarProgresoSistemas() {
                         });
                         processed++;
                         if (processed === currentSelectedFiles.length) {
-                            saveWorksData();
+                            await saveWorksData();
                             addExp(25 * currentSelectedFiles.length);
                             renderCourses();
                             closeModal('add-work-modal');
@@ -1204,25 +1249,24 @@ function evaluarProgresoSistemas() {
                 const finalTitle = (fileName === 'Esperando archivos o enlace...' || !fileName) ? 'Evidencia_Registrada' : fileName;
 
                 worksData[weekKey].push({ id: Date.now(), title: finalTitle, type, url });
-                saveWorksData();
+                await saveWorksData();
                 addExp(25);
                 renderCourses();
                 closeModal('add-work-modal');
             }
         }
 
-        function deleteWork(courseId, weekNum, index) {
+        async function deleteWork(courseId, weekNum, index) {
             if (confirm('¿Eliminar esta evidencia registrada?')) {
                 const weekKey = `${courseId}_${weekNum}`;
                 if (worksData[weekKey]) {
                     worksData[weekKey].splice(index, 1);
-                    saveWorksData();
+                    await saveWorksData();
                     renderCourses();
                 }
             }
         }
 
-        // DESCARGAR O ABRIR UN TRABAJO CORREGIDO
         function downloadWork(courseId, weekNum, index) {
             const weekKey = `${courseId}_${weekNum}`;
             const work = worksData[weekKey][index];
@@ -1240,7 +1284,6 @@ function evaluarProgresoSistemas() {
             }
         }
 
-        // PREVISUALIZAR TRABAJO CORREGIDO
         function previewDoc(courseId, weekNum, index) {
             const weekKey = `${courseId}_${weekNum}`;
             const work = worksData[weekKey][index];
@@ -1472,7 +1515,6 @@ function evaluarProgresoSistemas() {
         }
         function refreshPageData() {
             loadStoredData();
-            renderCourses();
             loadPhotos();
             playSpeedSound();
         }
@@ -1482,10 +1524,8 @@ function evaluarProgresoSistemas() {
             try {
                 await initIndexedDB();
             } catch(e) {}
-            loadStoredData();
-            renderCourses();
+            await loadStoredData();
             await loadPhotos();
-            updateTotalWorksCounter();
         };
     </script>
 </body>

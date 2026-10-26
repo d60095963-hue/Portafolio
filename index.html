@@ -68,10 +68,6 @@
             text-shadow: 0 0 14px var(--accent-glow);
         }
 
-        .gold-text-glow {
-            text-shadow: 0 0 12px rgba(255, 215, 0, 0.7);
-        }
-
         ::-webkit-scrollbar {
             width: 7px;
         }
@@ -443,7 +439,7 @@
         </div>
     </div>
 
-    <!-- MODAL AGREGAR TRABAJO (ACTUALIZADO CON MULTIPLES ARCHIVOS) -->
+    <!-- MODAL AGREGAR TRABAJO (CORREGIDO Y OPTIMIZADO) -->
     <div id="add-work-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="cyber-card max-w-lg w-full rounded-2xl p-6 border border-[#00d2ff] space-y-4">
             <div class="flex justify-between items-center border-b border-[#0a3066] pb-3">
@@ -472,7 +468,6 @@
                 <div class="space-y-2 border border-[#0a3066] p-3 rounded-xl bg-[#020b18]/60">
                     <label class="block text-sky-200 font-bold">Subir Varios Archivos o Enlaces a la vez *</label>
                     
-                    <!-- ATRIBUTO MULTIPLE AÑADIDO PARA SELECCIONAR VARIOS TRABAJOS JUNTOS -->
                     <input type="file" id="work-file-input" class="hidden" multiple onchange="handleWorkFileUpload(event)">
                     
                     <div class="flex flex-wrap gap-2">
@@ -485,8 +480,8 @@
                     </div>
 
                     <div class="mt-2">
-                        <span class="text-[10px] text-sky-400/80 block mb-1">O pega un enlace de Google Drive:</span>
-                        <input type="text" id="work-url-input" oninput="extractNameFromUrl()" placeholder="https://drive.google.com/file/d/..." class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
+                        <span class="text-[10px] text-sky-400/80 block mb-1">O pega un enlace de Google Drive / Web:</span>
+                        <input type="text" id="work-url-input" placeholder="https://drive.google.com/file/d/... o https://..." class="w-full bg-[#020b18] border border-[#0a3066] rounded-lg p-2 text-white focus:border-[#00d2ff] outline-none">
                     </div>
 
                     <div class="pt-2 border-t border-[#0a3066]/50">
@@ -869,7 +864,11 @@ function evaluarProgresoSistemas() {
         }
 
         function saveWorksData() {
-            localStorage.setItem('danilson_sonic_works_data', JSON.stringify(worksData));
+            try {
+                localStorage.setItem('danilson_sonic_works_data', JSON.stringify(worksData));
+            } catch (e) {
+                alert("¡Almacenamiento lleno! Te recomendamos usar enlaces de Google Drive para archivos muy pesados.");
+            }
             updateTotalWorksCounter();
         }
 
@@ -1126,12 +1125,11 @@ function evaluarProgresoSistemas() {
             document.getElementById('work-week-num').value = weekNum;
             document.getElementById('work-url-input').value = '';
             document.getElementById('work-file-input').value = '';
-            document.getElementById('auto-detected-filename').innerText = 'Esperando archivo o enlace...';
+            document.getElementById('auto-detected-filename').innerText = 'Esperando archivos o enlace...';
             currentSelectedFiles = [];
             document.getElementById('add-work-modal').classList.remove('hidden');
         }
 
-        // FUNCIÓN ACTUALIZADA PARA SOPORTAR MÚLTIPLES ARCHIVOS A LA VEZ
         function handleWorkFileUpload(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
@@ -1147,39 +1145,32 @@ function evaluarProgresoSistemas() {
                 reader.readAsDataURL(currentSelectedFiles[0]);
             } else {
                 document.getElementById('auto-detected-filename').innerText = `🔥 ${currentSelectedFiles.length} archivos seleccionados para subir juntos`;
-                document.getElementById('work-url-input').value = "Múltiples archivos seleccionados";
-            }
-        }
-
-        function extractNameFromUrl() {
-            const urlInput = document.getElementById('work-url-input').value.trim();
-            if (urlInput && currentSelectedFiles.length === 0) {
-                try {
-                    const urlParts = urlInput.split('/');
-                    let filename = urlParts[urlParts.length - 1] || 'Archivo_Drive_UPLA';
-                    if (filename.includes('?')) filename = filename.split('?')[0];
-                    document.getElementById('auto-detected-filename').innerText = filename || 'Evidencia_Drive_Subida';
-                } catch(e) {
-                    document.getElementById('auto-detected-filename').innerText = 'Evidencia_Drive_Subida';
-                }
+                document.getElementById('work-url-input').value = "multiples_archivos_cargados";
             }
         }
 
         function selectWorkFromDrive() {
-            const driveUrl = prompt("Pega el enlace compartido de Google Drive:");
+            const driveUrl = prompt("Pega el enlace compartido de Google Drive o URL web:");
             if (driveUrl) {
                 document.getElementById('work-url-input').value = driveUrl.trim();
                 currentSelectedFiles = [];
-                extractNameFromUrl();
+                try {
+                    const urlParts = driveUrl.split('/');
+                    let filename = urlParts[urlParts.length - 1] || 'Enlace_Web_UPLA';
+                    if (filename.includes('?')) filename = filename.split('?')[0];
+                    document.getElementById('auto-detected-filename').innerText = filename || 'Enlace_Externo';
+                } catch(e) {
+                    document.getElementById('auto-detected-filename').innerText = 'Enlace_Externo';
+                }
             }
         }
 
-        // GUARDAR TRABAJOS (SOPORTA LOTE DE MÚLTIPLES ARCHIVOS)
+        // FUNCIÓN DE GUARDADO REPARADA Y OPTIMIZADA
         function saveNewWork() {
             const courseId = document.getElementById('work-course-id').value;
             const weekNum = document.getElementById('work-week-num').value;
             const type = document.getElementById('work-type-input').value;
-            const url = document.getElementById('work-url-input').value.trim();
+            let url = document.getElementById('work-url-input').value.trim();
 
             const weekKey = `${courseId}_${weekNum}`;
             if (!worksData[weekKey]) worksData[weekKey] = [];
@@ -1208,11 +1199,12 @@ function evaluarProgresoSistemas() {
                 });
             } else {
                 if (!url) {
-                    alert('Selecciona al menos un archivo o ingresa un enlace de Drive.');
-                    return;
+                    url = "https://drive.google.com";
                 }
                 const fileName = document.getElementById('auto-detected-filename').innerText;
-                worksData[weekKey].push({ id: Date.now(), title: fileName, type, url });
+                const finalTitle = (fileName === 'Esperando archivos o enlace...' || !fileName) ? 'Evidencia_Registrada' : fileName;
+
+                worksData[weekKey].push({ id: Date.now(), title: finalTitle, type, url });
                 saveWorksData();
                 addExp(25);
                 renderCourses();

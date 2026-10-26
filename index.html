@@ -179,7 +179,7 @@
                         <i class="fas fa-book text-[11px]"></i> CURSOS
                     </a>
                     <button onclick="openLabModal()" class="px-3 py-1.5 rounded-full bg-[#041630] border border-[#0a3066] text-sky-200 hover:border-[#ffd700] hover:text-[#ffd700] transition flex items-center gap-1.5">
-                        <i class="fas fa-[#ffd700] fa-circle-notch text-[11px] text-[#ffd700]"></i> LAB & QUIZ DIDÁCTICO
+                        <i class="fas fa-circle-notch text-[11px] text-[#ffd700]"></i> LAB & QUIZ DIDÁCTICO
                     </button>
                     <button onclick="openAppsScriptModal()" class="px-3 py-1.5 rounded-full bg-[#041630] border border-[#0a3066] text-sky-200 hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1.5">
                         <i class="fas fa-code text-[11px]"></i> APPS SCRIPT
@@ -438,7 +438,7 @@
         <div class="cyber-card max-w-lg w-full rounded-2xl p-6 border border-[#00d2ff] space-y-5">
             <div class="flex justify-between items-center border-b border-[#0a3066] pb-3">
                 <h3 class="text-lg font-bold gothic-title text-[#00d2ff] flex items-center gap-2">
-                    <i class="fas fa-images"></i> PERSONALIZAR FOTOS
+                    <i class="fas fa-images"></i> PERSONALIZAR FOTOS (SIN LÍMITE DE PESO)
                 </h3>
                 <button onclick="closeModal('photo-modal')" class="text-sky-300 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
@@ -453,7 +453,7 @@
                             <i class="fas fa-upload"></i> Subir desde dispositivo
                         </button>
                         <button type="button" onclick="triggerDriveSelect('profile')" class="px-3 py-2 bg-yellow-500/20 text-[#ffd700] border border-[#ffd700]/50 rounded-lg hover:bg-[#ffd700] hover:text-black transition flex items-center gap-1.5">
-                            <i class="fab fa-google-drive"></i> Subir desde Drive
+                            <i class="fab fa-google-drive"></i> Subir desde Drive / URL
                         </button>
                         <span id="file-profile-name" class="text-[10px] text-sky-400/80 truncate w-full block mt-1">Archivo seleccionado: Ninguno</span>
                     </div>
@@ -468,7 +468,7 @@
                             <i class="fas fa-upload"></i> Subir desde dispositivo
                         </button>
                         <button type="button" onclick="triggerDriveSelect('uni')" class="px-3 py-2 bg-yellow-500/20 text-[#ffd700] border border-[#ffd700]/50 rounded-lg hover:bg-[#ffd700] hover:text-black transition flex items-center gap-1.5">
-                            <i class="fab fa-google-drive"></i> Subir desde Drive
+                            <i class="fab fa-google-drive"></i> Subir desde Drive / URL
                         </button>
                         <span id="file-uni-name" class="text-[10px] text-sky-400/80 truncate w-full block mt-1">Archivo seleccionado: Ninguno</span>
                     </div>
@@ -477,7 +477,9 @@
 
             <div class="flex justify-end space-x-3 pt-2">
                 <button onclick="closeModal('photo-modal')" class="px-4 py-2 rounded-xl bg-[#041630] border border-[#0a3066] text-sky-300 hover:text-white text-xs code-font">Cancelar</button>
-                <button onclick="savePhotos()" class="px-4 py-2 rounded-xl bg-[#00d2ff] text-black font-bold hover:bg-[#0077ff] hover:text-white text-xs code-font transition">Guardar Cambios</button>
+                <button onclick="savePhotos()" class="px-4 py-2 rounded-xl bg-[#00d2ff] text-black font-bold hover:bg-[#0077ff] hover:text-white text-xs code-font transition flex items-center gap-1">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
             </div>
         </div>
     </div>
@@ -515,7 +517,7 @@
                     
                     <div class="flex flex-wrap gap-2">
                         <button type="button" onclick="document.getElementById('work-file-input').click()" class="px-3 py-2 bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1.5">
-                            <i class="fas fa-upload"></i> Subir directo (Dispositivo)
+                            <i class="fas fa-upload"></i> Subir directo (Sin límite de tamaño)
                         </button>
                         <button type="button" onclick="selectWorkFromDrive()" class="px-3 py-2 bg-yellow-500/20 text-[#ffd700] border border-[#ffd700]/50 rounded-lg hover:bg-[#ffd700] hover:text-black transition flex items-center gap-1.5">
                             <i class="fab fa-google-drive"></i> Seleccionar de Google Drive
@@ -581,9 +583,13 @@
             <div class="flex-grow bg-[#020b18] rounded-xl my-2 border border-[#0a3066] overflow-hidden relative flex flex-col items-center justify-center">
                 <iframe id="doc-iframe" class="w-full h-full hidden" frameborder="0" allowfullscreen></iframe>
                 
-                <div id="doc-fallback" class="p-6 text-center space-y-3">
+                <div id="doc-fallback" class="p-6 text-center space-y-3 hidden">
                     <i class="fab fa-google-drive text-6xl text-[#ffd700] animate-bounce"></i>
                     <p class="text-xs code-font text-sky-100 max-w-md">Puedes abrir directamente esta evidencia almacenada en Google Drive.</p>
+                </div>
+
+                <div id="doc-image-preview" class="w-full h-full hidden flex items-center justify-center p-2">
+                    <img id="doc-img-element" src="" alt="Vista Previa de Imagen" class="max-w-full max-h-full object-contain rounded-lg">
                 </div>
             </div>
 
@@ -591,7 +597,7 @@
                 <span id="doc-modal-size" class="text-xs code-font text-sky-400/60"></span>
                 <div class="flex gap-2">
                     <a id="doc-download-btn" href="#" target="_blank" class="px-4 py-2 bg-[#00d2ff] text-black font-bold rounded-xl text-xs code-font hover:bg-[#0077ff] hover:text-white transition flex items-center gap-2">
-                        <i class="fas fa-external-link-alt"></i> Abrir en Google Drive
+                        <i class="fas fa-external-link-alt"></i> Abrir Enlace / Descargar
                     </a>
                     <button onclick="closeModal('doc-modal')" class="px-4 py-2 rounded-xl bg-[#041630] border border-[#0a3066] text-sky-300 text-xs code-font">Cerrar</button>
                 </div>
@@ -705,6 +711,70 @@ function evaluarProgresoSistemas() {
         let currentUploadedWorkFile = null;
         let currentUploadedPhotoProfile = null;
         let currentUploadedPhotoUni = null;
+
+        // INDEXEDDB ENGINE FOR UNLIMITED IMAGE/FILE STORAGE
+        let dbInstance = null;
+
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open("SonicCyberpunkDB", 1);
+                request.onupgradeneeded = function(e) {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains("photos")) {
+                        db.createObjectStore("photos");
+                    }
+                };
+                request.onsuccess = function(e) {
+                    dbInstance = e.target.result;
+                    resolve(dbInstance);
+                };
+                request.onerror = function(e) {
+                    console.error("IndexedDB initialization error:", e);
+                    reject(e);
+                };
+            });
+        }
+
+        function savePhotoToDB(key, data) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    // Fallback to localStorage
+                    try {
+                        localStorage.setItem(key, data);
+                        resolve();
+                    } catch(err) {
+                        reject(err);
+                    }
+                    return;
+                }
+                const tx = dbInstance.transaction("photos", "readwrite");
+                const store = tx.objectStore("photos");
+                const request = store.put(data, key);
+                request.onsuccess = () => resolve();
+                request.onerror = (e) => reject(e);
+            });
+        }
+
+        function getPhotoFromDB(key) {
+            return new Promise((resolve) => {
+                if (!dbInstance) {
+                    resolve(localStorage.getItem(key));
+                    return;
+                }
+                const tx = dbInstance.transaction("photos", "readonly");
+                const store = tx.objectStore("photos");
+                const request = store.get(key);
+                request.onsuccess = function(e) {
+                    if (e.target.result) {
+                        resolve(e.target.result);
+                    } else {
+                        // Check localStorage fallback
+                        resolve(localStorage.getItem(key));
+                    }
+                };
+                request.onerror = () => resolve(localStorage.getItem(key));
+            });
+        }
 
         let coursesData = [
             {
@@ -1022,7 +1092,7 @@ function evaluarProgresoSistemas() {
                                                         </div>
 
                                                         <div class="flex items-center space-x-2">
-                                                            <button onclick="previewDoc('${work.title.replace(/'/g, "\\'")}', '', '${work.url}', '')" class="px-2.5 py-1 text-[11px] code-font bg-[#020b18] text-sky-200 border border-[#0a3066] rounded-lg hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1">
+                                                            <button onclick="previewDoc('${work.title.replace(/'/g, "\\'")}', '', '${work.url.replace(/'/g, "\\'")}', '', '${work.type}')" class="px-2.5 py-1 text-[11px] code-font bg-[#020b18] text-sky-200 border border-[#0a3066] rounded-lg hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1">
                                                                 <i class="fas fa-eye"></i> Vista Previa
                                                             </button>
                                                             <a href="${work.url}" target="_blank" class="px-2.5 py-1 text-[11px] code-font bg-[#00d2ff]/10 text-[#00d2ff] border border-[#00d2ff]/30 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1">
@@ -1210,13 +1280,13 @@ function evaluarProgresoSistemas() {
             closeModal('edit-week-modal');
         }
 
-        // Photos Management
+        // Photos Management (UNLIMITED FILE WEIGHT VIA INDEXEDDB)
         function handleFileUpload(event, type) {
             const file = event.target.files[0];
             if (!file) return;
 
             const nameSpan = document.getElementById(type === 'profile' ? 'file-profile-name' : 'file-uni-name');
-            if (nameSpan) nameSpan.innerText = `Archivo seleccionado: ${file.name}`;
+            if (nameSpan) nameSpan.innerText = `Archivo (${(file.size / (1024*1024)).toFixed(2)} MB): ${file.name}`;
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1228,22 +1298,25 @@ function evaluarProgresoSistemas() {
         }
 
         function triggerDriveSelect(type) {
-            const driveUrl = prompt("Ingresa el enlace directo de la imagen guardada en Google Drive:");
+            const driveUrl = prompt("Ingresa el enlace directo de la imagen guardada en Google Drive / Web:");
             if (driveUrl) {
                 const nameSpan = document.getElementById(type === 'profile' ? 'file-profile-name' : 'file-uni-name');
-                if (nameSpan) nameSpan.innerText = `Desde Google Drive: ${driveUrl.substring(0, 30)}...`;
+                if (nameSpan) nameSpan.innerText = `Desde Enlace: ${driveUrl.substring(0, 30)}...`;
 
                 if (type === 'profile') currentUploadedPhotoProfile = driveUrl.trim();
                 else if (type === 'uni') currentUploadedPhotoUni = driveUrl.trim();
             }
         }
 
-        function loadPhotos() {
-            const profileUrl = localStorage.getItem('danilson_sonic_profile') || DEFAULT_PROFILE;
-            const uniUrl = localStorage.getItem('danilson_sonic_uni') || DEFAULT_UNI;
+        async function loadPhotos() {
+            const profileUrl = await getPhotoFromDB('danilson_sonic_profile') || DEFAULT_PROFILE;
+            const uniUrl = await getPhotoFromDB('danilson_sonic_uni') || DEFAULT_UNI;
 
-            document.getElementById('hero-profile-photo').src = profileUrl;
-            document.getElementById('header-uni-logo').src = uniUrl;
+            const profileImg = document.getElementById('hero-profile-photo');
+            const uniImg = document.getElementById('header-uni-logo');
+
+            if (profileImg) profileImg.src = profileUrl;
+            if (uniImg) uniImg.src = uniUrl;
         }
 
         function openPhotoModal() {
@@ -1254,16 +1327,26 @@ function evaluarProgresoSistemas() {
             document.getElementById('photo-modal').classList.remove('hidden');
         }
 
-        function savePhotos() {
-            if (currentUploadedPhotoProfile) localStorage.setItem('danilson_sonic_profile', currentUploadedPhotoProfile);
-            if (currentUploadedPhotoUni) localStorage.setItem('danilson_sonic_uni', currentUploadedPhotoUni);
+        async function savePhotos() {
+            try {
+                if (currentUploadedPhotoProfile) {
+                    await savePhotoToDB('danilson_sonic_profile', currentUploadedPhotoProfile);
+                }
+                if (currentUploadedPhotoUni) {
+                    await savePhotoToDB('danilson_sonic_uni', currentUploadedPhotoUni);
+                }
 
-            loadPhotos();
-            closeModal('photo-modal');
+                await loadPhotos();
+                playSonicRingSound();
+                closeModal('photo-modal');
+            } catch (err) {
+                console.error("Error guardando imagen:", err);
+                alert("Ocurrió un error al guardar la imagen. Inténtalo con una URL o reconectando.");
+            }
         }
 
         // Preview Embed
-        function previewDoc(title, desc, url, size) {
+        function previewDoc(title, desc, url, size, type) {
             document.getElementById('doc-modal-title').innerText = title.toUpperCase();
             document.getElementById('doc-modal-desc').innerText = desc || '';
             document.getElementById('doc-modal-size').innerText = size ? `Tamaño: ${size}` : '';
@@ -1271,22 +1354,32 @@ function evaluarProgresoSistemas() {
 
             const iframe = document.getElementById('doc-iframe');
             const fallback = document.getElementById('doc-fallback');
+            const imgContainer = document.getElementById('doc-image-preview');
+            const imgElement = document.getElementById('doc-img-element');
 
-            let embedUrl = '';
-            if (url.includes('drive.google.com/file/d/')) {
-                embedUrl = url.replace('/view', '/preview');
-            } else if (url.includes('docs.google.com') || url.endsWith('.pdf') || url.startsWith('data:image')) {
-                embedUrl = url;
-            }
+            // Reset views
+            iframe.classList.add('hidden');
+            fallback.classList.add('hidden');
+            imgContainer.classList.add('hidden');
 
-            if (embedUrl) {
-                iframe.src = embedUrl;
-                iframe.classList.remove('hidden');
-                fallback.classList.add('hidden');
+            if (type === 'IMG' || url.startsWith('data:image') || url.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i)) {
+                imgElement.src = url;
+                imgContainer.classList.remove('hidden');
             } else {
-                iframe.src = '';
-                iframe.classList.add('hidden');
-                fallback.classList.remove('hidden');
+                let embedUrl = '';
+                if (url.includes('drive.google.com/file/d/')) {
+                    embedUrl = url.replace('/view', '/preview');
+                } else if (url.includes('docs.google.com') || url.endsWith('.pdf')) {
+                    embedUrl = url;
+                }
+
+                if (embedUrl) {
+                    iframe.src = embedUrl;
+                    iframe.classList.remove('hidden');
+                } else {
+                    iframe.src = '';
+                    fallback.classList.remove('hidden');
+                }
             }
 
             document.getElementById('doc-modal').classList.remove('hidden');
@@ -1401,15 +1494,19 @@ function evaluarProgresoSistemas() {
             renderCourses();
             loadPhotos();
             playSpeedSound();
-            alert('Portafolio Sonic Cyberpunk sincronizado con LocalStorage 💨');
         }
 
         // On Load
-        window.onload = function() {
+        window.onload = async function() {
             initSpeedCanvas();
+            try {
+                await initIndexedDB();
+            } catch(e) {
+                console.warn("IndexedDB no disponible, usando localStorage como respaldo.");
+            }
             loadStoredData();
             renderCourses();
-            loadPhotos();
+            await loadPhotos();
             updateTotalWorksCounter();
         };
     </script>

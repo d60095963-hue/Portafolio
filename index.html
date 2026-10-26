@@ -439,7 +439,7 @@
         </div>
     </div>
 
-    <!-- MODAL AGREGAR TRABAJO (CORREGIDO Y OPTIMIZADO) -->
+    <!-- MODAL AGREGAR TRABAJO -->
     <div id="add-work-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="cyber-card max-w-lg w-full rounded-2xl p-6 border border-[#00d2ff] space-y-4">
             <div class="flex justify-between items-center border-b border-[#0a3066] pb-3">
@@ -539,8 +539,8 @@
                 <iframe id="doc-iframe" class="w-full h-full hidden" frameborder="0" allowfullscreen></iframe>
                 
                 <div id="doc-fallback" class="p-6 text-center space-y-3 hidden">
-                    <i class="fab fa-google-drive text-6xl text-[#ffd700] animate-bounce"></i>
-                    <p class="text-xs code-font text-sky-100 max-w-md">Puedes abrir directamente esta evidencia almacenada en Google Drive.</p>
+                    <i class="fas fa-file-download text-6xl text-[#ffd700] animate-bounce"></i>
+                    <p class="text-xs code-font text-sky-100 max-w-md">Este archivo se descargará a tu dispositivo o lo puedes abrir en tu lector prefirido.</p>
                 </div>
 
                 <div id="doc-image-preview" class="w-full h-full hidden flex items-center justify-center p-2">
@@ -551,8 +551,8 @@
             <div class="flex justify-between items-center border-t border-[#0a3066] pt-3">
                 <span id="doc-modal-size" class="text-xs code-font text-sky-400/60"></span>
                 <div class="flex gap-2">
-                    <a id="doc-download-btn" href="#" target="_blank" class="px-4 py-2 bg-[#00d2ff] text-black font-bold rounded-xl text-xs code-font hover:bg-[#0077ff] hover:text-white transition flex items-center gap-2">
-                        <i class="fas fa-external-link-alt"></i> Abrir Enlace / Descargar
+                    <a id="doc-download-btn" href="#" download target="_blank" class="px-4 py-2 bg-[#00d2ff] text-black font-bold rounded-xl text-xs code-font hover:bg-[#0077ff] hover:text-white transition flex items-center gap-2">
+                        <i class="fas fa-download"></i> Descargar / Abrir Archivo
                     </a>
                     <button onclick="closeModal('doc-modal')" class="px-4 py-2 rounded-xl bg-[#041630] border border-[#0a3066] text-sky-300 text-xs code-font">Cerrar</button>
                 </div>
@@ -1037,12 +1037,12 @@ function evaluarProgresoSistemas() {
                                                         </div>
 
                                                         <div class="flex items-center space-x-2">
-                                                            <button onclick="previewDoc('${work.title.replace(/'/g, "\\'")}', '', '${work.url.replace(/'/g, "\\'")}', '', '${work.type}')" class="px-2.5 py-1 text-[11px] code-font bg-[#020b18] text-sky-200 border border-[#0a3066] rounded-lg hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1">
+                                                            <button onclick="previewDoc('${course.id}', ${currentWeek}, ${index})" class="px-2.5 py-1 text-[11px] code-font bg-[#020b18] text-sky-200 border border-[#0a3066] rounded-lg hover:border-[#00d2ff] hover:text-[#00d2ff] transition flex items-center gap-1">
                                                                 <i class="fas fa-eye"></i> Vista Previa
                                                             </button>
-                                                            <a href="${work.url}" target="_blank" class="px-2.5 py-1 text-[11px] code-font bg-[#00d2ff]/10 text-[#00d2ff] border border-[#00d2ff]/30 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1">
-                                                                <i class="fas fa-external-link-alt"></i> Abrir
-                                                            </a>
+                                                            <button onclick="downloadWork('${course.id}', ${currentWeek}, ${index})" class="px-2.5 py-1 text-[11px] code-font bg-[#00d2ff]/10 text-[#00d2ff] border border-[#00d2ff]/30 rounded-lg hover:bg-[#00d2ff] hover:text-black transition flex items-center gap-1">
+                                                                <i class="fas fa-download"></i> Descargar / Abrir
+                                                            </button>
                                                             <button onclick="deleteWork('${course.id}', ${currentWeek}, ${index})" class="px-2 py-1 text-[11px] code-font bg-red-950/40 text-red-400 border border-red-800/40 rounded-lg hover:bg-red-600 hover:text-white transition" title="Eliminar trabajo">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
@@ -1165,7 +1165,6 @@ function evaluarProgresoSistemas() {
             }
         }
 
-        // FUNCIÓN DE GUARDADO REPARADA Y OPTIMIZADA
         function saveNewWork() {
             const courseId = document.getElementById('work-course-id').value;
             const weekNum = document.getElementById('work-week-num').value;
@@ -1221,6 +1220,82 @@ function evaluarProgresoSistemas() {
                     renderCourses();
                 }
             }
+        }
+
+        // DESCARGAR O ABRIR UN TRABAJO CORREGIDO
+        function downloadWork(courseId, weekNum, index) {
+            const weekKey = `${courseId}_${weekNum}`;
+            const work = worksData[weekKey][index];
+            if (!work) return;
+
+            if (work.url.startsWith('data:')) {
+                const link = document.createElement('a');
+                link.href = work.url;
+                link.download = work.title;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                window.open(work.url, '_blank');
+            }
+        }
+
+        // PREVISUALIZAR TRABAJO CORREGIDO
+        function previewDoc(courseId, weekNum, index) {
+            const weekKey = `${courseId}_${weekNum}`;
+            const work = worksData[weekKey][index];
+            if (!work) return;
+
+            const title = work.title;
+            const url = work.url;
+            const type = work.type;
+
+            document.getElementById('doc-modal-title').innerText = title.toUpperCase();
+            document.getElementById('doc-modal-desc').innerText = '';
+            document.getElementById('doc-modal-size').innerText = '';
+            
+            const downloadBtn = document.getElementById('doc-download-btn');
+            
+            if (url.startsWith('data:')) {
+                downloadBtn.href = url;
+                downloadBtn.download = title;
+                downloadBtn.removeAttribute('target');
+            } else {
+                downloadBtn.href = url;
+                downloadBtn.removeAttribute('download');
+                downloadBtn.target = '_blank';
+            }
+
+            const iframe = document.getElementById('doc-iframe');
+            const fallback = document.getElementById('doc-fallback');
+            const imgContainer = document.getElementById('doc-image-preview');
+            const imgElement = document.getElementById('doc-img-element');
+
+            iframe.classList.add('hidden');
+            fallback.classList.add('hidden');
+            imgContainer.classList.add('hidden');
+
+            if (type === 'IMG' || url.startsWith('data:image') || url.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i)) {
+                imgElement.src = url;
+                imgContainer.classList.remove('hidden');
+            } else {
+                let embedUrl = '';
+                if (url.includes('drive.google.com/file/d/')) {
+                    embedUrl = url.replace('/view', '/preview');
+                } else if (url.includes('docs.google.com') || url.endsWith('.pdf')) {
+                    embedUrl = url;
+                }
+
+                if (embedUrl) {
+                    iframe.src = embedUrl;
+                    iframe.classList.remove('hidden');
+                } else {
+                    iframe.src = '';
+                    fallback.classList.remove('hidden');
+                }
+            }
+
+            document.getElementById('doc-modal').classList.remove('hidden');
         }
 
         function openEditWeekModal(courseId, weekNum, currentTitle) {
@@ -1305,44 +1380,6 @@ function evaluarProgresoSistemas() {
             } catch (err) {
                 alert("Ocurrió un error al guardar la imagen.");
             }
-        }
-
-        function previewDoc(title, desc, url, size, type) {
-            document.getElementById('doc-modal-title').innerText = title.toUpperCase();
-            document.getElementById('doc-modal-desc').innerText = desc || '';
-            document.getElementById('doc-modal-size').innerText = size ? `Tamaño: ${size}` : '';
-            document.getElementById('doc-download-btn').href = url;
-
-            const iframe = document.getElementById('doc-iframe');
-            const fallback = document.getElementById('doc-fallback');
-            const imgContainer = document.getElementById('doc-image-preview');
-            const imgElement = document.getElementById('doc-img-element');
-
-            iframe.classList.add('hidden');
-            fallback.classList.add('hidden');
-            imgContainer.classList.add('hidden');
-
-            if (type === 'IMG' || url.startsWith('data:image') || url.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i)) {
-                imgElement.src = url;
-                imgContainer.classList.remove('hidden');
-            } else {
-                let embedUrl = '';
-                if (url.includes('drive.google.com/file/d/')) {
-                    embedUrl = url.replace('/view', '/preview');
-                } else if (url.includes('docs.google.com') || url.endsWith('.pdf')) {
-                    embedUrl = url;
-                }
-
-                if (embedUrl) {
-                    iframe.src = embedUrl;
-                    iframe.classList.remove('hidden');
-                } else {
-                    iframe.src = '';
-                    fallback.classList.remove('hidden');
-                }
-            }
-
-            document.getElementById('doc-modal').classList.remove('hidden');
         }
 
         function triggerSonicAction() {
